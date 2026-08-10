@@ -756,7 +756,7 @@ async function pushSharedConfig(){
       headers:{'Authorization':`Bearer ${GH_TOKEN}`,'Accept':'application/vnd.github+json'}
     });
     if(metaRes.ok){ const meta=await metaRes.json(); sha=meta.sha; }
-    else if(metaRes.status!==404){ throw new Error('读取仓库失败('+metaRes.status+(metaRes.status===401?'，Token 无效或权限不足——请用 Classic token + repo 权限')+')'); }
+    else if(metaRes.status!==404){ throw new Error('读取仓库失败('+metaRes.status+(metaRes.status===401?'，Token 无效或权限不足——请用 Classic token + repo 权限':'')+')'); }
     // 2) 写入（UTF-8 安全 base64）
     const content=btoa(unescape(encodeURIComponent(JSON.stringify(modules,null,2))));
     const putRes=await fetch(`https://api.github.com/repos/${GH_REPO}/contents/modules.json`,{
