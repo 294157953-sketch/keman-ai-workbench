@@ -619,10 +619,11 @@
           <span class="sync-label">云端同步</span>
           <input type="password" id="gh-token" placeholder="粘贴 GitHub Token（需 repo 权限）以启用全员同步" />
           <button type="button" class="btn-ghost2" id="gh-token-save">保存Token</button>
+          <button type="button" class="btn-ghost2" id="gh-verify">验证</button>
           <button type="button" class="btn-ghost2" id="gh-publish">立即发布</button>
         </div>
         <div class="sync-status" id="sync-status"></div>
-        <div class="sync-hint">后端已迁到 GitHub Pages（无需服务器/隧道，地址永久不变）。管理员填入一次 Token 后，每次保存模块都会自动同步给全员；Token 仅保存在本机浏览器，不会上传。</div>
+        <div class="sync-hint">后端已迁到 GitHub Pages（无需服务器/隧道，地址永久不变）。管理员填入一次 Token 后，每次保存模块都会自动同步给全员；Token 仅保存在本机浏览器，不会上传。<br><b>Token 要求：</b>必须用 <b>Classic token</b>（不是 Fine-grained），勾选 <b>repo</b> 权限。→ <a href="https://github.com/settings/tokens/new?scopes=repo&description=keman-workbench-sync" target="_blank" rel="noopener">一键创建正确权限的 Token →</a></div>
       </div>
       <div class="mod-list">
         <div class="mod-list-bar">
@@ -742,7 +743,7 @@ async function pushSharedConfig(){
       headers:{'Authorization':`Bearer ${GH_TOKEN}`,'Accept':'application/vnd.github+json'}
     });
     if(metaRes.ok){ const meta=await metaRes.json(); sha=meta.sha; }
-    else if(metaRes.status!==404){ throw new Error('读取仓库失败('+metaRes.status+')'); }
+    else if(metaRes.status!==404){ throw new Error('读取仓库失败('+metaRes.status+(metaRes.status===401?'，Token 无效或权限不足——请用 Classic token + repo 权限')+')'); }
     // 2) 写入（UTF-8 安全 base64）
     const content=btoa(unescape(encodeURIComponent(JSON.stringify(modules,null,2))));
     const putRes=await fetch(`https://api.github.com/repos/${GH_REPO}/contents/modules.json`,{
@@ -1300,6 +1301,23 @@ if(ghPubBtn) ghPubBtn.onclick=async ()=>{
   if(!GH_TOKEN){ syncStatus('请先粘贴并保存 GitHub Token。', true); return; }
   syncStatus('正在发布到 GitHub…', false);
   await pushSharedConfig();
+};
+// 验证 Token：点一下就知道是否有效，不用等到发布才报错
+const ghVerifyBtn=document.getElementById('gh-verify');
+if(ghVerifyBtn) ghVerifyBtn.onclick=async ()=>{
+  const tok=(document.getElementById('gh-token').value||'').trim();
+  if(!tok){ syncStatus('请先粘贴 Token 再验证。', true); return; }
+  syncStatus('正在验证 Token…', false);
+  try{
+    const res=await fetch(`https://api.github.com/repos/${GH_REPO}/contents/modules.json?ref=${GH_BRANCH}`,{
+      headers:{'Authorization':`Bearer ${tok}`,'Accept':'application/vnd.github+json'}
+    });
+    if(res.status===401){ syncStatus('❌ Token 无效或权限不足！请确认：①用 Classic token（不是 Fine-grained）；②勾了 repo 权限；③Token 没过期。→ 点下方「一键创建」链接重新生成', true); return; }
+    if(res.status===404){ syncStatus('✅ Token 有效（仓库可访问，modules.json 尚不存在，首次发布会自动创建）。可以点「立即发布」。', false); return; }
+    if(res.ok){ syncStatus('✅ Token 有效且仓库可读写，可以正常发布。', false); return; }
+    const err=await res.json().catch(()=>({}));
+    syncStatus(`⚠️ 意外状态 ${res.status}：${err.message||'未知错误'}`, true);
+  }catch(e){ syncStatus('验证失败：网络不通或 CORS 被拦截。'+e.message, true); }
 };
 document.getElementById('btn-admin').onclick=openAdmin;
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!modal.hidden) closeAdmin(); });
