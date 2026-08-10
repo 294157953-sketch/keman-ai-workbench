@@ -80,6 +80,16 @@
     padding:4px 11px;border-radius:20px;font-weight:600;letter-spacing:.5px;
     backdrop-filter:blur(4px);color:#fff}
   .stat{margin-left:auto;display:flex;gap:8px;align-items:center}
+  /* 云端同步状态徽标 */
+  .cloud-badge{display:none;align-items:center;gap:5px;font-size:12px;padding:4px 10px;border-radius:999px;
+    background:#eef5ee;color:#2e8b57;border:1px solid #cfe8d2;white-space:nowrap;transition:all .2s var(--ease)}
+  .cloud-badge.show{display:inline-flex}
+  .cloud-badge.syncing{background:#eef3fb;color:#3b6fb5;border-color:#cfe0f5}
+  .cloud-badge.off{background:#fdf2ec;color:#c2671a;border-color:#f6dcc4}
+  .cloud-badge.err{background:#fdeeee;color:#c0392b;border-color:#f6cccc}
+  .cloud-badge .dot{width:7px;height:7px;border-radius:50%;background:currentColor;animation:pulse 1.2s infinite}
+  .cloud-badge.syncing .dot{animation:pulse 1s infinite}
+  @keyframes pulse{0%{opacity:.35}50%{opacity:1}100%{opacity:.35}}
   .stat-card{display:flex;align-items:center;gap:6px;height:36px;min-width:58px;padding:0 9px;border-radius:8px;
     cursor:pointer;color:#fff;transition:filter .16s var(--ease),transform .16s var(--ease)}
   .stat-card:hover{filter:brightness(1.12);transform:translateY(-1px)}
@@ -477,6 +487,7 @@
     <button data-role="admin">🛡 管理员</button>
   </div>
   <div class="stat" id="stat"></div>
+  <div class="cloud-badge" id="cloud-badge" title="云端同步状态">☁ 同步中…</div>
 </header>
 
 <div class="main">
@@ -620,6 +631,7 @@
           <input type="password" id="gh-token" placeholder="粘贴 GitHub Token（需 repo 权限）以启用全员同步" />
           <button type="button" class="btn-ghost2" id="gh-token-save">保存Token</button>
           <button type="button" class="btn-ghost2" id="gh-verify">验证</button>
+          <button type="button" class="btn-ghost2" id="gh-pull">从云端刷新</button>
           <button type="button" class="btn-ghost2" id="gh-publish">立即发布</button>
         </div>
         <div class="sync-status" id="sync-status"></div>
@@ -735,7 +747,8 @@ function saveModules(){
 }
 // 写回云端：后台任意改动都同步到 GitHub 仓库的 modules.json，全员下次打开即见（不再依赖服务器/隧道）
 async function pushSharedConfig(){
-  if(!GH_TOKEN){ syncStatus('未配置 GitHub Token：本次改动仅保存在本机，不会同步给同事。请在后台「同步设置」中粘贴 Token。', true); return; }
+  if(!GH_TOKEN){ syncStatus('未配置 GitHub Token：本次改动仅保存在本机，不会同步给同事。请在后台「同步设置」中粘贴 Token。', true); cloudBadge('off','☁ 未配置 Token'); return; }
+  cloudBadge('syncing','☁ 正在保存到云端…');
   try{
     // 1) 取当前文件 sha（已存在则需提供，用于乐观锁）
     let sha=null;
@@ -753,22 +766,27 @@ async function pushSharedConfig(){
     });
     if(!putRes.ok){ const err=await putRes.json().catch(()=>({})); throw new Error(err.message||('发布失败('+putRes.status+')')); }
     syncStatus('已发布到 GitHub，全员约 1 分钟内即可看到最新配置。', false);
-  }catch(e){ syncStatus('发布失败：'+e.message, true); }
+    cloudBadge('ok',`☁ 已同步云端 · ${modules.length} 个模块`);
+  }catch(e){ syncStatus('发布失败：'+e.message, true); cloudBadge('err','☁ 同步失败'); }
 }
 // 拉取共享配置：同源 modules.json 优先，全员看到同一份；失败回退本地/种子
 async function syncSharedConfig(){
   if(!SHARED_CONFIG_URL) return;
+  cloudBadge('syncing','☁ 正在从云端拉取配置…');
   try{
     const res=await fetch(SHARED_CONFIG_URL+'?_='+Date.now(),{cache:'no-store'});
-    if(!res.ok) return;
+    if(!res.ok){ cloudBadge('off','☁ 云端暂不可用'); return; }
     const data=await res.json();
     if(Array.isArray(data)&&data.length){
       SHARED_MODULES=data.map(m=>({...m, id:m.id||uid(), perm:m.perm??'staff', sso:!!m.sso}));
       modules=SHARED_MODULES.map(m=>({...m}));
       try{localStorage.setItem(LS_KEY,JSON.stringify(modules));}catch(e){}
       refreshAll();
+      cloudBadge('ok',`☁ 已同步云端 · ${modules.length} 个模块`);
+    }else{
+      cloudBadge('off','☁ 云端暂无配置');
     }
-  }catch(e){ /* 离线或无共享文件时回退默认种子 */ }
+  }catch(e){ cloudBadge('err','☁ 拉取失败（离线）'); }
 }
 let modules=loadModules();
 
@@ -1288,6 +1306,15 @@ document.getElementById('f-import-file').onchange=e=>{
 };
 // ===== 云端同步：GitHub Token 设置 + 发布状态 =====
 function syncStatus(msg, warn){ const el=document.getElementById('sync-status'); if(!el)return; el.textContent=msg; el.className='sync-status'+(warn?' warn':''); }
+// 主界面云端同步状态徽标：state ∈ ok|syncing|off|err
+function cloudBadge(state, text){
+  const el=document.getElementById('cloud-badge'); if(!el) return;
+  el.className='cloud-badge show '+(state||'');
+  el.innerHTML=(state==='syncing'?'<span class="dot"></span>':'')+text;
+  if(state==='ok'){ // 5 秒后淡出，避免长期占位置
+    clearTimeout(el._t); el._t=setTimeout(()=>{ if(el.classList.contains('ok')) el.classList.remove('show'); },5000);
+  }
+}
 const ghTokenInput=document.getElementById('gh-token');
 if(ghTokenInput) ghTokenInput.value=GH_TOKEN;
 const ghSaveBtn=document.getElementById('gh-token-save');
@@ -1301,6 +1328,14 @@ if(ghPubBtn) ghPubBtn.onclick=async ()=>{
   if(!GH_TOKEN){ syncStatus('请先粘贴并保存 GitHub Token。', true); return; }
   syncStatus('正在发布到 GitHub…', false);
   await pushSharedConfig();
+};
+// 从云端刷新：手动拉取最新共享配置（别人刚改完，你想立刻看到时点这个）
+const ghPullBtn=document.getElementById('gh-pull');
+if(ghPullBtn) ghPullBtn.onclick=async ()=>{
+  syncStatus('正在从云端拉取最新配置…', false);
+  await syncSharedConfig();
+  if(GH_TOKEN) syncStatus('已从云端拉取最新配置。如需把你的改动同步给同事，点「立即发布」。', false);
+  else syncStatus('已从云端拉取最新配置。未配置 Token，你的改动仅存本机。', true);
 };
 // 验证 Token：点一下就知道是否有效，不用等到发布才报错
 const ghVerifyBtn=document.getElementById('gh-verify');
