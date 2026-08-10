@@ -291,42 +291,45 @@
   .section-title{display:flex;align-items:center;gap:9px;margin:32px 2px 16px;font-size:15px;font-weight:800;color:var(--ink);letter-spacing:.5px}
   .section-title .bar{width:4px;height:16px;border-radius:2px;background:linear-gradient(180deg,var(--brand),var(--brand-2))}
   .section-title .n{margin-left:auto;font-size:12px;color:var(--sub);font-weight:600}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(252px,1fr));gap:18px;align-content:start}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-lg);padding:17px 17px 14px;
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(252px,1fr));gap:20px;align-content:start}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-lg);padding:48px 17px 14px;
     cursor:pointer;transition:transform .2s var(--ease),box-shadow .2s, border-color .2s;
     box-shadow:var(--sh-1);position:relative;overflow:hidden}
   .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent,#ccc)}
   .card:hover{transform:translateY(-5px);box-shadow:var(--sh-3);border-color:var(--brand-line)}
-  .card .tag{font-size:11px;padding:4px 11px;border-radius:20px;color:#fff;display:inline-block;
-    font-weight:600;letter-spacing:.5px;box-shadow:0 2px 5px rgba(0,0,0,.08)}
-  .card .badges{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+  /* 左上角：分类标签（必选）*/
+  .card .cat-tag{position:absolute;top:16px;left:16px;height:22px;line-height:22px;padding:0 8px;border-radius:11px;
+    color:#fff;font-size:11px;font-weight:600;letter-spacing:.5px;box-shadow:0 2px 5px rgba(0,0,0,.08);z-index:2;white-space:nowrap}
+  .card .cat-tag.kanban{background:#34D399}
+  .card .cat-tag.app{background:#60A5FA}
+  .card .cat-tag.daily{background:#FB923C}
+  /* 右上角：权限标签 + 打开按钮（水平排列）*/
+  .card .card-top{position:absolute;top:16px;right:16px;display:flex;align-items:center;gap:8px;z-index:2}
+  .card .perm-tag{height:20px;line-height:18px;padding:0 8px;border-radius:10px;color:#F97316;border:1px solid #F97316;
+    font-size:11px;font-weight:600;white-space:nowrap}
+  .card .open{font-size:12px;color:var(--brand);text-decoration:none;font-weight:700;background:var(--brand-soft);
+    padding:4px 10px;border-radius:9px;border:1px solid var(--brand-line);display:inline-flex;align-items:center;gap:4px;
+    transition:.15s;cursor:pointer}
+  .card .open:hover{background:var(--brand);color:#fff}
+  .card .open.disabled{color:#C2B8AC;background:rgba(120,110,100,.06);border-color:transparent;cursor:default}
+  .card .open.disabled:hover{background:rgba(120,110,100,.06);color:#C2B8AC}
+  .card .open .ext-ic{width:12px;height:12px;display:block}
+  .card .r-time{font-size:10.5px;font-weight:600;color:var(--sub)}
+  /* 后台弹窗内标签（保留）*/
   .badge-sso{font-size:10.5px;padding:3px 9px;border-radius:20px;font-weight:600;letter-spacing:.3px;
     background:rgba(62,127,208,.1);color:#2E6BC4;border:1px solid rgba(62,127,208,.28);white-space:nowrap}
   .badge-perm{font-size:10.5px;padding:3px 9px;border-radius:20px;font-weight:600;letter-spacing:.3px;
     background:rgba(232,86,10,.1);color:var(--brand);border:1px solid var(--brand-line);white-space:nowrap}
-  .tag.kanban{background:var(--c-kanban)} .tag.app{background:var(--c-app)} .tag.daily{background:var(--c-daily)}
   .card h3{font-size:16px;margin-bottom:8px;font-weight:700;letter-spacing:.3px}
   .card .owner{font-size:12.5px;color:var(--sub)}
   .card .owner b{color:var(--nut);font-weight:600}
-  /* 复制链接按钮 — 右下角，hover 才显示 */
-  .card .copy-btn{position:absolute;bottom:10px;right:10px;width:30px;height:30px;border-radius:8px;
-    display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:3;
-    color:#9AA0A6;background:rgba(120,110,100,.05);border:1px solid transparent;
-    opacity:0;transform:translateY(4px);transition:.18s var(--ease)}
-  .card:hover .copy-btn{opacity:1;transform:translateY(0)}
-  .card .copy-btn:hover{color:var(--brand);background:var(--brand-soft);border-color:var(--brand-line)}
-  .card .copy-btn svg{width:15px;height:15px;display:block}
-  /* 复制成功 toast — 卡片右上角弹出，2s 消失 */
+  /* 复制成功 toast（保留，默认隐藏）*/
   .card .toast{position:absolute;top:13px;right:13px;z-index:6;
     background:rgba(35,28,24,.92);color:#fff;font-size:12px;font-weight:600;
     padding:5px 11px;border-radius:8px;display:flex;align-items:center;gap:4px;
     opacity:0;transform:translateY(-6px) scale(.96);pointer-events:none;
     transition:.22s var(--ease);box-shadow:0 4px 12px rgba(0,0,0,.22)}
   .card .toast.show{opacity:1;transform:translateY(0) scale(1)}
-  .card .open{position:absolute;top:16px;right:16px;font-size:12px;color:var(--brand);
-    text-decoration:none;font-weight:700;background:var(--brand-soft);padding:4px 10px;border-radius:9px;
-    border:1px solid var(--brand-line);transition:.15s}
-  .card .open:hover{background:var(--brand);color:#fff}
   .no-url{color:#C2B8AC;font-style:italic}
   .home-deco{position:absolute;right:30px;bottom:18px;opacity:.04;pointer-events:none;width:210px;height:auto}
   /* ===== 最近使用 ===== */
@@ -334,19 +337,15 @@
   .recent-head{margin:30px 2px 14px}
   .recent-head .view-all{margin-left:auto;font-size:12px;font-weight:700;color:var(--brand);text-decoration:none;letter-spacing:.3px}
   .recent-head .view-all:hover{text-decoration:underline}
-  .recent-row{display:flex;gap:14px;overflow-x:auto;padding:2px 2px 10px;scrollbar-width:thin}
+  .recent-row{display:flex;gap:20px;overflow-x:auto;padding:2px 2px 10px;scrollbar-width:thin}
   .recent-row::-webkit-scrollbar{height:6px}
   .recent-row::-webkit-scrollbar-thumb{background:rgba(150,130,110,.32);border-radius:3px}
   .recent-card{flex:0 0 auto;width:198px;min-width:198px}
   .recent-card h3{font-size:15px}
-  .recent-card .visit-time{position:absolute;top:13px;right:13px;z-index:2;font-size:10.5px;font-weight:600;color:var(--sub);background:rgba(120,110,100,.08);padding:2px 8px;border-radius:7px}
-  .recent-card .copy-btn{bottom:9px;right:9px;width:27px;height:27px}
-  .recent-card .copy-btn svg{width:13px;height:13px}
   /* ===== Footer ===== */
-  footer{height:40px;background:linear-gradient(180deg,#2C1B10,#1F130A);color:#D8C9BA;
-    display:flex;align-items:center;justify-content:center;gap:9px;font-size:12.5px;flex-shrink:0;
-    letter-spacing:.5px;box-shadow:0 -2px 10px rgba(40,20,8,.2)}
-  footer img{height:20px;width:auto;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
+  footer{height:36px;background:#F5F0EB;color:#888;
+    display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;letter-spacing:.5px}
+  footer b{color:#888;font-weight:700}
   footer b{color:#FFB877;font-weight:700}
   /* ===== 管理后台按钮 ===== */
   .admin-btn{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;
@@ -465,7 +464,7 @@
 </head>
 <body>
 <header>
-  <div class="logo-badge"><img src="ip_trio_clean.png" alt="三只松鼠官方IP" /></div>
+  <div class="logo-badge"><img class="js-squirrel" alt="三只松鼠官方IP" /></div>
   <div class="brand-txt">
     <span class="cn">三只松鼠</span>
     <span class="en">Three Squirrels</span>
@@ -481,7 +480,7 @@
 
 <div class="main">
   <nav id="nav">
-    <div class="nav-brand"><img src="ip_jian.png" alt="" /><span>工作台导航</span></div>
+    <div class="nav-brand"><img class="js-squirrel" alt="" /><span>工作台导航</span></div>
     <div class="nav-tabs">
       <button class="nav-tab active" data-view="cat">按分类</button>
       <button class="nav-tab" data-view="owner">按责任人</button>
@@ -508,13 +507,13 @@
       <div class="count" id="count"></div>
     </div>
     <div class="tabbar" id="tabbar">
-      <div class="tab active" id="tab-home" data-id="home"><img src="ip_jian.png" class="tab-icon" alt="" /><span class="tname">首页</span></div>
+      <div class="tab active" id="tab-home" data-id="home"><img class="tab-icon js-squirrel" alt="" /><span class="tname">首页</span></div>
     </div>
     <div class="pages" id="pages">
       <div class="page home active" id="page-home">
         <div class="hero">
           <div class="hero-illo">
-            <img src="ip_trio.png" class="hero-trio-img" alt="三只松鼠官方IP" />
+            <img class="hero-trio-img js-squirrel" alt="三只松鼠官方IP" />
             <div class="plaque">三只松鼠</div>
           </div>
           <div class="hero-text">
@@ -539,14 +538,13 @@
         </div>
         <div class="section-title" id="sec-all"><span class="bar"></span>全部应用<span class="n" id="sec-n"></span></div>
         <div class="grid" id="grid"></div>
-        <img src="ip_trio_clean.png" class="home-deco" alt="" />
+        <img class="home-deco js-squirrel" alt="" />
       </div>
     </div>
   </div>
 </div>
 
 <footer>
-  <img src="ip_trio_clean.png" alt="" />
   <span>© <b>三只松鼠股份有限公司</b>　|　客满中心 AI 应用统一工作台　·　内部协同平台</span>
 </footer>
 
@@ -555,7 +553,7 @@
   <div class="modal-mask" id="admin-mask"></div>
   <div class="modal-panel" role="dialog" aria-modal="true" aria-label="模块配置后台">
     <div class="modal-head">
-      <img src="ip_jian.png" class="modal-logo" alt="" />
+      <img class="modal-logo js-squirrel" alt="" />
       <div class="modal-title">模块配置后台</div>
       <button class="modal-close" id="admin-close" aria-label="关闭">×</button>
     </div>
@@ -660,6 +658,25 @@ const IP_ICONS = {
   mei:  'ip_mei.png',   // 小美 — 粉蝴蝶结
   meng: 'ip_meng.png'   // 小萌 — 眼镜
 };
+
+/* 三只松鼠品牌松鼠形象（内联 SVG，data URI），替代缺失的 PNG，确保任何环境都能正常显示 */
+const SQUIRREL_SVG = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
+<path d='M66 84 C90 80 94 46 77 32 C68 24 55 30 59 43 C61 34 72 37 71 50 C70 64 59 72 53 67' fill='#FF8A2B' stroke='#D9620A' stroke-width='2.5' stroke-linejoin='round'/>
+<path d='M40 88 C20 81 20 54 37 50 C54 46 69 56 64 75 C62 86 52 93 40 88 Z' fill='#FF9E45'/>
+<path d='M42 82 C32 79 31 63 41 61 C52 59 61 68 59 79 C58 86 50 87 42 82 Z' fill='#FFE9D6'/>
+<circle cx='44' cy='40' r='20' fill='#FF9E45'/>
+<path d='M31 25 L24 4 L42 21 Z' fill='#FF9E45' stroke='#D9620A' stroke-width='2' stroke-linejoin='round'/>
+<path d='M55 25 L64 5 L60 23 Z' fill='#FF9E45' stroke='#D9620A' stroke-width='2' stroke-linejoin='round'/>
+<path d='M33 22 L30 11 L39 20 Z' fill='#FFD2AC'/>
+<path d='M57 22 L61 12 L59 21 Z' fill='#FFD2AC'/>
+<circle cx='39' cy='38' r='4.2' fill='#3B2410'/>
+<circle cx='37.5' cy='36.5' r='1.5' fill='#fff'/>
+<circle cx='24' cy='45' r='3.2' fill='#3B2410'/>
+<ellipse cx='31' cy='47' rx='4.5' ry='3' fill='#FFB877' opacity='0.55'/>
+<path d='M35 67 c-5 3 -7 8 -3 12 l6 0 c-3 -6 1 -11 5 -12 Z' fill='#FF8A2B'/>
+</svg>`;
+const SQUIRREL = 'data:image/svg+xml;utf8,' + encodeURIComponent(SQUIRREL_SVG);
+function fixSquirrelImgs(){ document.querySelectorAll('.js-squirrel').forEach(e=>{ e.src = SQUIRREL; }); }
 
 // ===== 分类定义 =====
 const CATS = {
@@ -872,13 +889,23 @@ function render(){
     const card=document.createElement('div');
     card.className='card';
     card.style.setProperty('--accent',`var(--c-${a.cat})`);
-    const linkHtml=a.url?`<a class="open" href="${a.url}" target="_blank" onclick="event.stopPropagation()">打开↗</a>`:'';
-    const copyBtn=a.url?`<button class="copy-btn" title="复制链接" aria-label="复制链接"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>`:'';
-    const ssoBadge=a.sso?`<span class="badge-sso">飞书 SSO · 仅新窗口</span>`:'';
-    const permBadge=(currentRole==='admin'&&a.perm==='admin')?`<span class="badge-perm">管理专属</span>`:'';
-    card.innerHTML=`${linkHtml}<div class="badges"><span class="tag ${c.cls}">${c.label}</span>${ssoBadge}${permBadge}</div><h3>${a.name}</h3><div class="owner">责任人：<b>${a.owner}</b></div>${copyBtn}<div class="toast">✓ 已复制</div>`;
-    if(a.url){ const cb=card.querySelector('.copy-btn'); cb.onclick=(e)=>{e.stopPropagation();copyLink(a.url,card);}; }
+    const permTag=(currentRole==='admin'&&a.perm==='admin')?`<span class="perm-tag">管理专属</span>`:'';
+    const ssoIcon=a.sso?'<svg class="ext-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M20 4 11 13"/><path d="M19 13v6a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6"/></svg>':'';
+    const openBtn = a.url
+      ? `<a class="open${a.sso?' sso':''}" href="${a.url}"${a.sso?' target="_blank" rel="noopener" title="飞书 SSO 登录，新窗口打开"':' data-inline="1"'}><span>打开</span>${ssoIcon}</a>`
+      : `<span class="open disabled">未配置</span>`;
+    card.innerHTML=`
+      <span class="cat-tag tag ${c.cls}">${c.label}</span>
+      <div class="card-top">${permTag}${openBtn}</div>
+      <h3>${a.name}</h3>
+      <div class="owner">责任人：<b>${a.owner}</b></div>
+      <div class="toast">✓ 已复制</div>`;
     card.onclick=()=>openApp(a);
+    if(a.url){
+      const ob=card.querySelector('.open');
+      if(!a.sso){ ob.onclick=(e)=>{ e.preventDefault(); e.stopPropagation(); openApp(a); }; }
+      else { ob.onclick=(e)=>{ e.stopPropagation(); /* SSO 站点禁止内嵌，按默认 target=_blank 新窗口打开 */ }; }
+    }
     grid.appendChild(card);
   });
   const roleLabel = currentRole==='staff'?'（员工视图）':'（管理员视图）';
@@ -897,7 +924,7 @@ function openApp(app){
   const tb=document.createElement('div');
   tb.className='tab';tb.dataset.id=id;
   tb.draggable=true;
-  const iconUrl = CATS[app.cat].icon;
+  const iconUrl = SQUIRREL;
   tb.innerHTML=`<img src="${iconUrl}" class="tab-icon" alt="" /><span class="tname">${app.name}</span><span class="tclose" title="关闭">×</span>`;
   tb.onclick=(e)=>{ if(e.target.classList.contains('tclose')){closeTab(id);} else {activateTab(id);} };
   tb.oncontextmenu=(e)=>{ e.preventDefault(); showTabMenu(e.clientX,e.clientY,id); };
@@ -1169,10 +1196,10 @@ function renderRecent(){
     card.className='card recent-card';
     card.style.setProperty('--accent',`var(--c-${r.type})`);
     const vt=fmtVisit(r.lastVisit);
-    const copyBtn=r.url?`<button class="copy-btn" title="复制链接" aria-label="复制链接"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>`:'';
-    card.innerHTML=`<div class="visit-time">${vt}</div><div class="badges"><span class="tag ${c.cls}">${c.label}</span></div><h3>${r.name}</h3><div class="owner">责任人：<b>${r.owner}</b></div>${copyBtn}<div class="toast">✓ 已复制</div>`;
+    const openBtn = r.url ? `<a class="open" href="${r.url}" data-inline="1"><span>打开</span></a>` : `<span class="open disabled">未配置</span>`;
+    card.innerHTML=`<span class="cat-tag tag ${c.cls}">${c.label}</span><div class="card-top"><span class="r-time">${vt}</span>${openBtn}</div><h3>${r.name}</h3><div class="owner">责任人：<b>${r.owner}</b></div><div class="toast">✓ 已复制</div>`;
     const app = modules.find(m=>m.id===r.id) || {id:r.id,name:r.name,cat:r.type,owner:r.owner,url:r.url,perm:'staff',sso:false};
-    if(r.url){ const cb=card.querySelector('.copy-btn'); cb.onclick=(e)=>{e.stopPropagation();copyLink(r.url,card);}; }
+    if(r.url){ const ob=card.querySelector('.open:not(.disabled)'); if(ob) ob.onclick=(e)=>{ e.preventDefault(); e.stopPropagation(); openApp(app); }; }
     card.onclick=()=>openApp(app);
     row.appendChild(card);
   });
@@ -1264,6 +1291,7 @@ document.querySelectorAll('#role-seg button').forEach(b=>{
 });
 setRole(currentRole); // 初始化高亮、后台按钮可见性并渲染
 syncSharedConfig(); // 拉取服务端共享配置，使全员看到同一份模块
+fixSquirrelImgs(); // 用内联 SVG 修复所有品牌图标/形象（原 PNG 缺失）
 </script>
 </body>
 </html>
