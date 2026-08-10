@@ -475,7 +475,7 @@
 </head>
 <body>
 <header>
-  <div class="logo-badge"><img src="ip_trio_clean.png" alt="三只松鼠官方IP" /></div>
+  <div class="logo-badge"><img src="https://294157953-sketch.github.io/keman-ai-workbench/ip_trio_clean.png" alt="三只松鼠官方IP" /></div>
   <div class="brand-txt">
     <span class="cn">三只松鼠</span>
     <span class="en">Three Squirrels</span>
@@ -492,7 +492,7 @@
 
 <div class="main">
   <nav id="nav">
-    <div class="nav-brand"><img src="ip_jian.png" alt="" /><span>工作台导航</span></div>
+    <div class="nav-brand"><img src="https://294157953-sketch.github.io/keman-ai-workbench/ip_jian.png" alt="" /><span>工作台导航</span></div>
     <div class="nav-tabs">
       <button class="nav-tab active" data-view="cat">按分类</button>
       <button class="nav-tab" data-view="owner">按责任人</button>
@@ -519,13 +519,13 @@
       <div class="count" id="count"></div>
     </div>
     <div class="tabbar" id="tabbar">
-      <div class="tab active" id="tab-home" data-id="home"><img src="ip_jian.png" class="tab-icon" alt="" /><span class="tname">首页</span></div>
+      <div class="tab active" id="tab-home" data-id="home"><img src="https://294157953-sketch.github.io/keman-ai-workbench/ip_jian.png" class="tab-icon" alt="" /><span class="tname">首页</span></div>
     </div>
     <div class="pages" id="pages">
       <div class="page home active" id="page-home">
         <div class="hero">
           <div class="hero-illo">
-            <img src="ip_trio.png" class="hero-trio-img" alt="三只松鼠官方IP" />
+            <img src="https://294157953-sketch.github.io/keman-ai-workbench/ip_trio.png" class="hero-trio-img" alt="三只松鼠官方IP" />
             <div class="plaque">三只松鼠</div>
           </div>
           <div class="hero-text">
@@ -550,14 +550,14 @@
         </div>
         <div class="section-title" id="sec-all"><span class="bar"></span>全部应用<span class="n" id="sec-n"></span></div>
         <div class="grid" id="grid"></div>
-        <img src="ip_trio_clean.png" class="home-deco" alt="" />
+        <img src="https://294157953-sketch.github.io/keman-ai-workbench/ip_trio_clean.png" class="home-deco" alt="" />
       </div>
     </div>
   </div>
 </div>
 
 <footer>
-  <img src="ip_trio_clean.png" alt="" />
+  <img src="https://294157953-sketch.github.io/keman-ai-workbench/ip_trio_clean.png" alt="" />
   <span>© <b>三只松鼠股份有限公司</b>　|　客满中心 AI 应用统一工作台　·　内部协同平台</span>
 </footer>
 
@@ -566,7 +566,7 @@
   <div class="modal-mask" id="admin-mask"></div>
   <div class="modal-panel" role="dialog" aria-modal="true" aria-label="模块配置后台">
     <div class="modal-head">
-      <img src="ip_jian.png" class="modal-logo" alt="" />
+      <img src="https://294157953-sketch.github.io/keman-ai-workbench/ip_jian.png" class="modal-logo" alt="" />
       <div class="modal-title">模块配置后台</div>
       <button class="modal-close" id="admin-close" aria-label="关闭">×</button>
     </div>
@@ -684,9 +684,9 @@
 <script>
 // ===== 三只松鼠官方 IP 图标映射（使用裁切后的官方原图 PNG）=====
 const IP_ICONS = {
-  jian: 'ip_jian.png',   // 小健 — 蓝围巾，C位
-  mei:  'ip_mei.png',   // 小美 — 粉蝴蝶结
-  meng: 'ip_meng.png'   // 小萌 — 眼镜
+  jian: 'https://294157953-sketch.github.io/keman-ai-workbench/ip_jian.png',   // 小健 — 蓝围巾，C位
+  mei:  'https://294157953-sketch.github.io/keman-ai-workbench/ip_mei.png',   // 小美 — 粉蝴蝶结
+  meng: 'https://294157953-sketch.github.io/keman-ai-workbench/ip_meng.png'   // 小萌 — 眼镜
 };
 
 // ===== 分类定义 =====
@@ -719,7 +719,7 @@ const DEFAULT_SEED = [
 const LS_KEY='keman_modules_v1';
 // ===== 共享配置后端：阿里云服务器 config_server.py（直接 HTTP，无需 Token/隧道/GitHub）=====
 // 打开页面自动拉取最新配置；保存模块自动推送到云端；全员实时同步，零手动操作。
-const SHARED_CONFIG_URL = 'http://47.96.108.51:8080/modules';
+const SHARED_CONFIG_URL = location.hostname.includes('github.io') ? 'http://47.96.108.51:8080/modules' : 'modules';
 let SHARED_MODULES=null; // 服务端共享配置（全员可见）
 function uid(){return 'm'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function loadModules(){
