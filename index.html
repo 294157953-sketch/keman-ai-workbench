@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>三只松鼠 · 客满中心 AI 应用统一工作台</title>
+<style>
+  :root{
+    /* 品牌色 — 克制使用，避免促销感 */
+    --brand:#E8560A;
+    --brand-2:#FF7A1A;
+    --brand-soft:rgba(232,86,10,.08);
+    --brand-line:rgba(232,86,10,.22);
+    --nut:#5A3A22;
+    --ink:#241A14;
+    --sub:#9A8C80;
+    --line:#EFE6DC;
+    --cream:#FAF6F1;
+    --panel:#FFFFFF;
+    /* 三类目 — 低饱和高级色，与品牌橙协调 */
+    --c-kanban:#3FA66A; /* 小萌·绿 */
+    --c-app:#3E7FD0;    /* 小健·蓝 */
+    --c-daily:#D6568A;  /* 小美·粉 */
+    --tab-h:46px;
+    /* 多层柔和阴影 — 由浅入深，营造体积而非厚重 */
+    --sh-1:0 1px 2px rgba(70,45,25,.04), 0 2px 6px rgba(70,45,25,.05);
+    --sh-2:0 2px 4px rgba(70,45,25,.05), 0 8px 24px rgba(70,45,25,.08);
+    --sh-3:0 4px 10px rgba(70,45,25,.07), 0 16px 40px rgba(70,45,25,.12);
+    --r-lg:20px; --r-md:14px; --r-sm:10px;
+    --ease:cubic-bezier(.22,.61,.36,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+    color:var(--ink);height:100vh;display:flex;flex-direction:column;overflow:hidden;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+    background:var(--cream);
+    /* 极淡的暖色mesh底，制造高级质感而不喧宾夺主 */
+    background-image:
+      radial-gradient(900px 500px at 8% -5%,rgba(255,150,60,.07),transparent 60%),
+      radial-gradient(800px 600px at 100% 110%,rgba(62,127,208,.05),transparent 55%);
+  }
+  /* ===== Header — 深橡木至品牌橙的精炼渐变 ===== */
+  header{
+    position:relative;z-index:6;flex-shrink:0;height:72px;padding:0 28px;
+    display:flex;align-items:center;gap:18px;
+    background:linear-gradient(115deg,#2C1B10 0%,#5A2E12 38%,#A8430E 72%,var(--brand-2) 100%);
+    box-shadow:0 2px 0 rgba(0,0,0,.06), 0 10px 30px rgba(70,30,10,.22);
+  }
+  /* 顶部高光线 */
+  header::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(255,224,184,.7),transparent)}
+  /* 底部细金线 */
+  header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
+    background:linear-gradient(90deg,transparent,rgba(255,210,150,.9) 30%,var(--brand) 50%,rgba(255,210,150,.9) 70%,transparent)}
+  /* ===== Header Logo — 三只松鼠 3D 悬浮（克制光晕，不抢字）===== */
+  .logo-badge{width:118px;height:46px;display:flex;align-items:flex-end;justify-content:center;flex-shrink:0;position:relative}
+  .logo-badge::before{content:"";position:absolute;inset:-6px -2px;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,224,184,.85),rgba(255,138,43,.22) 45%,transparent 72%);
+    z-index:0;filter:blur(2.5px);animation:pulse-glow 3s ease-in-out infinite alternate}
+  .logo-badge::after{content:"";position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);
+    width:42px;height:10px;border-radius:50%;
+    background:radial-gradient(ellipse,rgba(40,20,8,.4),transparent 68%);z-index:0;filter:blur(1.5px)}
+  .logo-badge img{position:relative;z-index:1;height:42px;width:auto;max-width:116px;object-fit:contain;
+    filter:drop-shadow(0 4px 7px rgba(60,28,10,.34)) drop-shadow(0 2px 3px rgba(0,0,0,.14));
+    transform-origin:bottom center;animation:floaty 3.4s ease-in-out infinite;
+    transition:transform .4s var(--ease),filter .4s ease}
+  .logo-badge:hover img{animation-play-state:paused;transform:scale(1.06) rotate(-3deg) translateY(-4px)!important;
+    filter:drop-shadow(0 9px 16px rgba(60,28,10,.42)) drop-shadow(0 4px 6px rgba(0,0,0,.18))}
+  @keyframes floaty{0%,100%{transform:translateY(0) rotate(-1.2deg)}50%{transform:translateY(-5px) rotate(1.5deg)}}
+  @keyframes pulse-glow{from{opacity:.6;transform:scale(.95)}to{opacity:.95;transform:scale(1.05)}}
+  .brand-txt{display:flex;flex-direction:column;line-height:1.12}
+  .brand-txt .cn{font-size:20px;font-weight:800;letter-spacing:4px;color:#fff;
+    text-shadow:0 1px 3px rgba(0,0,0,.3)}
+  .brand-txt .en{font-size:9.5px;letter-spacing:3px;opacity:.72;font-weight:600;
+    text-transform:uppercase;margin-top:2px}
+  .brand-sub{font-size:14px;font-weight:600;color:rgba(255,255,255,.92);
+    padding-left:16px;margin-left:2px;border-left:1px solid rgba(255,255,255,.28)}
+  .company-pill{font-size:11px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.34);
+    padding:4px 11px;border-radius:20px;font-weight:600;letter-spacing:.5px;
+    backdrop-filter:blur(4px);color:#fff}
+  .stat{margin-left:auto;display:flex;gap:8px;align-items:center}
+  .stat-card{display:flex;align-items:center;gap:6px;height:36px;min-width:58px;padding:0 9px;border-radius:8px;
+    cursor:pointer;color:#fff;transition:filter .16s var(--ease),transform .16s var(--ease)}
+  .stat-card:hover{filter:brightness(1.12);transform:translateY(-1px)}
+  .stat-card .stat-ic{width:16px;height:16px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+  .stat-card .stat-ic svg{width:16px;height:16px;display:block}
+  .stat-card .stat-col{display:flex;flex-direction:column;line-height:1.04}
+  .stat-card .stat-num{font-size:18px;font-weight:700;line-height:1}
+  .stat-card .stat-label{font-size:12px;font-weight:400;opacity:.9}
+  .stat-card.kanban{background:#3FA66A}
+  .stat-card.app{background:#3E7FD0}
+  .stat-card.daily{background:#E8560A}
+  /* ===== 角色切换（权限分级）===== */
+  .role-seg{display:flex;background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.14);border-radius:20px;
+    padding:3px;gap:2px;margin-left:auto}
+  .role-seg button{border:none;background:transparent;color:rgba(255,255,255,.72);font-size:12px;font-weight:700;
+    padding:5px 14px;border-radius:16px;cursor:pointer;transition:.16s;display:flex;align-items:center;gap:5px}
+  .role-seg button:hover{color:#fff}
+  .role-seg button.active{background:#fff;color:var(--brand);box-shadow:0 1px 4px rgba(0,0,0,.2)}
+  /* ===== Layout ===== */
+  .main{display:flex;flex:1;min-height:0}
+  nav{width:236px;background:linear-gradient(180deg,#FFFDFB,#FCF7F1);border-right:1px solid var(--line);
+    padding:20px 13px;overflow-y:auto;flex-shrink:0}
+  .nav-brand{display:flex;align-items:center;gap:9px;padding:0 9px 15px;margin-bottom:8px;
+    border-bottom:1px solid var(--line)}
+  .nav-brand img{width:28px;height:28px;flex-shrink:0;border-radius:9px;object-fit:cover;
+    box-shadow:var(--sh-1), inset 0 1px 2px rgba(255,255,255,.6);background:#fff;
+    border:1px solid var(--line);transition:transform .25s var(--ease),box-shadow .25s ease}
+  .nav-brand img:hover{transform:scale(1.08) translateY(-1px);box-shadow:var(--sh-2)}
+  .nav-brand span{font-size:13px;font-weight:700;color:var(--nut);letter-spacing:.5px}
+  .group-title{font-size:10.5px;color:var(--sub);margin:16px 9px 9px;font-weight:700;
+    letter-spacing:1.5px;text-transform:uppercase}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r-sm);
+    cursor:pointer;font-size:13.5px;color:var(--ink);margin-bottom:3px;
+    transition:background .16s,transform .16s,color .16s;border:1px solid transparent}
+  .nav-item:hover{background:#F6EEE5;transform:translateX(2px)}
+  .nav-item.active{background:linear-gradient(90deg,var(--brand-soft),transparent);
+    color:var(--brand);font-weight:700;border-color:var(--brand-line)}
+  .nav-item.hl{background:#F6EEE5;transform:translateX(2px)}
+  .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;box-shadow:0 0 0 3px rgba(0,0,0,.02)}
+  .dot.kanban{background:var(--c-kanban)} .dot.app{background:var(--c-app)}
+  .dot.daily{background:var(--c-daily)} .dot.all{background:#B7A99C}
+  /* ===== 导航 Tab 切换（按分类 / 按责任人）===== */
+  .nav-tabs{display:flex;gap:4px;background:rgba(120,110,100,.08);border-radius:20px;padding:3px;margin:4px 4px 12px}
+  .nav-tab{flex:1;height:30px;border:none;background:transparent;color:var(--sub);font-size:12.5px;font-weight:700;
+    border-radius:16px;cursor:pointer;transition:background .2s var(--ease),color .2s,box-shadow .2s}
+  .nav-tab:hover{color:var(--nut)}
+  .nav-tab.active{background:var(--brand);color:#fff;box-shadow:0 2px 6px rgba(232,86,10,.28)}
+  .nav-pane{animation:navFade .22s var(--ease)}
+  @keyframes navFade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+  .nav-item.disabled{color:#C2B8AC;cursor:not-allowed;pointer-events:none;opacity:.7}
+  .nav-item.disabled .dot{background:#D8CFC5!important}
+  /* 按责任人：搜索 + 列表 */
+  .owner-search{margin:0 2px 8px}
+  .owner-search input{width:100%;height:32px;border:1px solid var(--line);border-radius:6px;
+    padding:0 11px;font-size:12.5px;color:var(--ink);background:#fff;outline:none;
+    transition:border-color .15s,box-shadow .15s}
+  .owner-search input:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+  #owners{max-height:calc(100vh - 300px);overflow-y:auto;scrollbar-width:thin}
+  #owners::-webkit-scrollbar{width:5px}
+  #owners::-webkit-scrollbar-thumb{background:rgba(150,130,110,.3);border-radius:3px}
+  .owner-item{display:flex;align-items:center;gap:10px;height:36px;padding:0 12px;border-radius:var(--r-sm);
+    cursor:pointer;font-size:13.5px;color:var(--ink);margin-bottom:3px;
+    transition:background .16s,border-color .16s;border:1px solid transparent}
+  .owner-item:hover{background:#F6EEE5;transform:none}
+  .owner-item.active{background:linear-gradient(90deg,var(--brand-soft),transparent);color:var(--brand);font-weight:700;border-color:var(--brand-line)}
+  .owner-item .owner-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .count-badge{flex-shrink:0;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:rgba(120,110,100,.1);
+    color:var(--sub);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .owner-item.active .count-badge{background:var(--brand);color:#fff}
+  .nav-empty{font-size:12px;color:var(--sub);padding:10px 12px;text-align:center}
+  /* ===== Content ===== */
+  .content{flex:1;display:flex;flex-direction:column;min-width:0}
+  .toolbar{padding:13px 22px;background:rgba(255,255,255,.7);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;flex-shrink:0}
+  .search-wrap{position:relative;flex:0 0 300px}
+  .search-wrap svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);opacity:.4}
+  .toolbar input{border:1px solid var(--line);border-radius:var(--r-sm);padding:10px 12px 10px 38px;
+    font-size:13.5px;width:100%;outline:none;background:#fff;color:var(--ink);
+    transition:border-color .16s,box-shadow .16s}
+  .toolbar input::placeholder{color:#B9ADA0}
+  .toolbar input:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+  .toolbar .hint{font-size:12.5px;color:var(--sub)}
+  .toolbar .count{margin-left:auto;font-size:13px;color:var(--sub);font-weight:600}
+  /* ===== Tab bar — 玻璃质感 ===== */
+  .tabbar{height:var(--tab-h);background:linear-gradient(180deg,#F4ECE3,#EFE6DB);
+    border-bottom:1px solid var(--line);display:flex;align-items:stretch;overflow-x:auto;
+    flex-shrink:0;padding-left:4px}
+  .tabbar::-webkit-scrollbar{height:6px}
+  .tabbar::-webkit-scrollbar-thumb{background:#D6C7B6;border-radius:3px}
+  .tab{display:flex;align-items:center;gap:8px;padding:0 9px 0 12px;font-size:13px;color:var(--sub);
+    background:transparent;border-right:1px solid rgba(0,0,0,.04);cursor:pointer;
+    white-space:nowrap;max-width:240px;transition:.14s;position:relative}
+  .tab:hover{background:rgba(255,255,255,.5)}
+  .tab.active{background:var(--panel);color:var(--ink);font-weight:700;
+    box-shadow:0 -1px 0 var(--brand),0 4px 12px rgba(70,45,25,.06)}
+  .tab.active::after{content:"";position:absolute;left:12px;right:12px;bottom:0;height:2px;
+    background:linear-gradient(90deg,var(--brand),var(--brand-2));border-radius:2px}
+  .tab .tname{overflow:hidden;text-overflow:ellipsis}
+  .tab .tclose{flex-shrink:0;width:18px;height:18px;border-radius:6px;display:flex;align-items:center;
+    justify-content:center;font-size:14px;color:#AEA298;line-height:1;transition:.12s;position:relative}
+  .tab .tclose::before{content:"";position:absolute;inset:-3px;border-radius:8px}
+  .tab .tclose:hover{background:#EBDDCE;color:#7a2e00}
+  .tab.dragging{opacity:.4}
+  .tab.drop-target{box-shadow:inset 0 2px 0 var(--brand)}
+  /* 标签右键菜单 */
+  .tab-menu{position:fixed;z-index:70;width:160px;background:#fff;border:1px solid var(--line);
+    border-radius:6px;box-shadow:0 8px 26px rgba(60,40,20,.18);padding:5px;animation:navFade .12s var(--ease)}
+  .tab-menu[hidden]{display:none}
+  .tab-menu-item{height:32px;display:flex;align-items:center;padding:0 11px;border-radius:5px;font-size:13px;
+    color:var(--ink);cursor:pointer;transition:background .12s}
+  .tab-menu-item:hover{background:#F3EFEA}
+  .tab-menu-item.disabled{color:#C2B8AC;cursor:not-allowed}
+  .tab-menu-item.disabled:hover{background:transparent}
+  .tab-menu-sep{height:1px;background:var(--line);margin:4px 2px}
+  .tab .tab-icon{width:22px;height:22px;border-radius:7px;object-fit:cover;flex-shrink:0;
+    box-shadow:var(--sh-1),inset 0 1px 1px rgba(255,255,255,.5);background:#fff;border:1px solid rgba(0,0,0,.04);
+    transition:transform .25s var(--ease),box-shadow .25s ease}
+  .tab.active .tab-icon{box-shadow:var(--sh-2)}
+  .tab:hover .tab-icon{transform:scale(1.12) translateY(-1px)}
+  /* ===== Pages ===== */
+  .pages{flex:1;position:relative;min-height:0;background:var(--panel)}
+  .page{position:absolute;inset:0;display:none}
+  .page.active{display:block}
+  .page iframe{width:100%;height:100%;border:none;display:block}
+  /* ===== 应用页顶部操作条 + 加载失败兜底 ===== */
+  .page-bar{height:44px;display:flex;align-items:center;gap:10px;padding:0 14px;flex-shrink:0;
+    background:linear-gradient(180deg,#FBF5EE,#F3E9DD);border-bottom:1px solid var(--line);
+    box-shadow:0 1px 3px rgba(70,45,25,.04)}
+  .page-bar .pb-icon{width:22px;height:22px;border-radius:7px;object-fit:cover;flex-shrink:0;
+    background:#fff;border:1px solid var(--line);box-shadow:var(--sh-1)}
+  .page-bar .pb-name{font-size:13.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .page-bar .pb-cat{font-size:11px;padding:2px 9px;border-radius:20px;color:#fff;font-weight:600;flex-shrink:0}
+  .page-bar .grow{flex:1}
+  .page-bar button,.page-bar a{font-size:12.5px;font-weight:700;border-radius:9px;cursor:pointer;text-decoration:none;
+    transition:filter .15s,border-color .15s,color .15s;white-space:nowrap}
+  .pb-refresh{background:#fff;border:1px solid var(--line);color:var(--sub);padding:6px 13px}
+  .pb-refresh:hover{border-color:var(--brand);color:var(--brand)}
+  .pb-open{background:linear-gradient(135deg,var(--brand-2),var(--brand));color:#fff;padding:6px 14px;
+    border:1px solid transparent;box-shadow:0 2px 6px rgba(232,86,10,.25)}
+  .pb-open:hover{filter:brightness(1.06)}
+  .frame-wrap{position:absolute;inset:44px 0 0 0;background:#fff;min-height:0}
+  .frame-wrap iframe{width:100%;height:100%;border:none;display:block}
+  .frame-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(180deg,#FFFDFB,#F7EFE6);z-index:3}
+  .frame-fallback[hidden]{display:none}
+  .frame-loading{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;
+    flex-direction:column;gap:12px;background:#fff;color:var(--sub);font-size:13px;
+    background-image:radial-gradient(600px 400px at 50% 40%,rgba(255,150,60,.04),transparent 70%)}
+  .frame-loading[hidden]{display:none}
+  .frame-loading .spin{width:26px;height:26px;border:3px solid var(--brand-line);border-top-color:var(--brand);
+    border-radius:50%;animation:spin .8s linear infinite}
+  .frame-loading .fl-text{letter-spacing:.5px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .ff-card{text-align:center;max-width:360px;padding:30px 34px;background:#fff;
+    border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh-2)}
+  .ff-card .ff-title{font-size:15.5px;font-weight:800;color:var(--ink);margin-bottom:9px}
+  .ff-card .ff-sub{font-size:12.5px;color:var(--sub);line-height:1.75;margin-bottom:18px}
+  .ff-card .pb-open{display:inline-block}
+  /* ===== Home ===== */
+  .home{position:absolute;inset:0;overflow-y:auto;padding:34px 40px 48px;
+    background:
+      radial-gradient(700px 380px at 10% 0%,rgba(255,150,60,.06),transparent 60%),
+      radial-gradient(600px 480px at 96% 100%,rgba(62,127,208,.04),transparent 55%),
+      var(--cream)}
+  .hero{display:flex;align-items:center;gap:34px;background:linear-gradient(120deg,#FFFFFF 56%,#FFF4E9);
+    border:1px solid var(--line);border-radius:var(--r-lg);padding:30px 36px;box-shadow:var(--sh-2);
+    position:relative;overflow:hidden}
+  .hero::before{content:"";position:absolute;right:-40px;top:-40px;width:200px;height:200px;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,150,60,.14),transparent 70%)}
+  .hero::after{content:"";position:absolute;left:-30px;bottom:-50px;width:160px;height:160px;border-radius:50%;
+    background:radial-gradient(circle,rgba(62,127,208,.07),transparent 70%)}
+  .hero-illo{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:12px;position:relative;z-index:1}
+  .hero-trio-img{max-width:300px;width:100%;height:auto;border-radius:16px;object-fit:contain;background:#fff;
+    border:1px solid rgba(230,215,195,.6);padding:8px;
+    box-shadow:var(--sh-3);
+    transform:perspective(700px) rotateY(-2.5deg) rotateX(1deg);
+    transition:transform .4s var(--ease),box-shadow .4s ease}
+  .hero-trio-img:hover{transform:perspective(700px) rotateY(0) rotateX(0) translateY(-4px) scale(1.02);
+    box-shadow:0 6px 14px rgba(70,45,25,.1),0 22px 50px rgba(70,45,25,.16)}
+  .plaque{background:linear-gradient(180deg,#B98C50,#9A6E36 45%,#7A4E22);
+    color:#FFF6E8;font-weight:800;letter-spacing:5px;font-size:14px;padding:6px 22px;border-radius:9px;
+    box-shadow:0 3px 7px rgba(80,45,18,.4),inset 0 1px 0 rgba(255,255,255,.3),inset 0 -2px 4px rgba(0,0,0,.16);
+    border:1px solid #5a3818;transform:perspective(400px) rotateX(3deg);
+    text-shadow:0 1px 2px rgba(80,40,10,.45)}
+  .hero-text{position:relative;z-index:1}
+  /* 使用指南入口 + 浮层 */
+  .guide-entry{position:absolute;right:18px;bottom:15px;display:flex;align-items:center;gap:6px;z-index:5;
+    font-size:12px;color:var(--sub);cursor:pointer;background:rgba(255,255,255,.72);border:1px solid var(--line);
+    border-radius:18px;padding:5px 12px;transition:.16s var(--ease);backdrop-filter:blur(4px)}
+  .guide-entry:hover{color:var(--brand);border-color:var(--brand-line);background:#fff}
+  .guide-entry .q{width:16px;height:16px;border-radius:50%;background:var(--brand);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+  .guide-pop{position:absolute;right:18px;bottom:48px;width:280px;background:#fff;border:1px solid var(--line);
+    border-radius:8px;box-shadow:0 12px 34px rgba(60,40,20,.18);padding:14px 16px;z-index:20;
+    opacity:0;visibility:hidden;transform:translateY(6px);transition:.2s var(--ease)}
+  .guide-pop.show{opacity:1;visibility:visible;transform:translateY(0)}
+  .guide-pop h4{font-size:13px;font-weight:800;color:var(--ink);margin:0 0 10px;display:flex;align-items:center;gap:6px}
+  .guide-pop h4 svg{width:15px;height:15px;color:var(--brand)}
+  .guide-pop ul{list-style:none;margin:0;padding:0}
+  .guide-pop li{display:flex;align-items:flex-start;gap:9px;padding:7px 0;font-size:12.5px;color:var(--nut);line-height:1.5}
+  .guide-pop li .gi{width:16px;height:16px;flex-shrink:0;color:var(--brand);margin-top:1px}
+  .guide-pop li .gi svg{width:16px;height:16px;display:block}
+  .hero-text h1{font-size:23px;font-weight:800;color:var(--ink);margin-bottom:8px;letter-spacing:.5px}
+  .hero-text h1 em{color:var(--brand);font-style:normal}
+  .hero-text p{font-size:13.5px;color:var(--sub);line-height:1.8;max-width:540px}
+  .hero-text .tags{margin-top:14px;display:flex;gap:9px;flex-wrap:wrap}
+  .hero-text .tags span{font-size:12px;background:var(--brand-soft);color:var(--brand);
+    padding:5px 12px;border-radius:20px;font-weight:600;border:1px solid var(--brand-line)}
+  .section-title{display:flex;align-items:center;gap:9px;margin:32px 2px 16px;font-size:15px;font-weight:800;color:var(--ink);letter-spacing:.5px}
+  .section-title .bar{width:4px;height:16px;border-radius:2px;background:linear-gradient(180deg,var(--brand),var(--brand-2))}
+  .section-title .n{margin-left:auto;font-size:12px;color:var(--sub);font-weight:600}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(252px,1fr));gap:18px;align-content:start}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-lg);padding:17px 17px 14px;
+    cursor:pointer;transition:transform .2s var(--ease),box-shadow .2s, border-color .2s;
+    box-shadow:var(--sh-1);position:relative;overflow:hidden}
+  .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent,#ccc)}
+  .card:hover{transform:translateY(-5px);box-shadow:var(--sh-3);border-color:var(--brand-line)}
+  .card .tag{font-size:11px;padding:4px 11px;border-radius:20px;color:#fff;display:inline-block;
+    font-weight:600;letter-spacing:.5px;box-shadow:0 2px 5px rgba(0,0,0,.08)}
+  .card .badges{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+  .badge-sso{font-size:10.5px;padding:3px 9px;border-radius:20px;font-weight:600;letter-spacing:.3px;
+    background:rgba(62,127,208,.1);color:#2E6BC4;border:1px solid rgba(62,127,208,.28);white-space:nowrap}
+  .badge-perm{font-size:10.5px;padding:3px 9px;border-radius:20px;font-weight:600;letter-spacing:.3px;
+    background:rgba(232,86,10,.1);color:var(--brand);border:1px solid var(--brand-line);white-space:nowrap}
+  .tag.kanban{background:var(--c-kanban)} .tag.app{background:var(--c-app)} .tag.daily{background:var(--c-daily)}
+  .card h3{font-size:16px;margin-bottom:8px;font-weight:700;letter-spacing:.3px}
+  .card .owner{font-size:12.5px;color:var(--sub)}
+  .card .owner b{color:var(--nut);font-weight:600}
+  /* 复制链接按钮 — 右下角，hover 才显示 */
+  .card .copy-btn{position:absolute;bottom:10px;right:10px;width:30px;height:30px;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:3;
+    color:#9AA0A6;background:rgba(120,110,100,.05);border:1px solid transparent;
+    opacity:0;transform:translateY(4px);transition:.18s var(--ease)}
+  .card:hover .copy-btn{opacity:1;transform:translateY(0)}
+  .card .copy-btn:hover{color:var(--brand);background:var(--brand-soft);border-color:var(--brand-line)}
+  .card .copy-btn svg{width:15px;height:15px;display:block}
+  /* 复制成功 toast — 卡片右上角弹出，2s 消失 */
+  .card .toast{position:absolute;top:13px;right:13px;z-index:6;
+    background:rgba(35,28,24,.92);color:#fff;font-size:12px;font-weight:600;
+    padding:5px 11px;border-radius:8px;display:flex;align-items:center;gap:4px;
+    opacity:0;transform:translateY(-6px) scale(.96);pointer-events:none;
+    transition:.22s var(--ease);box-shadow:0 4px 12px rgba(0,0,0,.22)}
+  .card .toast.show{opacity:1;transform:translateY(0) scale(1)}
+  .card .open{position:absolute;top:16px;right:16px;font-size:12px;color:var(--brand);
+    text-decoration:none;font-weight:700;background:var(--brand-soft);padding:4px 10px;border-radius:9px;
+    border:1px solid var(--brand-line);transition:.15s}
+  .card .open:hover{background:var(--brand);color:#fff}
+  .no-url{color:#C2B8AC;font-style:italic}
+  .home-deco{position:absolute;right:30px;bottom:18px;opacity:.04;pointer-events:none;width:210px;height:auto}
+  /* ===== 最近使用 ===== */
+  .recent{margin:6px 0 2px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+  .recent-head{margin:30px 2px 14px}
+  .recent-head .view-all{margin-left:auto;font-size:12px;font-weight:700;color:var(--brand);text-decoration:none;letter-spacing:.3px}
+  .recent-head .view-all:hover{text-decoration:underline}
+  .recent-row{display:flex;gap:14px;overflow-x:auto;padding:2px 2px 10px;scrollbar-width:thin}
+  .recent-row::-webkit-scrollbar{height:6px}
+  .recent-row::-webkit-scrollbar-thumb{background:rgba(150,130,110,.32);border-radius:3px}
+  .recent-card{flex:0 0 auto;width:198px;min-width:198px}
+  .recent-card h3{font-size:15px}
+  .recent-card .visit-time{position:absolute;top:13px;right:13px;z-index:2;font-size:10.5px;font-weight:600;color:var(--sub);background:rgba(120,110,100,.08);padding:2px 8px;border-radius:7px}
+  .recent-card .copy-btn{bottom:9px;right:9px;width:27px;height:27px}
+  .recent-card .copy-btn svg{width:13px;height:13px}
+  /* ===== Footer ===== */
+  footer{height:40px;background:linear-gradient(180deg,#2C1B10,#1F130A);color:#D8C9BA;
+    display:flex;align-items:center;justify-content:center;gap:9px;font-size:12.5px;flex-shrink:0;
+    letter-spacing:.5px;box-shadow:0 -2px 10px rgba(40,20,8,.2)}
+  footer img{height:20px;width:auto;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
+  footer b{color:#FFB877;font-weight:700}
+  /* ===== 管理后台按钮 ===== */
+  .admin-btn{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;
+    color:#fff;background:linear-gradient(135deg,var(--brand-2),var(--brand));border:none;
+    padding:9px 16px;border-radius:var(--r-sm);cursor:pointer;flex-shrink:0;
+    box-shadow:0 2px 6px rgba(232,86,10,.3);transition:transform .16s,box-shadow .16s,filter .16s}
+  .admin-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(232,86,10,.4);filter:brightness(1.05)}
+  .admin-btn:active{transform:translateY(0)}
+  .toolbar .count{font-size:13px;color:var(--sub);font-weight:600}
+  /* ===== 后台弹层 ===== */
+  .modal{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:24px}
+  .modal[hidden]{display:none}
+  .modal-mask{position:absolute;inset:0;background:rgba(40,24,12,.42);backdrop-filter:blur(3px)}
+  .modal-panel{position:relative;width:min(600px,100%);max-height:88vh;display:flex;flex-direction:column;
+    background:var(--panel);border-radius:var(--r-lg);box-shadow:var(--sh-3);overflow:hidden;
+    border:1px solid var(--line);animation:pop .22s var(--ease)}
+  @keyframes pop{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+  .modal-head{display:flex;align-items:center;gap:10px;padding:15px 20px;border-bottom:1px solid var(--line);
+    background:linear-gradient(115deg,#2C1B10,#A8430E);color:#fff}
+  .modal-logo{height:26px;width:auto;object-fit:contain;filter:drop-shadow(0 1px 2px rgba(0,0,0,.3))}
+  .modal-title{font-size:15.5px;font-weight:800;letter-spacing:.5px;flex:1}
+  .modal-close{width:30px;height:30px;border-radius:9px;border:none;background:rgba(255,255,255,.15);
+    color:#fff;font-size:19px;cursor:pointer;line-height:1;transition:.15s}
+  .modal-close:hover{background:rgba(255,255,255,.3)}
+  .modal-body{overflow-y:auto;padding:18px 20px 22px;display:flex;flex-direction:column;gap:16px}
+  .mod-form{background:linear-gradient(180deg,#FFFDFB,#FCF7F1);border:1px solid var(--line);
+    border-radius:var(--r-md);padding:13px 16px;display:flex;flex-direction:column;gap:9px}
+  .form-row{display:flex;align-items:center;gap:12px}
+  .form-row label{width:58px;flex-shrink:0;font-size:13px;font-weight:700;color:var(--nut);text-align:right}
+  .form-row input,.form-row select{flex:1;border:1px solid var(--line);border-radius:var(--r-sm);
+    padding:8px 11px;font-size:13.5px;outline:none;background:#fff;color:var(--ink);
+    transition:border-color .16s,box-shadow .16s}
+  .form-row input:focus,.form-row select:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+  .form-actions{display:flex;align-items:center;gap:10px;margin-top:2px}
+  .form-actions .grow{flex:1}
+  .btn-primary,.btn-cancel,.btn-ghost{font-size:13px;font-weight:700;padding:9px 18px;border-radius:var(--r-sm);
+    cursor:pointer;border:1px solid transparent;transition:.16s}
+  .btn-primary{background:linear-gradient(135deg,var(--brand-2),var(--brand));color:#fff;box-shadow:0 2px 6px rgba(232,86,10,.3)}
+  .btn-primary:hover{filter:brightness(1.06);box-shadow:0 4px 12px rgba(232,86,10,.4)}
+  .btn-cancel{background:#fff;color:var(--sub);border-color:var(--line)}
+  .btn-cancel:hover{border-color:#D8C9B8;color:var(--ink)}
+  .btn-ghost{background:transparent;color:var(--sub);border-color:transparent;margin-right:auto}
+  .btn-ghost:hover{color:var(--brand);text-decoration:underline}
+  /* ===== 模块配置后台：列表 / 搜索 / 批量 ===== */
+  .mod-divider{height:1px;background:var(--line);margin:1px 3px}
+  .mod-list{display:flex;flex-direction:column;gap:6px}
+  .mod-list-bar{display:flex;align-items:center;gap:12px}
+  .mod-list-title{font-size:13px;font-weight:700;color:var(--ink);white-space:nowrap}
+  .mod-search{position:relative;flex:1;display:flex;align-items:center}
+  .mod-search svg{position:absolute;left:10px;width:15px;height:15px;color:var(--sub);pointer-events:none}
+  .mod-search input{flex:1;border:1px solid var(--line);border-radius:var(--r-sm);padding:7px 11px 7px 30px;
+    font-size:13px;outline:none;background:#fff;color:var(--ink);transition:border-color .16s,box-shadow .16s}
+  .mod-search input:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+  .mod-colhead{display:flex;align-items:center;gap:14px;padding:7px 14px;margin-top:2px;
+    font-size:12px;font-weight:600;color:var(--sub);background:#FBF6F0;border:1px solid var(--line);
+    border-bottom:none;border-radius:var(--r-md) var(--r-md) 0 0}
+  .mod-colhead .col-sel{width:18px;flex-shrink:0;display:flex;align-items:center}
+  .mod-colhead .col-tag{width:56px;flex-shrink:0;display:flex;align-items:center;color:var(--ink)}
+  .mod-colhead .col-main{flex:1;min-width:0}
+  .mod-colhead .col-op{width:124px;flex-shrink:0;text-align:right}
+  .mod-rows{max-height:400px;overflow-y:auto;display:flex;flex-direction:column;gap:9px;padding:9px;
+    border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r-md) var(--r-md)}
+  .mod-row{display:flex;align-items:center;gap:14px;padding:11px 14px;border:1px solid var(--line);
+    border-radius:var(--r-md);background:#fff;transition:border-color .16s,box-shadow .16s}
+  .mod-row:hover{border-color:var(--brand-line);box-shadow:var(--sh-1)}
+  .mod-row .m-sel{width:18px;flex-shrink:0;display:flex;align-items:center}
+  .mod-row .m-tag{font-size:11px;padding:3px 10px;border-radius:20px;color:#fff;font-weight:600;flex-shrink:0;
+    min-width:56px;text-align:center;display:inline-flex;align-items:center;justify-content:center}
+  .m-tag.kanban{background:var(--c-kanban)} .m-tag.app{background:var(--c-app)} .m-tag.daily{background:var(--c-daily)}
+  .mod-row .m-main{flex:1;min-width:0}
+  .mod-row .m-name{font-size:14px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mod-row .m-meta{font-size:12px;color:var(--sub);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mod-row .m-meta a{color:var(--brand);text-decoration:none}
+  .mod-row .m-link{color:var(--brand);text-decoration:none;display:inline-block;max-width:240px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:bottom}
+  .mod-row .m-ops{width:124px;flex-shrink:0;display:flex;align-items:center;justify-content:flex-end;gap:14px}
+  .m-edit,.m-del{font-size:12.5px;font-weight:700;padding:6px 13px;border-radius:8px;cursor:pointer;border:1px solid var(--line);transition:.15s}
+  .m-edit{background:#fff;color:var(--brand);border-color:var(--brand-line)}
+  .m-edit:hover{background:var(--brand-soft)}
+  .m-del{background:#fff;color:#C0392B;border-color:#F0D2CC}
+  .m-del:hover{background:#FBEAE8}
+  .mod-batch{position:sticky;bottom:0;display:flex;align-items:center;justify-content:space-between;
+    gap:10px;padding:10px 14px;margin-top:8px;background:#F2EFEB;border:1px solid var(--line);
+    border-radius:var(--r-md);font-size:12.5px;color:var(--ink)}
+  .mod-batch .batch-info{font-weight:600}
+  .mod-batch .batch-tip{font-weight:600;color:var(--sub)}
+  .mod-batch .batch-actions{display:flex;align-items:center;gap:8px}
+  .btn-ghost2{font-size:12.5px;font-weight:700;padding:7px 14px;border-radius:var(--r-sm);cursor:pointer;
+    background:#fff;color:var(--sub);border:1px solid var(--line);transition:.15s}
+  .btn-ghost2:hover{border-color:#D8C9B8;color:var(--ink)}
+  .help-tip{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;
+    background:var(--sub);color:#fff;font-size:11px;font-weight:700;cursor:help;position:relative;margin-left:4px}
+  .help-tip::after{content:attr(data-tip);position:absolute;bottom:150%;left:50%;transform:translateX(-50%);
+    background:#3A2A1C;color:#fff;font-size:11.5px;line-height:1.5;font-weight:500;white-space:normal;
+    width:max-content;max-width:240px;padding:7px 10px;border-radius:6px;opacity:0;visibility:hidden;
+    transition:.15s;pointer-events:none;z-index:5;box-shadow:var(--sh-2)}
+  .help-tip:hover::after,.help-tip:focus::after{opacity:1;visibility:visible}
+  /* 删除二次确认弹窗 */
+  .cf-modal{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center}
+  .cf-modal[hidden]{display:none}
+  .cf-mask{position:absolute;inset:0;background:rgba(40,24,12,.42)}
+  .cf-panel{position:relative;width:min(360px,90%);background:var(--panel);border-radius:var(--r-md);
+    box-shadow:var(--sh-3);border:1px solid var(--line);padding:20px;animation:pop .18s var(--ease)}
+  .cf-title{font-size:14.5px;font-weight:800;color:var(--ink);margin-bottom:10px}
+  .cf-msg{font-size:13px;color:var(--sub);line-height:1.6;margin-bottom:18px}
+  .cf-actions{display:flex;justify-content:flex-end;gap:10px}
+  .empty-tip{font-size:13px;color:var(--sub);text-align:center;padding:18px;background:#FBF6F0;border-radius:var(--r-md);border:1px dashed var(--line)}
+  @media(max-width:900px){
+    nav{display:none}.search-wrap{flex-basis:160px}
+    .form-row{flex-direction:column;align-items:stretch;gap:6px}
+    .form-row label{width:auto;text-align:left}
+    .modal-body{padding:16px}
+    .admin-btn{padding:8px 12px;font-size:12px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo-badge"><img src="ip_trio_clean.png" alt="三只松鼠官方IP" /></div>
+  <div class="brand-txt">
+    <span class="cn">三只松鼠</span>
+    <span class="en">Three Squirrels</span>
+  </div>
+  <span class="brand-sub">客满中心 AI 应用统一工作台</span>
+  <span class="company-pill">股份有限公司</span>
+  <div class="role-seg" id="role-seg">
+    <button data-role="staff">👤 员工</button>
+    <button data-role="admin">🛡 管理员</button>
+  </div>
+  <div class="stat" id="stat"></div>
+</header>
+
+<div class="main">
+  <nav id="nav">
+    <div class="nav-brand"><img src="ip_jian.png" alt="" /><span>工作台导航</span></div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" data-view="cat">按分类</button>
+      <button class="nav-tab" data-view="owner">按责任人</button>
+    </div>
+    <div class="nav-pane" id="pane-cat">
+      <div class="nav-item active" data-cat="all"><span class="dot all"></span>全部应用</div>
+      <div class="nav-item" data-cat="kanban"><span class="dot kanban"></span>看板类（数据）</div>
+      <div class="nav-item" data-cat="app"><span class="dot app"></span>应用类（工具）</div>
+      <div class="nav-item" data-cat="daily"><span class="dot daily"></span>日报类</div>
+    </div>
+    <div class="nav-pane" id="pane-owner" hidden>
+      <div class="owner-search"><input id="owner-search" type="text" placeholder="搜索责任人" /></div>
+      <div id="owners"></div>
+    </div>
+  </nav>
+
+  <div class="content">
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8A7F77" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+        <input id="search" placeholder="搜索应用名称 / 责任人…" />
+      </div>
+      <button class="admin-btn" id="btn-admin">⚙ 模块配置后台</button>
+      <div class="count" id="count"></div>
+    </div>
+    <div class="tabbar" id="tabbar">
+      <div class="tab active" id="tab-home" data-id="home"><img src="ip_jian.png" class="tab-icon" alt="" /><span class="tname">首页</span></div>
+    </div>
+    <div class="pages" id="pages">
+      <div class="page home active" id="page-home">
+        <div class="hero">
+          <div class="hero-illo">
+            <img src="ip_trio.png" class="hero-trio-img" alt="三只松鼠官方IP" />
+            <div class="plaque">三只松鼠</div>
+          </div>
+          <div class="hero-text">
+            <h1>欢迎来到 <em>三只松鼠</em> 客满中心 AI 应用统一工作台</h1>
+            <p>这里集合了客满中心已上线的全部 AI 应用，按「看板 / 应用 / 日报」三大类归集。点击下方任意应用卡片，将在上方新标签页中打开，可同时开启多个应用并排对照，实现页间协同。</p>
+            <div class="tags"><span>品牌统一入口</span><span>多标签窗口</span><span>页间互联互通</span><span>权限分级</span></div>
+          </div>
+          <div class="guide-entry" id="guide-entry"><span class="q">?</span><span>使用指南</span></div>
+          <div class="guide-pop" id="guide-pop">
+            <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.2 2.4c-.8.3-1.2.9-1.2 1.9"/><circle cx="12" cy="17" r=".7" fill="currentColor" stroke="none"/></svg>使用指南</h4>
+            <ul>
+              <li><span class="gi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="12" height="12" rx="1.5"/><path d="M9 9h10v10H9z"/></svg></span>点击应用卡片 → 在上方新标签页打开</li>
+              <li><span class="gi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="8" height="8" rx="1"/><rect x="13" y="12" width="8" height="8" rx="1"/></svg></span>支持同时开启多个应用并排对照</li>
+              <li><span class="gi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h12a1 1 0 0 1 1 1v3H3V6a1 1 0 0 1 1-1z"/><path d="M3 9h14v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/></svg></span>标签页可切换、可关闭</li>
+              <li><span class="gi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18l-7 8v6l-4 2v-8z"/></svg></span>左侧可按分类或责任人筛选应用</li>
+            </ul>
+          </div>
+        </div>
+        <div class="recent" id="recent" hidden>
+          <div class="section-title recent-head"><span class="bar"></span>最近使用<a class="view-all" id="recent-viewall" href="javascript:void(0)">查看全部</a></div>
+          <div class="recent-row" id="recent-row"></div>
+        </div>
+        <div class="section-title" id="sec-all"><span class="bar"></span>全部应用<span class="n" id="sec-n"></span></div>
+        <div class="grid" id="grid"></div>
+        <img src="ip_trio_clean.png" class="home-deco" alt="" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <img src="ip_trio_clean.png" alt="" />
+  <span>© <b>三只松鼠股份有限公司</b>　|　客满中心 AI 应用统一工作台　·　内部协同平台</span>
+</footer>
+
+<!-- ===== 模块配置后台（管理员） ===== -->
+<div class="modal" id="admin-modal" hidden>
+  <div class="modal-mask" id="admin-mask"></div>
+  <div class="modal-panel" role="dialog" aria-modal="true" aria-label="模块配置后台">
+    <div class="modal-head">
+      <img src="ip_jian.png" class="modal-logo" alt="" />
+      <div class="modal-title">模块配置后台</div>
+      <button class="modal-close" id="admin-close" aria-label="关闭">×</button>
+    </div>
+    <div class="modal-body">
+      <form class="mod-form" id="mod-form" autocomplete="off">
+        <input type="hidden" id="f-id" />
+        <div class="form-row">
+          <label for="f-cat">类型</label>
+          <select id="f-cat">
+            <option value="kanban">看板类（数据）</option>
+            <option value="app">应用类（工具）</option>
+            <option value="daily">日报类</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="f-name">名称</label>
+          <input id="f-name" placeholder="如：运营数据看板" required />
+        </div>
+        <div class="form-row">
+          <label for="f-owner">责任人</label>
+          <input id="f-owner" placeholder="如：鼠杏子" required />
+        </div>
+        <div class="form-row">
+          <label for="f-url">链接</label>
+          <input id="f-url" placeholder="https://…（可留空，留空时卡片标注“暂未配置链接”）" />
+        </div>
+        <div class="form-row">
+          <label for="f-perm">权限</label>
+          <select id="f-perm">
+            <option value="staff">员工可见（员工 / 管理都能看）</option>
+            <option value="admin">管理专属（仅管理可见）</option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-ghost" id="f-reset">恢复共享配置</button>
+          <span class="help-tip" tabindex="0" data-tip="清空本地配置，恢复为管理员发布的共享配置（modules.json）">?</span>
+          <span class="grow"></span>
+          <button type="button" class="btn-cancel" id="f-cancel">取消</button>
+          <button type="submit" class="btn-primary" id="f-save">保存模块</button>
+        </div>
+      </form>
+
+      <div class="mod-divider"></div>
+      <div class="mod-toolbar" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:2px 0 12px;">
+        <button type="button" class="btn-ghost2" id="f-export">⬇ 导出配置</button>
+        <button type="button" class="btn-ghost2" id="f-import">⬆ 导入配置</button>
+        <input type="file" id="f-import-file" accept="application/json,.json" hidden />
+        <span class="toolbar-tip" style="color:#8a8f99;font-size:12px;">导出 JSON → 发给管理员重新部署，即可让全员同步同一份配置</span>
+      </div>
+      <div class="mod-list">
+        <div class="mod-list-bar">
+          <span class="mod-list-title">已配置模块（<span id="mod-count">0</span>）</span>
+          <div class="mod-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            <input id="mod-search-input" placeholder="搜索模块名称/责任人" />
+          </div>
+        </div>
+        <div class="mod-colhead">
+          <span class="col-sel"><input type="checkbox" id="sel-all" /></span>
+          <span class="col-tag">全选</span>
+          <span class="col-main">模块（名称 / 责任人 / 权限 / 链接）</span>
+          <span class="col-op">操作</span>
+        </div>
+        <div class="mod-rows" id="mod-rows"></div>
+        <div class="mod-batch" id="mod-batch" hidden>
+          <span class="batch-info">已选 <b id="batch-n">0</b> 项</span>
+          <span class="batch-actions" id="batch-actions">
+            <button class="btn-cancel" id="batch-del">批量删除</button>
+            <button class="btn-ghost2" id="batch-perm">批量修改权限</button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="cf-modal" id="cf-modal" hidden>
+  <div class="cf-mask" id="cf-mask"></div>
+  <div class="cf-panel">
+    <div class="cf-title">提示</div>
+    <div class="cf-msg" id="cf-msg"></div>
+    <div class="cf-actions">
+      <button class="btn-cancel" id="cf-cancel">取消</button>
+      <button class="btn-primary" id="cf-ok">确定</button>
+    </div>
+  </div>
+</div>
+
+<div class="tab-menu" id="tab-menu" hidden>
+  <div class="tab-menu-item" data-act="close">关闭当前标签</div>
+  <div class="tab-menu-item" data-act="close-others">关闭其他标签</div>
+  <div class="tab-menu-item" data-act="close-all">关闭所有标签</div>
+  <div class="tab-menu-item" data-act="close-right">关闭右侧标签</div>
+  <div class="tab-menu-sep"></div>
+  <div class="tab-menu-item" data-act="newwin">在新窗口打开</div>
+</div>
+
+<script>
+// ===== 三只松鼠官方 IP 图标映射（使用裁切后的官方原图 PNG）=====
+const IP_ICONS = {
+  jian: 'ip_jian.png',   // 小健 — 蓝围巾，C位
+  mei:  'ip_mei.png',   // 小美 — 粉蝴蝶结
+  meng: 'ip_meng.png'   // 小萌 — 眼镜
+};
+
+// ===== 分类定义 =====
+const CATS = {
+  kanban:{label:'看板类',cls:'kanban',icon:IP_ICONS.meng},
+  app:{label:'应用类',cls:'app',icon:IP_ICONS.jian},
+  daily:{label:'日报类',cls:'daily',icon:IP_ICONS.mei}
+};
+
+// ===== 默认种子数据（来源：飞书台账 wiki CQ7Lwt2s8i1arDkqPyScje4UnXT，原表未改动）=====
+// perm: 'staff'=员工可见 / 'admin'=管理专属 ｜ sso:true=飞书 SSO 应用，仅能新窗口打开
+// 首次加载写入 localStorage；之后以管理员在后台的配置为准。
+const DEFAULT_SEED = [
+  {name:'运营数据看板', owner:'鼠杏子', cat:'kanban', perm:'staff', url:'https://fc30bd6fd87441879cc4cc0c6e9befa1.app.codebuddy.work/'},
+  {name:'361看板', owner:'鼠一多', cat:'kanban', perm:'staff', url:'https://4f6cdb2c3be64c5181c4a2b49dccea37.app.codebuddy.work/'},
+  {name:'经营数据看板', owner:'鼠小愈', cat:'kanban', perm:'staff', url:''},
+  {name:'运营/客服协同看板', owner:'鼠摇摇', cat:'kanban', perm:'staff', sso:true, url:'https://sanzhisongshu.feishuapp.com/app/app_17a5h6f4q98/'},
+  {name:'排班中枢', owner:'鼠杏子', cat:'app', perm:'admin', url:'https://51061b5b1d6349af8512e88622f93a45.app.codebuddy.work/?scheme=%E9%BB%98%E8%AE%A4%E6%96%B9%E6%A1%88&month=2026-09'},
+  {name:'排班系统', owner:'鼠清商', cat:'app', perm:'admin', url:'https://294157953-sketch.github.io/squirrel-schedule/index.html'},
+  {name:'客服考核管理', owner:'鼠笙苼', cat:'app', perm:'admin', sso:true, url:'https://sanzhisongshu.aiforce.cloud/app/app_4jxt13nqw00bn/knowledge-base'},
+  {name:'客服库存查询', owner:'鼠摇摇', cat:'app', perm:'staff', url:'https://sanzhisongshu.feishuapp.com/app/app_17ambq08ry4/'},
+  {name:'培训闯关', owner:'鼠摇摇', cat:'app', perm:'staff', url:'https://d920a54842ef4ece9c6b386919b3337c.app.codebuddy.work/'},
+  {name:'经营管理系统', owner:'鼠叮咚', cat:'app', perm:'admin', url:'https://6edfe639881145789afc6e597bd423ae.app.codebuddy.work/'},
+  {name:'AI培训课件', owner:'鼠笙苼', cat:'app', perm:'staff', url:'https://29aad2d5b7bf48579eaf4584e24c47ec.app.codebuddy.work/'},
+  {name:'客服部门数据库', owner:'鼠一多', cat:'app', perm:'admin', url:'https://codebuddy.work/agents/share/Y1wD8L4t25WttiZziKqxmLsaTpJ4f6hA4o6ByNwUXMaE9WoeLtmAXexTyC75d4VH?platform=workbuddy'},
+  {name:'客服工单系统', owner:'鼠乐乐', cat:'app', perm:'staff', url:'https://77d0354a565f4e8588b2bd98fb11292d.app.codebuddy.work/'},
+  {name:'日报', owner:'鼠小愈', cat:'daily', perm:'staff', url:'https://www.workbuddy.link/p/T8XGYK4rwbzudQtNKa1dIx?ext2=browser_icon'}
+];
+
+const LS_KEY='keman_modules_v1';
+const SHARED_CONFIG_URL='modules.json';
+let SHARED_MODULES=null; // 服务端共享配置（管理员发布，全员可见）
+function uid(){return 'm'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function loadModules(){
+  try{const raw=localStorage.getItem(LS_KEY);
+    if(raw){const a=JSON.parse(raw); if(Array.isArray(a)&&a.length){
+      // 字段回填：兼容旧版无 perm/sso 的数据，避免员工视图误隐藏
+      return a.map(m=>({...m, perm:m.perm ?? 'staff', sso:!!m.sso}));
+    }}
+  }catch(e){}
+  const seed=DEFAULT_SEED.map(a=>({...a,id:uid()}));
+  try{localStorage.setItem(LS_KEY,JSON.stringify(seed));}catch(e){}
+  return seed;
+}
+function saveModules(){try{localStorage.setItem(LS_KEY,JSON.stringify(modules));}catch(e){}}
+// 拉取服务端共享配置（modules.json）；首次访问（本地无配置）自动采用，使全员看到同一份
+async function syncSharedConfig(){
+  try{
+    const res=await fetch(SHARED_CONFIG_URL,{cache:'no-store'});
+    if(!res.ok) return;
+    const data=await res.json();
+    if(Array.isArray(data)&&data.length){
+      SHARED_MODULES=data.map(m=>({...m, id:m.id||uid(), perm:m.perm??'staff', sso:!!m.sso}));
+      const raw=localStorage.getItem(LS_KEY);
+      if(!raw){ modules=SHARED_MODULES.map(m=>({...m})); saveModules(); refreshAll(); }
+    }
+  }catch(e){ /* 离线或无共享文件时回退默认种子 */ }
+}
+let modules=loadModules();
+
+// ===== 角色（权限分级）=====
+// 员工视图：仅显示 perm==='staff' 的模块；管理员视图：显示全部。
+// 说明：当前为纯前端静态站，角色切换是"视图过滤"，不是后端鉴权；要真权限需接后端（详见对话）。
+const LS_ROLE='keman_role_v1';
+let currentRole = (localStorage.getItem(LS_ROLE)==='staff') ? 'staff' : 'admin';
+function setRole(r){
+  currentRole=r;
+  try{localStorage.setItem(LS_ROLE,r);}catch(e){}
+  document.querySelectorAll('#role-seg button').forEach(b=>b.classList.toggle('active',b.dataset.role===r));
+  // 模块配置后台仅管理员可见
+  document.getElementById('btn-admin').style.display = (r==='admin')?'':'none';
+  render();
+}
+
+// ===== 状态 =====
+const grid=document.getElementById('grid');
+const search=document.getElementById('search');
+const countEl=document.getElementById('count');
+const statEl=document.getElementById('stat');
+const tabbar=document.getElementById('tabbar');
+const pages=document.getElementById('pages');
+let curCat='all', curOwner=null;
+let tabSeq=0;
+const tabs=[];
+let dragTabId=null;
+
+const STAT_ICONS={
+  kanban:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="5" height="16" rx="1"/><rect x="10" y="4" width="5" height="11" rx="1"/><rect x="17" y="4" width="4" height="14" rx="1"/></svg>',
+  app:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
+  daily:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 2v3M16 2v3M4 9h16"/></svg>'
+};
+function updateStat(){
+  const counts={kanban:0,app:0,daily:0};
+  modules.forEach(a=>{ if(counts[a.cat]!==undefined) counts[a.cat]++; });
+  document.getElementById('sec-n').textContent = `共 ${modules.length} 个应用`;
+  statEl.innerHTML =
+    `<div class="stat-card kanban" data-cat="kanban" title="看板类"><span class="stat-ic">${STAT_ICONS.kanban}</span><span class="stat-col"><span class="stat-num">${counts.kanban}</span><span class="stat-label">看板</span></span></div>`+
+    `<div class="stat-card app" data-cat="app" title="应用类"><span class="stat-ic">${STAT_ICONS.app}</span><span class="stat-col"><span class="stat-num">${counts.app}</span><span class="stat-label">应用</span></span></div>`+
+    `<div class="stat-card daily" data-cat="daily" title="日报类"><span class="stat-ic">${STAT_ICONS.daily}</span><span class="stat-col"><span class="stat-num">${counts.daily}</span><span class="stat-label">日报</span></span></div>`;
+  // 联动：hover 高亮左侧导航对应分类项；click 等价于点击该分类
+  statEl.querySelectorAll('.stat-card').forEach(card=>{
+    const cat=card.dataset.cat;
+    const navItem=document.querySelector(`.nav-item[data-cat="${cat}"]`);
+    card.onmouseenter=()=>{ if(navItem) navItem.classList.add('hl'); };
+    card.onmouseleave=()=>{ if(navItem) navItem.classList.remove('hl'); };
+    card.onclick=()=>{ if(navItem && !navItem.classList.contains('disabled')) navItem.click(); };
+  });
+}
+let ownerList=[];
+function computeOwnerList(){
+  const map={};
+  modules.forEach(a=>{ map[a.owner]=(map[a.owner]||0)+1; });
+  ownerList=Object.keys(map).sort().map(n=>({name:n,count:map[n]}));
+}
+function renderOwnerList(filter=''){
+  const box=document.getElementById('owners');
+  if(!box) return;
+  const f=filter.trim().toLowerCase();
+  const list=ownerList.filter(o=>!f || o.name.toLowerCase().includes(f));
+  box.innerHTML='';
+  if(!list.length){ box.innerHTML='<div class="nav-empty">无匹配责任人</div>'; return; }
+  list.forEach(o=>{
+    const d=document.createElement('div');
+    d.className='nav-item owner-item'+(curOwner===o.name?' active':'');
+    d.dataset.owner=o.name;
+    d.innerHTML=`<span class="dot all"></span><span class="owner-name">${o.name}</span><span class="count-badge">${o.count}</span>`;
+    d.onclick=()=>{curOwner=(curOwner===o.name?null:o.name);curCat='all';
+      document.querySelectorAll('[data-cat]').forEach(n=>n.classList.remove('active'));
+      document.querySelectorAll('[data-owner]').forEach(n=>n.classList.toggle('active',n.dataset.owner===curOwner));
+      render();};
+    box.appendChild(d);
+  });
+}
+// 0 个的分类 → 灰显不可点击，带"敬请期待" tooltip
+function markEmptyCats(){
+  const counts={kanban:0,app:0,daily:0};
+  modules.forEach(a=>{ if(counts[a.cat]!==undefined) counts[a.cat]++; });
+  document.querySelectorAll('#pane-cat .nav-item[data-cat]').forEach(el=>{
+    const c=el.dataset.cat; if(c==='all') return;
+    if(counts[c]===0){ el.classList.add('disabled'); el.title='敬请期待'; }
+    else { el.classList.remove('disabled'); el.removeAttribute('title'); }
+  });
+}
+updateStat();
+computeOwnerList(); renderOwnerList(); markEmptyCats();
+renderRecent();
+
+document.querySelectorAll('[data-cat]').forEach(n=>{
+  n.onclick=()=>{curCat=n.dataset.cat;curOwner=null;
+    document.querySelectorAll('[data-cat]').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('[data-owner]').forEach(x=>x.classList.remove('active'));
+    n.classList.add('active');render();};
+});
+document.getElementById('tab-home').onclick=()=>activateTab('home');
+document.getElementById('tab-home').addEventListener('contextmenu',e=>{e.preventDefault();showTabMenu(e.clientX,e.clientY,'home');});
+search.oninput=render;
+
+// 标签栏容器：允许拖放落到末尾
+tabbar.addEventListener('dragover',e=>{ if(dragTabId) e.preventDefault(); });
+tabbar.addEventListener('drop',e=>{ if(dragTabId){ e.preventDefault(); syncTabsFromDOM(); } });
+
+// 右键菜单：动作分发
+document.getElementById('tab-menu').addEventListener('click',e=>{
+  const item=e.target.closest('.tab-menu-item'); if(!item||item.classList.contains('disabled'))return;
+  const act=item.dataset.act, id=ctxTabId; hideTabMenu();
+  if(act==='close') closeTab(id);
+  else if(act==='close-others') closeOtherTabs(id);
+  else if(act==='close-all') closeAllTabs();
+  else if(act==='close-right') closeTabsToRight(id);
+  else if(act==='newwin') openTabInNewWindow(id);
+});
+document.addEventListener('click',e=>{ if(!document.getElementById('tab-menu').hidden && !e.target.closest('#tab-menu')) hideTabMenu(); });
+window.addEventListener('scroll',hideTabMenu,true);
+
+// 快捷键：Ctrl+W 关闭当前 / Ctrl(+Shift)+Tab 切换（输入框聚焦时不触发）
+document.addEventListener('keydown',e=>{
+  const ae=document.activeElement;
+  if(ae && (ae.tagName==='INPUT'||ae.tagName==='TEXTAREA'||ae.tagName==='SELECT'||ae.isContentEditable)) return;
+  if(!(e.ctrlKey||e.metaKey)) return;
+  const key=e.key;
+  if(key==='w'||key==='W'){ e.preventDefault(); const cur=getActiveTabId(); if(cur&&cur!=='home') closeTab(cur); }
+  else if(key==='Tab'){ e.preventDefault(); const ids=getTabIds(); let i=ids.indexOf(getActiveTabId()); if(i<0)i=0; i=(i+(e.shiftKey?-1:1)+ids.length)%ids.length; activateTab(ids[i]); }
+});
+
+// 导航 Tab 切换（按分类 / 按责任人）
+document.querySelectorAll('.nav-tab').forEach(t=>{
+  t.onclick=()=>{
+    document.querySelectorAll('.nav-tab').forEach(x=>x.classList.toggle('active',x===t));
+    const v=t.dataset.view;
+    document.getElementById('pane-cat').hidden=(v!=='cat');
+    document.getElementById('pane-owner').hidden=(v!=='owner');
+  };
+});
+// 责任人搜索实时过滤
+const ownerSearch=document.getElementById('owner-search');
+if(ownerSearch) ownerSearch.addEventListener('input',e=>renderOwnerList(e.target.value));
+
+// ===== 首页卡片 =====
+function render(){
+  const q=search.value.trim().toLowerCase();
+  const list=modules.filter(a=>{
+    if(curCat!=='all'&&a.cat!==curCat)return false;
+    if(curOwner&&a.owner!==curOwner)return false;
+    if(currentRole==='staff' && a.perm!=='staff')return false; // 员工仅看员工可见模块
+    if(q&&!(a.name.toLowerCase().includes(q)||a.owner.toLowerCase().includes(q)))return false;
+    return true;
+  });
+  grid.innerHTML='';
+  list.forEach(a=>{
+    const c=CATS[a.cat];
+    const card=document.createElement('div');
+    card.className='card';
+    card.style.setProperty('--accent',`var(--c-${a.cat})`);
+    const linkHtml=a.url?`<a class="open" href="${a.url}" target="_blank" onclick="event.stopPropagation()">打开↗</a>`:'';
+    const copyBtn=a.url?`<button class="copy-btn" title="复制链接" aria-label="复制链接"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>`:'';
+    const ssoBadge=a.sso?`<span class="badge-sso">飞书 SSO · 仅新窗口</span>`:'';
+    const permBadge=(currentRole==='admin'&&a.perm==='admin')?`<span class="badge-perm">管理专属</span>`:'';
+    card.innerHTML=`${linkHtml}<div class="badges"><span class="tag ${c.cls}">${c.label}</span>${ssoBadge}${permBadge}</div><h3>${a.name}</h3><div class="owner">责任人：<b>${a.owner}</b></div>${copyBtn}<div class="toast">✓ 已复制</div>`;
+    if(a.url){ const cb=card.querySelector('.copy-btn'); cb.onclick=(e)=>{e.stopPropagation();copyLink(a.url,card);}; }
+    card.onclick=()=>openApp(a);
+    grid.appendChild(card);
+  });
+  const roleLabel = currentRole==='staff'?'（员工视图）':'（管理员视图）';
+  countEl.textContent=`显示 ${list.length} / ${modules.length} 个 ${roleLabel}`;
+}
+
+// ===== 标签页（图标用官方 IP PNG）=====
+function openApp(app){
+  if(!app.url){alert(app.name+' 暂未配置链接，无法在新标签页打开。');return;}
+  recordRecent(app); renderRecent(); // 记录最近使用
+  /* 已知禁止 iframe 内嵌的域名 — 直接新窗口打开，不走 iframe */
+  const BLOCKED_HOSTS=['feishuapp.com','feishu.cn','aiforce.cloud','dingtalk.com','work.weixin.qq.com'];
+  const tryHost=new URL(app.url,location.origin).hostname;
+  if(BLOCKED_HOSTS.some(h=>tryHost.includes(h))){
+    window.open(app.url,'_blank','noopener');
+    return;
+  }
+  const exist=tabs.find(t=>t.app===app);
+  if(exist){activateTab(exist.id);return;}
+  const id='tab-'+(++tabSeq);
+  tabs.push({id,app});
+  const tb=document.createElement('div');
+  tb.className='tab';tb.dataset.id=id;
+  tb.draggable=true;
+  const iconUrl = CATS[app.cat].icon;
+  tb.innerHTML=`<img src="${iconUrl}" class="tab-icon" alt="" /><span class="tname">${app.name}</span><span class="tclose" title="关闭">×</span>`;
+  tb.onclick=(e)=>{ if(e.target.classList.contains('tclose')){closeTab(id);} else {activateTab(id);} };
+  tb.oncontextmenu=(e)=>{ e.preventDefault(); showTabMenu(e.clientX,e.clientY,id); };
+  tb.ondragstart=(e)=>{ dragTabId=id; tb.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; e.dataTransfer.setData('text/plain',id); };
+  tb.ondragend=()=>{ tb.classList.remove('dragging'); document.querySelectorAll('.tab.drop-target').forEach(t=>t.classList.remove('drop-target')); dragTabId=null; syncTabsFromDOM(); };
+  tb.ondragover=(e)=>{
+    e.preventDefault();
+    if(!dragTabId||dragTabId===id)return;
+    tb.classList.add('drop-target');
+    const rect=tb.getBoundingClientRect();
+    const after=(e.clientX-rect.left)>rect.width/2;
+    if(tb.dataset.id==='home'&&!after)return; // 不允许拖到首页之前
+    const dragged=document.querySelector(`.tab[data-id="${dragTabId}"]`);
+    tabbar.insertBefore(dragged, after?tb.nextSibling:tb);
+  };
+  tb.ondragleave=()=>tb.classList.remove('drop-target');
+  tabbar.appendChild(tb);
+  const pg=document.createElement('div');
+  pg.className='page';pg.id=id;
+  const c=CATS[app.cat];
+  pg.innerHTML=`
+    <div class="page-bar">
+      <img class="pb-icon" src="${iconUrl}" alt="" />
+      <span class="pb-name">${app.name}</span>
+      <span class="pb-cat ${c.cls}">${c.label}</span>
+      <span class="grow"></span>
+      <button class="pb-refresh" type="button">刷新</button>
+      <a class="pb-open" href="${app.url}" target="_blank" rel="noopener">↗ 在新窗口打开</a>
+    </div>
+    <div class="frame-wrap">
+      <iframe></iframe>
+      <div class="frame-loading">
+        <div class="spin"></div>
+        <div class="fl-text">正在加载「${app.name}」…</div>
+      </div>
+      <div class="frame-fallback" hidden>
+        <div class="ff-card">
+          <div class="ff-title">该页面无法在此内嵌显示</div>
+          <div class="ff-sub">站点可能限制了嵌入（X-Frame-Options / 安全策略），或链接已失效。请点击下方按钮在新窗口打开查看。</div>
+          <a class="pb-open" href="${app.url}" target="_blank" rel="noopener">↗ 在新窗口打开</a>
+        </div>
+      </div>
+    </div>`;
+  pages.appendChild(pg);
+  const f=pg.querySelector('iframe');
+  f.referrerPolicy='no-referrer';
+  f.sandbox='allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-popups-to-escape-sandbox';
+  const ff=pg.querySelector('.frame-fallback');
+  const loading=pg.querySelector('.frame-loading');
+  let loaded=false;
+  const showFF=()=>{
+    ff.hidden=false; loading.hidden=true;
+    /* 自动跳转新窗口 — 不让用户手动点 */
+    const opened=window.open(app.url,'_blank','noopener');
+    if(!opened){
+      ff.querySelector('.ff-sub').textContent='该站点禁止被嵌入，已尝试自动打开新窗口但被浏览器拦截。请点击下方按钮手动打开：';
+    } else {
+      ff.querySelector('.ff-title').textContent='该页面已自动在新窗口打开';
+      ff.querySelector('.ff-sub').textContent='此站点限制了 iframe 内嵌（安全策略），我们已帮您在外部窗口打开了该页面。原窗口可继续浏览其他应用。';
+      ff.querySelector('.pb-open').textContent='再次打开↗';
+    }
+  };
+  const hideFF=()=>{ff.hidden=true;};
+  const hideLoading=()=>{ loading.hidden=true; };
+  const armWatchdog=(ms)=>{ loaded=false; setTimeout(()=>{ if(!loaded){ hideLoading(); showFF(); } }, ms); };
+  f.onload=()=>{ loaded=true; hideFF(); hideLoading(); };
+  f.onerror=()=>{ hideLoading(); showFF(); };
+  f.src=app.url;
+  armWatchdog(6000);
+  pg.querySelector('.pb-refresh').onclick=()=>{ hideFF(); loading.hidden=false; f.src=app.url; armWatchdog(6000); };
+  activateTab(id);
+}
+function activateTab(id){
+  const targetId = id==='home' ? 'page-home' : id;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.id===id));
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===targetId));
+}
+function closeTab(id){
+  if(id==='home')return; // 首页不可关闭
+  const idx=tabs.findIndex(t=>t.id===id);
+  if(idx<0)return;
+  const wasActive=document.querySelector(`.tab[data-id="${id}"]`)?.classList.contains('active');
+  tabs.splice(idx,1);
+  document.querySelector(`.tab[data-id="${id}"]`)?.remove();
+  document.getElementById(id)?.remove();
+  if(wasActive){
+    if(tabs.length) activateTab(tabs[tabs.length-1].id);
+    else activateTab('home');
+  }
+}
+// ===== 标签页批量 / 拖拽 / 快捷键 / 右键菜单 =====
+function getTabIds(){ return [...tabbar.querySelectorAll('.tab')].map(t=>t.dataset.id); }
+function getActiveTabId(){ return document.querySelector('.tab.active')?.dataset.id || 'home'; }
+function syncTabsFromDOM(){
+  const ids=getTabIds();
+  const map={}; tabs.forEach(t=>map[t.id]=t);
+  tabs.length=0;
+  ids.forEach(id=>{ if(id!=='home'&&map[id]) tabs.push(map[id]); });
+  ids.forEach(id=>{ if(id!=='home'){ const pg=document.getElementById(id); if(pg) pages.appendChild(pg); } });
+}
+function closeOtherTabs(keepId){
+  getTabIds().filter(x=>x!=='home'&&x!==keepId).forEach(closeTab);
+  activateTab(keepId);
+}
+function closeAllTabs(){
+  getTabIds().filter(x=>x!=='home').forEach(closeTab);
+  activateTab('home');
+}
+function closeTabsToRight(id){
+  const ids=getTabIds(); const i=ids.indexOf(id);
+  ids.slice(i+1).filter(x=>x!=='home').forEach(closeTab);
+  activateTab(id);
+}
+function openTabInNewWindow(id){
+  const t=tabs.find(x=>x.id===id);
+  if(t&&t.app&&t.app.url) window.open(t.app.url,'_blank','noopener');
+}
+let ctxTabId=null;
+function showTabMenu(x,y,id){
+  ctxTabId=id;
+  const menu=document.getElementById('tab-menu');
+  const isHome=(id==='home');
+  menu.querySelector('[data-act="close"]').classList.toggle('disabled',isHome);
+  menu.querySelector('[data-act="close-right"]').classList.toggle('disabled',isHome);
+  menu.hidden=false;
+  const mw=160, mh=menu.offsetHeight||210;
+  let px=x, py=y;
+  if(x+mw>window.innerWidth) px=window.innerWidth-mw-8;
+  if(y+mh>window.innerHeight) py=window.innerHeight-mh-8;
+  menu.style.left=px+'px'; menu.style.top=py+'px';
+}
+function hideTabMenu(){ document.getElementById('tab-menu').hidden=true; }
+
+// ===== 模块配置后台（管理员 CRUD）=====
+const modal=document.getElementById('admin-modal');
+const form=document.getElementById('mod-form');
+const fId=document.getElementById('f-id'), fCat=document.getElementById('f-cat'),
+      fName=document.getElementById('f-name'), fOwner=document.getElementById('f-owner'),
+      fUrl=document.getElementById('f-url'), fPerm=document.getElementById('f-perm');
+const modRows=document.getElementById('mod-rows'), modCount=document.getElementById('mod-count');
+
+function openAdmin(){ modal.hidden=false; const si=document.getElementById('mod-search-input'); if(si)si.value=''; selIds.clear(); renderAdminList(); renderBatchActions(); }
+function closeAdmin(){ modal.hidden=true; form.reset(); fId.value=''; }
+function copyLink(url,card){
+  const t=card.querySelector('.toast');
+  const show=()=>{ if(t){t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000);} };
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(show).catch(()=>{fallbackCopy(url);show();});
+  } else { fallbackCopy(url); show(); }
+}
+function fallbackCopy(text){
+  const ta=document.createElement('textarea');
+  ta.value=text;ta.style.position='fixed';ta.style.opacity='0';ta.style.top='0';ta.style.left='0';
+  document.body.appendChild(ta);ta.focus();ta.select();
+  try{document.execCommand('copy');}catch(e){}
+  document.body.removeChild(ta);
+}
+let selIds = new Set();
+function renderAdminList(){
+  const q=(document.getElementById('mod-search-input').value||'').trim().toLowerCase();
+  modCount.textContent=modules.length;
+  const list=modules.filter(m=>(m.name+' '+m.owner).toLowerCase().includes(q));
+  modRows.innerHTML='';
+  if(!modules.length){ modRows.innerHTML='<div class="empty-tip">暂无模块，请在上方表单新增。</div>'; updateBatchBar(); return; }
+  if(!list.length){ modRows.innerHTML='<div class="empty-tip">没有匹配「'+q+'」的模块。</div>'; updateBatchBar(); return; }
+  list.forEach(m=>{
+    const c=CATS[m.cat]||CATS.app;
+    const row=document.createElement('div'); row.className='mod-row';
+    const checked=selIds.has(m.id)?'checked':'';
+    const permTag = m.perm==='admin'?'<span class="badge-perm">管理专属</span>':'<span class="badge-sso" style="background:rgba(63,166,106,.1);color:#2E8B57;border-color:rgba(63,166,106,.3)">员工可见</span>';
+    const ssoTag = m.sso?'<span class="badge-sso">飞书 SSO</span>':'';
+    const urlHtml=m.url?`<a href="${m.url}" target="_blank" class="m-link" title="${m.url}">${m.url}</a>`:'（暂未配置链接）';
+    row.innerHTML=`<label class="m-sel"><input type="checkbox" ${checked}/></label>
+      <span class="m-tag ${c.cls}">${c.label}</span>
+      <div class="m-main"><div class="m-name">${m.name}</div>
+      <div class="m-meta">责任人：${m.owner}　·　权限：${permTag} ${ssoTag}　·　链接：${urlHtml}</div></div>
+      <div class="m-ops"><button class="m-edit">编辑</button><button class="m-del">删除</button></div>`;
+    row.querySelector('input').onchange=e=>{ if(e.target.checked)selIds.add(m.id); else selIds.delete(m.id); syncSelAll(); updateBatchBar(); };
+    row.querySelector('.m-edit').onclick=()=>editModule(m.id);
+    row.querySelector('.m-del').onclick=()=>deleteModule(m.id);
+    modRows.appendChild(row);
+  });
+  syncSelAll(); updateBatchBar();
+}
+function syncSelAll(){
+  const q=(document.getElementById('mod-search-input').value||'').trim().toLowerCase();
+  const list=modules.filter(m=>(m.name+' '+m.owner).toLowerCase().includes(q));
+  const sel=list.filter(m=>selIds.has(m.id)).length;
+  const sa=document.getElementById('sel-all');
+  sa.checked = list.length>0 && sel===list.length;
+  sa.indeterminate = sel>0 && sel<list.length;
+}
+function updateBatchBar(){
+  const n=[...selIds].filter(id=>modules.some(m=>m.id===id)).length;
+  document.getElementById('batch-n').textContent=n;
+  document.getElementById('mod-batch').hidden = n===0;
+}
+function renderBatchActions(){
+  const ba=document.getElementById('batch-actions');
+  ba.innerHTML='<button class="btn-cancel" id="batch-del">批量删除</button><button class="btn-ghost2" id="batch-perm">批量修改权限</button>';
+  document.getElementById('batch-del').onclick=batchDelete;
+  document.getElementById('batch-perm').onclick=batchPerm;
+}
+function editModule(id){
+  const m=modules.find(x=>x.id===id); if(!m)return;
+  fId.value=m.id; fCat.value=m.cat; fName.value=m.name; fOwner.value=m.owner; fUrl.value=m.url||''; fPerm.value=m.perm||'staff';
+  form.scrollIntoView({behavior:'smooth',block:'start'});
+  fName.focus();
+}
+function deleteModule(id){
+  const m=modules.find(x=>x.id===id); if(!m)return;
+  showConfirm(`确定删除模块「${m.name}」吗？删除后不可恢复。`,()=>{
+    const t=tabs.find(x=>x.app&&x.app.id===id); if(t)closeTab(t.id);
+    modules=modules.filter(x=>x.id!==id);
+    saveModules(); refreshAll();
+  });
+}
+function batchDelete(){
+  const ids=[...selIds].filter(id=>modules.some(m=>m.id===id));
+  if(!ids.length)return;
+  showConfirm(`确定删除选中的 ${ids.length} 个模块吗？删除后不可恢复。`,()=>{
+    ids.forEach(id=>{ const t=tabs.find(x=>x.app&&x.app.id===id); if(t)closeTab(t.id); });
+    modules=modules.filter(m=>!ids.includes(m.id));
+    selIds.clear(); saveModules(); refreshAll();
+  });
+}
+function batchPerm(){
+  const ba=document.getElementById('batch-actions');
+  ba.innerHTML='<span class="batch-tip">设为权限：</span><button class="btn-cancel" id="bp-staff">员工可见</button><button class="btn-primary" id="bp-admin">管理专属</button><button class="btn-ghost2" id="bp-back">返回</button>';
+  document.getElementById('bp-staff').onclick=()=>applyBatchPerm('staff');
+  document.getElementById('bp-admin').onclick=()=>applyBatchPerm('admin');
+  document.getElementById('bp-back').onclick=renderBatchActions;
+}
+function applyBatchPerm(p){
+  const ids=[...selIds].filter(id=>modules.some(m=>m.id===id));
+  if(!ids.length)return;
+  showConfirm(`确定将选中的 ${ids.length} 个模块权限设为「${p==='admin'?'管理专属':'员工可见'}」吗？`,()=>{
+    modules.forEach(m=>{ if(ids.includes(m.id)) m.perm=p; });
+    saveModules(); refreshAll();
+  });
+}
+function showConfirm(msg,onYes){ document.getElementById('cf-msg').textContent=msg; document.getElementById('cf-modal').hidden=false; cfCb=onYes; }
+let cfCb=null;
+// ===== 最近使用 =====
+const LS_RECENT='recentApps';
+const MAX_RECENT=10, SHOW_RECENT=5;
+function getRecent(){ try{ return JSON.parse(localStorage.getItem(LS_RECENT))||[]; }catch(e){ return []; } }
+function recordRecent(app){
+  if(!app||!app.url) return;
+  let rec=getRecent().filter(r=>r.id!==app.id); // 同一应用去重，更新时间戳
+  rec.unshift({id:app.id,name:app.name,type:app.cat,owner:app.owner,url:app.url,lastVisit:Date.now()});
+  if(rec.length>MAX_RECENT) rec=rec.slice(0,MAX_RECENT); // 最多保留 10 条
+  try{ localStorage.setItem(LS_RECENT,JSON.stringify(rec)); }catch(e){}
+}
+function fmtVisit(ts){
+  const d=new Date(ts), now=new Date();
+  const diff=(now-ts)/1000;
+  if(diff<60) return '刚刚';
+  if(diff<3600) return Math.floor(diff/60)+' 分钟前';
+  const pad=n=>String(n).padStart(2,'0');
+  const sameDay=d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth()&&d.getDate()===now.getDate();
+  if(sameDay) return '今天 '+pad(d.getHours())+':'+pad(d.getMinutes());
+  return (d.getMonth()+1)+'/'+d.getDate()+' '+pad(d.getHours())+':'+pad(d.getMinutes());
+}
+function renderRecent(){
+  const box=document.getElementById('recent'), row=document.getElementById('recent-row');
+  if(!box||!row) return;
+  const rec=getRecent();
+  if(!rec.length){ box.hidden=true; return; } // 首次使用无记录则不显示
+  box.hidden=false; row.innerHTML='';
+  rec.slice(0,SHOW_RECENT).forEach(r=>{ // 取前 5 条
+    const c=CATS[r.type]||CATS.app;
+    const card=document.createElement('div');
+    card.className='card recent-card';
+    card.style.setProperty('--accent',`var(--c-${r.type})`);
+    const vt=fmtVisit(r.lastVisit);
+    const copyBtn=r.url?`<button class="copy-btn" title="复制链接" aria-label="复制链接"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>`:'';
+    card.innerHTML=`<div class="visit-time">${vt}</div><div class="badges"><span class="tag ${c.cls}">${c.label}</span></div><h3>${r.name}</h3><div class="owner">责任人：<b>${r.owner}</b></div>${copyBtn}<div class="toast">✓ 已复制</div>`;
+    const app = modules.find(m=>m.id===r.id) || {id:r.id,name:r.name,cat:r.type,owner:r.owner,url:r.url,perm:'staff',sso:false};
+    if(r.url){ const cb=card.querySelector('.copy-btn'); cb.onclick=(e)=>{e.stopPropagation();copyLink(r.url,card);}; }
+    card.onclick=()=>openApp(app);
+    row.appendChild(card);
+  });
+}
+function refreshAll(){ computeOwnerList(); renderOwnerList(); markEmptyCats(); updateStat(); render(); renderAdminList(); renderRecent(); }
+
+form.addEventListener('submit',e=>{
+  e.preventDefault();
+  const name=fName.value.trim(), owner=fOwner.value.trim(), url=fUrl.value.trim(), perm=fPerm.value;
+  if(!name||!owner){ alert('名称和责任人均为必填项'); return; }
+  const id=fId.value;
+  if(id){ const m=modules.find(x=>x.id===id); if(m) Object.assign(m,{name,owner,cat:fCat.value,url,perm}); }
+  else { modules.push({id:uid(),name,owner,cat:fCat.value,url,perm}); }
+  saveModules(); refreshAll(); closeAdmin();
+});
+document.getElementById('f-cancel').onclick=closeAdmin;
+document.getElementById('admin-close').onclick=closeAdmin;
+document.getElementById('admin-mask').onclick=closeAdmin;
+document.getElementById('f-reset').onclick=async ()=>{
+  if(!confirm('将清空当前本地配置，恢复到管理员发布的共享配置（modules.json）。确认？'))return;
+  try{
+    const res=await fetch(SHARED_CONFIG_URL,{cache:'no-store'});
+    if(res.ok){ const data=await res.json();
+      if(Array.isArray(data)&&data.length){ SHARED_MODULES=data.map(m=>({...m,id:m.id||uid(),perm:m.perm??'staff',sso:!!m.sso})); }
+    }
+  }catch(e){}
+  modules = SHARED_MODULES ? SHARED_MODULES.map(m=>({...m})) : loadModules();
+  saveModules(); refreshAll(); closeAdmin();
+};
+// ===== 配置导出 / 导入（管理员备份与全员同步）=====
+document.getElementById('f-export').onclick=()=>{
+  const blob=new Blob([JSON.stringify(modules,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='keman-modules.json'; a.click(); URL.revokeObjectURL(a.href);
+};
+document.getElementById('f-import').onclick=()=>document.getElementById('f-import-file').click();
+document.getElementById('f-import-file').onchange=e=>{
+  const file=e.target.files[0]; if(!file)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{ const data=JSON.parse(r.result);
+      if(!Array.isArray(data)||!data.length) throw new Error('配置为空');
+      modules=data.map(m=>({...m,id:m.id||uid(),perm:m.perm??'staff',sso:!!m.sso}));
+      saveModules(); refreshAll(); closeAdmin();
+      alert('已导入 '+modules.length+' 个模块到本地。若要全员同步，请将此 JSON 发给管理员重新部署。');
+    }catch(err){ alert('导入失败：'+err.message); }
+  };
+  r.readAsText(file); e.target.value='';
+};
+document.getElementById('btn-admin').onclick=openAdmin;
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!modal.hidden) closeAdmin(); });
+// ===== 后台：搜索 / 全选 / 二次确认 =====
+const adminSearchEl=document.getElementById('mod-search-input');
+if(adminSearchEl) adminSearchEl.oninput=renderAdminList;
+document.getElementById('sel-all').onchange=e=>{
+  const q=(document.getElementById('mod-search-input').value||'').trim().toLowerCase();
+  const list=modules.filter(m=>(m.name+' '+m.owner).toLowerCase().includes(q));
+  if(e.target.checked) list.forEach(m=>selIds.add(m.id)); else list.forEach(m=>selIds.delete(m.id));
+  renderAdminList();
+};
+document.getElementById('cf-ok').onclick=()=>{ const cb=cfCb; cfCb=null; document.getElementById('cf-modal').hidden=true; if(cb)cb(); };
+document.getElementById('cf-cancel').onclick=()=>{ cfCb=null; document.getElementById('cf-modal').hidden=true; };
+document.getElementById('cf-mask').onclick=()=>{ cfCb=null; document.getElementById('cf-modal').hidden=true; };
+
+// 使用指南浮层：点击入口 toggle，点击浮层外区域关闭
+const guideEntry=document.getElementById('guide-entry');
+const guidePop=document.getElementById('guide-pop');
+if(guideEntry&&guidePop){
+  guideEntry.addEventListener('click',e=>{e.stopPropagation();guidePop.classList.toggle('show');});
+  document.addEventListener('click',e=>{
+    if(guidePop.classList.contains('show') && !guidePop.contains(e.target) && !guideEntry.contains(e.target)){
+      guidePop.classList.remove('show');
+    }
+  });
+}
+// 「最近使用 → 查看全部」跳转到全部应用列表
+const recentViewAll=document.getElementById('recent-viewall');
+if(recentViewAll){
+  recentViewAll.addEventListener('click',e=>{
+    e.preventDefault();
+    const sec=document.getElementById('sec-all');
+    if(sec) sec.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+}
+
+// 角色切换
+document.querySelectorAll('#role-seg button').forEach(b=>{
+  b.onclick=()=>setRole(b.dataset.role);
+});
+setRole(currentRole); // 初始化高亮、后台按钮可见性并渲染
+syncSharedConfig(); // 拉取服务端共享配置，使全员看到同一份模块
+</script>
+</body>
+</html>
