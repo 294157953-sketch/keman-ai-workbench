@@ -889,13 +889,7 @@ function render(){
 function openApp(app){
   if(!app.url){alert(app.name+' 暂未配置链接，无法在新标签页打开。');return;}
   recordRecent(app); renderRecent(); // 记录最近使用
-  /* 已知禁止 iframe 内嵌的域名 — 直接新窗口打开，不走 iframe */
-  const BLOCKED_HOSTS=['feishuapp.com','feishu.cn','aiforce.cloud','dingtalk.com','work.weixin.qq.com'];
-  const tryHost=new URL(app.url,location.origin).hostname;
-  if(BLOCKED_HOSTS.some(h=>tryHost.includes(h))){
-    window.open(app.url,'_blank','noopener');
-    return;
-  }
+  /* 所有站点统一走页内 iframe 展示；若站点禁止内嵌，仅页内提示并提供手动「在新窗口打开」按钮，不再自动弹新窗口 */
   const exist=tabs.find(t=>t.app===app);
   if(exist){activateTab(exist.id);return;}
   const id='tab-'+(++tabSeq);
@@ -956,15 +950,10 @@ function openApp(app){
   let loaded=false;
   const showFF=()=>{
     ff.hidden=false; loading.hidden=true;
-    /* 自动跳转新窗口 — 不让用户手动点 */
-    const opened=window.open(app.url,'_blank','noopener');
-    if(!opened){
-      ff.querySelector('.ff-sub').textContent='该站点禁止被嵌入，已尝试自动打开新窗口但被浏览器拦截。请点击下方按钮手动打开：';
-    } else {
-      ff.querySelector('.ff-title').textContent='该页面已自动在新窗口打开';
-      ff.querySelector('.ff-sub').textContent='此站点限制了 iframe 内嵌（安全策略），我们已帮您在外部窗口打开了该页面。原窗口可继续浏览其他应用。';
-      ff.querySelector('.pb-open').textContent='再次打开↗';
-    }
+    /* 不自动弹新窗口：仅在页内提示，由用户手动点击「在新窗口打开」 */
+    ff.querySelector('.ff-title').textContent='该页面无法在此内嵌显示';
+    ff.querySelector('.ff-sub').textContent='站点可能限制了嵌入（X-Frame-Options / 安全策略），或链接已失效。可点击下方按钮在新窗口打开查看，本工作台页面保持不变。';
+    ff.querySelector('.pb-open').textContent='↗ 在新窗口打开';
   };
   const hideFF=()=>{ff.hidden=true;};
   const hideLoading=()=>{ loading.hidden=true; };
@@ -972,8 +961,8 @@ function openApp(app){
   f.onload=()=>{ loaded=true; hideFF(); hideLoading(); };
   f.onerror=()=>{ hideLoading(); showFF(); };
   f.src=app.url;
-  armWatchdog(6000);
-  pg.querySelector('.pb-refresh').onclick=()=>{ hideFF(); loading.hidden=false; f.src=app.url; armWatchdog(6000); };
+  armWatchdog(12000);
+  pg.querySelector('.pb-refresh').onclick=()=>{ hideFF(); loading.hidden=false; f.src=app.url; armWatchdog(12000); };
   activateTab(id);
 }
 function activateTab(id){
