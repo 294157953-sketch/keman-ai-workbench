@@ -628,14 +628,10 @@
       <div class="sync-box">
         <div class="sync-row">
           <span class="sync-label">云端同步</span>
-          <input type="password" id="gh-token" placeholder="粘贴 GitHub Token（需 repo 权限）以启用全员同步" />
-          <button type="button" class="btn-ghost2" id="gh-token-save">保存Token</button>
-          <button type="button" class="btn-ghost2" id="gh-verify">验证</button>
           <button type="button" class="btn-ghost2" id="gh-pull">从云端刷新</button>
-          <button type="button" class="btn-ghost2" id="gh-publish">立即发布</button>
         </div>
         <div class="sync-status" id="sync-status"></div>
-        <div class="sync-hint">后端已迁到 GitHub Pages（无需服务器/隧道，地址永久不变）。管理员填入一次 Token 后，每次保存模块都会自动同步给全员；Token 仅保存在本机浏览器，不会上传。<br><b>Token 要求：</b>必须用 <b>Classic token</b>（不是 Fine-grained），勾选 <b>repo</b> 权限。→ <a href="https://github.com/settings/tokens/new?scopes=repo&description=keman-workbench-sync" target="_blank" rel="noopener">一键创建正确权限的 Token →</a></div>
+        <div class="sync-hint">配置已连接阿里云服务器，<b>打开页面自动拉取、保存模块自动推送</b>，全员实时同步，无需任何手动操作。</div>
       </div>
       <div class="mod-list">
         <div class="mod-list-bar">
@@ -721,14 +717,10 @@ const DEFAULT_SEED = [
 ];
 
 const LS_KEY='keman_modules_v1';
-// ===== 共享配置后端：直接复用 GitHub Pages 托管的 modules.json（同源、永久稳定，不再依赖易失的 Cloudflare 临时隧道）=====
-// 读取：同源 modules.json（永远在线）；写入：GitHub Contents API（需管理员在后台「同步设置」填入一次 Token）
-const SHARED_CONFIG_URL = location.origin + location.pathname.replace(/index\.html$/, '') + 'modules.json';
-const GH_REPO = '294157953-sketch/keman-ai-workbench';
-const GH_BRANCH = 'main';
-const LS_GH_TOKEN = 'keman_gh_token_v1';
-let GH_TOKEN = (()=>{ try{return localStorage.getItem(LS_GH_TOKEN)||'';}catch(e){return '';} })();
-let SHARED_MODULES=null; // 服务端共享配置（管理员发布，全员可见）
+// ===== 共享配置后端：阿里云服务器 config_server.py（直接 HTTP，无需 Token/隧道/GitHub）=====
+// 打开页面自动拉取最新配置；保存模块自动推送到云端；全员实时同步，零手动操作。
+const SHARED_CONFIG_URL = 'http://47.96.108.51:8080/modules';
+let SHARED_MODULES=null; // 服务端共享配置（全员可见）
 function uid(){return 'm'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function loadModules(){
   try{const raw=localStorage.getItem(LS_KEY);
@@ -745,29 +737,19 @@ function saveModules(){
   try{localStorage.setItem(LS_KEY,JSON.stringify(modules));}catch(e){}
   pushSharedConfig();
 }
-// 写回云端：后台任意改动都同步到 GitHub 仓库的 modules.json，全员下次打开即见（不再依赖服务器/隧道）
+// 写回云端：后台任意改动都自动 POST 到服务器，全员下次打开即见（无需 Token、无需手动发布）
 async function pushSharedConfig(){
-  if(!GH_TOKEN){ syncStatus('未配置 GitHub Token：本次改动仅保存在本机，不会同步给同事。请在后台「同步设置」中粘贴 Token。', true); cloudBadge('off','☁ 未配置 Token'); return; }
+  if(!SHARED_CONFIG_URL) return;
   cloudBadge('syncing','☁ 正在保存到云端…');
   try{
-    // 1) 取当前文件 sha（已存在则需提供，用于乐观锁）
-    let sha=null;
-    const metaRes=await fetch(`https://api.github.com/repos/${GH_REPO}/contents/modules.json?ref=${GH_BRANCH}`,{
-      headers:{'Authorization':`Bearer ${GH_TOKEN}`,'Accept':'application/vnd.github+json'}
+    const res=await fetch(SHARED_CONFIG_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({token:'',modules})
     });
-    if(metaRes.ok){ const meta=await metaRes.json(); sha=meta.sha; }
-    else if(metaRes.status!==404){ throw new Error('读取仓库失败('+metaRes.status+(metaRes.status===401?'，Token 无效或权限不足——请用 Classic token + repo 权限':'')+')'); }
-    // 2) 写入（UTF-8 安全 base64）
-    const content=btoa(unescape(encodeURIComponent(JSON.stringify(modules,null,2))));
-    const putRes=await fetch(`https://api.github.com/repos/${GH_REPO}/contents/modules.json`,{
-      method:'PUT',
-      headers:{'Authorization':`Bearer ${GH_TOKEN}`,'Accept':'application/vnd.github+json','Content-Type':'application/json'},
-      body:JSON.stringify({message:'chore: update modules.json via workbench',content,sha:sha||undefined,branch:GH_BRANCH})
-    });
-    if(!putRes.ok){ const err=await putRes.json().catch(()=>({})); throw new Error(err.message||('发布失败('+putRes.status+')')); }
-    syncStatus('已发布到 GitHub，全员约 1 分钟内即可看到最新配置。', false);
+    if(!res.ok) throw new Error('服务器返回 '+res.status);
     cloudBadge('ok',`☁ 已同步云端 · ${modules.length} 个模块`);
-  }catch(e){ syncStatus('发布失败：'+e.message, true); cloudBadge('err','☁ 同步失败'); }
+  }catch(e){ cloudBadge('err','☁ 同步失败（离线？）'); }
 }
 // 拉取共享配置：同源 modules.json 优先，全员看到同一份；失败回退本地/种子
 async function syncSharedConfig(){
@@ -1299,60 +1281,25 @@ document.getElementById('f-import-file').onchange=e=>{
       if(!Array.isArray(data)||!data.length) throw new Error('配置为空');
       modules=data.map(m=>({...m,id:m.id||uid(),perm:m.perm??'staff',sso:!!m.sso}));
       saveModules(); refreshAll(); closeAdmin();
-      alert('已导入 '+modules.length+' 个模块到本地。若要全员同步，请将此 JSON 发给管理员重新部署。');
+      alert('已导入 '+modules.length+' 个模块。配置已自动同步到云端，全员刷新即可看到。');
     }catch(err){ alert('导入失败：'+err.message); }
   };
   r.readAsText(file); e.target.value='';
 };
-// ===== 云端同步：GitHub Token 设置 + 发布状态 =====
+// ===== 云端同步状态（自动同步，无需手动操作）=====
 function syncStatus(msg, warn){ const el=document.getElementById('sync-status'); if(!el)return; el.textContent=msg; el.className='sync-status'+(warn?' warn':''); }
-// 主界面云端同步状态徽标：state ∈ ok|syncing|off|err
+// 主界面云端同步状态徽标
 function cloudBadge(state, text){
   const el=document.getElementById('cloud-badge'); if(!el) return;
   el.className='cloud-badge show '+(state||'');
   el.innerHTML=(state==='syncing'?'<span class="dot"></span>':'')+text;
-  if(state==='ok'){ // 5 秒后淡出，避免长期占位置
-    clearTimeout(el._t); el._t=setTimeout(()=>{ if(el.classList.contains('ok')) el.classList.remove('show'); },5000);
-  }
+  if(state==='ok'){ clearTimeout(el._t); el._t=setTimeout(()=>{ if(el.classList.contains('ok')) el.classList.remove('show'); },5000); }
 }
-const ghTokenInput=document.getElementById('gh-token');
-if(ghTokenInput) ghTokenInput.value=GH_TOKEN;
-const ghSaveBtn=document.getElementById('gh-token-save');
-if(ghSaveBtn) ghSaveBtn.onclick=()=>{
-  const v=(document.getElementById('gh-token').value||'').trim();
-  GH_TOKEN=v; try{ if(v) localStorage.setItem(LS_GH_TOKEN,v); else localStorage.removeItem(LS_GH_TOKEN); }catch(e){}
-  syncStatus(v?'Token 已保存（仅存本机）。保存模块即可自动同步。':'已清除 Token（将停止云端同步）。', !v);
-};
-const ghPubBtn=document.getElementById('gh-publish');
-if(ghPubBtn) ghPubBtn.onclick=async ()=>{
-  if(!GH_TOKEN){ syncStatus('请先粘贴并保存 GitHub Token。', true); return; }
-  syncStatus('正在发布到 GitHub…', false);
-  await pushSharedConfig();
-};
-// 从云端刷新：手动拉取最新共享配置（别人刚改完，你想立刻看到时点这个）
+// 从云端刷新：手动拉取最新配置（别人刚改完，你想立刻看到时点这个）
 const ghPullBtn=document.getElementById('gh-pull');
 if(ghPullBtn) ghPullBtn.onclick=async ()=>{
-  syncStatus('正在从云端拉取最新配置…', false);
+  syncStatus('正在从云端拉取…', false);
   await syncSharedConfig();
-  if(GH_TOKEN) syncStatus('已从云端拉取最新配置。如需把你的改动同步给同事，点「立即发布」。', false);
-  else syncStatus('已从云端拉取最新配置。未配置 Token，你的改动仅存本机。', true);
-};
-// 验证 Token：点一下就知道是否有效，不用等到发布才报错
-const ghVerifyBtn=document.getElementById('gh-verify');
-if(ghVerifyBtn) ghVerifyBtn.onclick=async ()=>{
-  const tok=(document.getElementById('gh-token').value||'').trim();
-  if(!tok){ syncStatus('请先粘贴 Token 再验证。', true); return; }
-  syncStatus('正在验证 Token…', false);
-  try{
-    const res=await fetch(`https://api.github.com/repos/${GH_REPO}/contents/modules.json?ref=${GH_BRANCH}`,{
-      headers:{'Authorization':`Bearer ${tok}`,'Accept':'application/vnd.github+json'}
-    });
-    if(res.status===401){ syncStatus('❌ Token 无效或权限不足！请确认：①用 Classic token（不是 Fine-grained）；②勾了 repo 权限；③Token 没过期。→ 点下方「一键创建」链接重新生成', true); return; }
-    if(res.status===404){ syncStatus('✅ Token 有效（仓库可访问，modules.json 尚不存在，首次发布会自动创建）。可以点「立即发布」。', false); return; }
-    if(res.ok){ syncStatus('✅ Token 有效且仓库可读写，可以正常发布。', false); return; }
-    const err=await res.json().catch(()=>({}));
-    syncStatus(`⚠️ 意外状态 ${res.status}：${err.message||'未知错误'}`, true);
-  }catch(e){ syncStatus('验证失败：网络不通或 CORS 被拦截。'+e.message, true); }
 };
 document.getElementById('btn-admin').onclick=openAdmin;
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!modal.hidden) closeAdmin(); });
