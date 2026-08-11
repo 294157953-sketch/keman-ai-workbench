@@ -263,6 +263,24 @@
   .gi-num{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--brand);color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center}
   .guide-item b{font-size:13.5px;color:var(--ink)}
   .guide-item p{font-size:12.5px;color:var(--sub);line-height:1.6;margin-top:2px}
+  /* ===== 设置弹窗 ===== */
+  .set-account{display:flex;align-items:center;gap:14px;background:linear-gradient(180deg,#FFFDFB,#FCF7F1);border:1px solid var(--line);border-radius:var(--r-md);padding:14px 16px}
+  .set-account .sa-avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--brand-2),var(--brand));color:#fff;font-size:19px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 10px rgba(232,86,10,.25)}
+  .set-account .sa-info{flex:1;min-width:0}
+  .set-account .sa-name{font-size:15px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:8px}
+  .set-account .sa-sub{font-size:12px;color:var(--sub);margin-top:3px}
+  .set-group{display:flex;flex-direction:column;gap:8px}
+  .set-group-title{font-size:12px;font-weight:700;color:var(--sub);letter-spacing:.5px;padding:0 2px}
+  .set-list{display:flex;flex-direction:column;gap:6px}
+  .set-item{display:flex;align-items:center;gap:12px;padding:12px 15px;border:1px solid var(--line);border-radius:var(--r-md);background:#fff;cursor:pointer;transition:border-color .16s,box-shadow .16s;font-size:14px;font-weight:600;color:var(--ink);text-align:left;width:100%;font-family:inherit}
+  .set-item:hover{border-color:var(--brand-line);box-shadow:var(--sh-1);background:var(--brand-soft)}
+  .set-item svg{width:18px;height:18px;color:var(--brand);flex-shrink:0}
+  .set-item .si-arrow{margin-left:auto;color:var(--sub);font-size:20px;line-height:1}
+  .set-item .si-status{margin-left:auto;font-size:12px;font-weight:600;color:var(--brand)}
+  .set-item.danger{color:#C0392B}
+  .set-item.danger:hover{background:#FBEAE8;border-color:#F0D2CC}
+  .set-item.danger svg{color:#C0392B}
+  .set-hint{font-size:11.5px;color:var(--sub);line-height:1.6;padding:0 3px}
   .section-title{display:flex;align-items:center;gap:9px;margin:32px 2px 16px;font-size:15px;font-weight:800;color:var(--ink);letter-spacing:.5px}
   .section-title .bar{width:4px;height:16px;border-radius:2px;background:linear-gradient(180deg,var(--brand),var(--brand-2))}
   .section-title .n{margin-left:auto;font-size:12px;color:var(--sub);font-weight:600}
@@ -711,6 +729,51 @@
         <div class="guide-item"><span class="gi-num">3</span><div><b>多标签协同</b><p>顶部标签栏支持关闭、关闭其他、新窗口打开；页间可互联互通。</p></div></div>
         <div class="guide-item"><span class="gi-num">4</span><div><b>权限分级</b><p>管理员可见全部应用；员工仅见「员工可见」及被授权的应用，由「人员配置」统一管理。</p></div></div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- 设置 -->
+<div class="modal" id="setting-modal" hidden>
+  <div class="modal-mask" id="setting-mask"></div>
+  <div class="modal-panel" style="width:min(460px,100%)" role="dialog" aria-modal="true" aria-label="设置">
+    <div class="modal-head">
+      <div class="modal-title">设置</div>
+      <button class="modal-close" id="setting-close" aria-label="关闭">×</button>
+    </div>
+    <div class="modal-body">
+      <!-- 账户信息 -->
+      <div class="set-account">
+        <div class="sa-avatar" id="set-avatar">客</div>
+        <div class="sa-info">
+          <div class="sa-name"><span id="set-name-text">姓名</span> <span class="role-pill" id="set-role"></span></div>
+          <div class="sa-sub" id="set-sub">登录时间：--</div>
+        </div>
+      </div>
+      <!-- 管理（仅管理员可见） -->
+      <div class="set-group" id="set-admin-group">
+        <div class="set-group-title">管理</div>
+        <div class="set-list">
+          <button class="set-item" id="set-modules" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>模块配置后台<span class="si-arrow">›</span></button>
+          <button class="set-item" id="set-personnel" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>人员配置<span class="si-arrow">›</span></button>
+        </div>
+      </div>
+      <!-- 数据同步 -->
+      <div class="set-group">
+        <div class="set-group-title">数据同步</div>
+        <div class="set-list">
+          <button class="set-item" id="set-sync" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>从云端同步配置<span class="si-status" id="set-sync-status">已同步</span></button>
+        </div>
+      </div>
+      <!-- 账户 -->
+      <div class="set-group">
+        <div class="set-group-title">账户</div>
+        <div class="set-list">
+          <button class="set-item danger" id="set-clear" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>清空本地缓存</button>
+          <button class="set-item danger" id="set-logout" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>退出登录</button>
+        </div>
+      </div>
+      <div class="set-hint">业务数据均存储于云服务器，本地仅缓存登录态。清空缓存将移除本机登录信息，需重新登录。</div>
     </div>
   </div>
 </div>
@@ -1191,9 +1254,40 @@ document.addEventListener('click',e=>{ if(!hdUser.contains(e.target)) hdUser.cla
 document.getElementById('pop-modules').onclick=()=>{ hdUser.classList.remove('open'); if(!guardAdmin()) return; openAdmin(); };
 document.getElementById('pop-personnel').onclick=()=>{ hdUser.classList.remove('open'); if(!guardAdmin()) return; openPersonnel(); };
 document.getElementById('pop-logout').onclick=()=>{ hdUser.classList.remove('open'); Auth.logout(); };
-// 设置按钮（演示占位）
+// 设置按钮 → 弹窗
 const settingBtn=document.querySelector('.hd-btn[data-act="setting"]');
-if(settingBtn) settingBtn.onclick=()=>{};
+const settingModal=document.getElementById('setting-modal');
+function openSetting(){
+  if(currentUser){
+    document.getElementById('set-avatar').textContent=currentUser.name?currentUser.name.charAt(0):'客';
+    document.getElementById('set-name-text').textContent=currentUser.name||'--';
+    const rp=document.getElementById('set-role');
+    rp.className='role-pill '+(currentUser.role||'');
+    rp.textContent=ROLE_LABEL[currentUser.role]||currentUser.role;
+    document.getElementById('set-sub').textContent='登录时间：'+(loginTime||'--');
+  }
+  document.getElementById('set-admin-group').hidden=!isAdmin();
+  settingModal.hidden=false;
+}
+function closeSetting(){ settingModal.hidden=true; }
+if(settingBtn){
+  settingBtn.onclick=(e)=>{ e.stopPropagation(); openSetting(); };
+}
+document.getElementById('setting-close').onclick=closeSetting;
+document.getElementById('setting-mask').onclick=closeSetting;
+document.addEventListener('click',e=>{ if(settingModal&&!settingModal.hidden&&!settingModal.contains(e.target)&&!settingBtn.contains(e.target)) closeSetting(); });
+document.getElementById('set-modules').onclick=()=>{ closeSetting(); if(guardAdmin()) openAdmin(); };
+document.getElementById('set-personnel').onclick=()=>{ closeSetting(); if(guardAdmin()) openPersonnel(); };
+document.getElementById('set-sync').onclick=async()=>{
+  const st=document.getElementById('set-sync-status');
+  st.textContent='同步中…';
+  try{ await syncSharedConfig(); st.textContent='已同步'; setTimeout(()=>{ if(st) st.textContent='已同步'; },1500); }
+  catch(err){ st.textContent='失败'; }
+};
+document.getElementById('set-clear').onclick=()=>{
+  if(confirm('确定清空本地缓存？将移除本机登录信息，需重新登录。')){ localStorage.clear(); location.reload(); }
+};
+document.getElementById('set-logout').onclick=()=>{ closeSetting(); Auth.logout(); };
 // 通知中心弹出（空状态）
 const noticeBtn=document.querySelector('.hd-btn[data-act="notice"]');
 const noticePop=document.getElementById('notice-pop');
