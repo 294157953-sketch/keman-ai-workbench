@@ -390,6 +390,10 @@
   .login-tip{font-size:12px;color:var(--sub);text-align:center;margin-top:16px;line-height:1.6}
   .login-err{font-size:12.5px;color:#C0392B;background:#FBEAE8;border:1px solid #F0D2CC;border-radius:8px;padding:8px 12px;margin-bottom:14px;display:none}
   .login-err.show{display:block}
+  .login-mirror{font-size:12.5px;color:#8A5A12;background:#FFF6E5;border:1px solid #F3DFB4;border-radius:8px;padding:9px 12px;margin-bottom:14px;line-height:1.7}
+  .login-mirror a{color:var(--brand);font-weight:800;text-decoration:none}
+  .login-mirror a:hover{text-decoration:underline}
+  .login-mirror[hidden]{display:none}
   .login-loading{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.5);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:-3px;margin-right:6px}
   @media(max-width:900px){ nav{display:none}.search-wrap{flex-basis:160px}.modal-body{padding:16px}.admin-btn{padding:8px 12px;font-size:12px} }
 </style>
@@ -405,6 +409,10 @@
       <div class="ls">AI 应用统一工作台 · 内部协同平台</div>
     </div>
     <div class="login-err" id="login-err"></div>
+    <div class="login-mirror" id="login-mirror" hidden>
+      当前为 GitHub 镜像页，<b>无法登录</b>。请访问正式地址：<br/>
+      <a href="http://47.96.108.51:8080/" target="_blank" rel="noopener">http://47.96.108.51:8080/</a>
+    </div>
     <div class="login-field">
       <label for="login-name">姓名</label>
       <input class="login-input" id="login-name" placeholder="请输入你的姓名（如：鼠清商）" autocomplete="off" />
@@ -706,8 +714,10 @@ const CATS = {
   daily:{label:'日报类',cls:'daily',icon:IP_ICONS.mei}
 };
 const ROLE_LABEL = { super_admin:'超级管理员', admin:'管理员', employee:'员工' };
-// 应用配置接口：github 镜像走绝对地址，云服务器走同源相对地址
-const SHARED_CONFIG_URL = location.hostname.includes('github.io') ? 'http://47.96.108.51:8080/modules' : 'modules';
+// 后端地址：云服务器部署时同源（空前缀）；github 镜像页指向云服务器绝对地址
+const IS_MIRROR = location.hostname.includes('github.io');
+const API_BASE  = IS_MIRROR ? 'http://47.96.108.51:8080' : '';
+const SHARED_CONFIG_URL = API_BASE + '/modules';
 
 // ===== 全局状态 =====
 let currentUser = null;            // {id,name,role,visibleApps?}
@@ -730,8 +740,10 @@ async function apiReq(method, path, body){
   const headers={'Content-Type':'application/json'};
   const tok=localStorage.getItem('auth-token');
   if(tok) headers['Authorization']='Bearer '+tok;
+  // 相对路径统一拼接后端基地址（镜像页指向云服务器）
+  const url = /^https?:\/\//.test(path) ? path : (path.charAt(0)==='/' ? API_BASE+path : path);
   let res;
-  try{ res=await fetch(path,{method,headers,body:body?JSON.stringify(body):undefined}); }
+  try{ res=await fetch(url,{method,headers,body:body?JSON.stringify(body):undefined}); }
   catch(e){ throw new Error('网络异常，请检查网络连接'); }
   let data=null;
   const ct=res.headers.get('Content-Type')||'';
@@ -1203,6 +1215,12 @@ function applyUserInfo(){
 function showLogin(){
   document.getElementById('app-root').hidden=true;
   document.getElementById('login-view').hidden=false;
+  // https 镜像页无法请求 http 后端（浏览器混合内容拦截），直接引导到正式地址
+  if(IS_MIRROR && location.protocol==='https:'){
+    document.getElementById('login-mirror').hidden=false;
+    const b=document.getElementById('login-btn');
+    b.disabled=true; b.textContent='请前往正式地址登录';
+  }
 }
 function showApp(){
   document.getElementById('login-view').hidden=true;
