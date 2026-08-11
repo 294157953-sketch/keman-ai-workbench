@@ -1040,7 +1040,8 @@ function openApp(app){
 function activateTab(id){
   tabs.forEach(t=>t.id===id);
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.id===id));
-  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));
+  const targetId=(id==='home'?'page-home':id);
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===targetId));
 }
 function closeTab(id){
   const idx=tabs.findIndex(t=>t.id===id); if(idx<0) return;
