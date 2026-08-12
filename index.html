@@ -17,7 +17,7 @@
     --line:#EFE6DC;
     --cream:#FAF6F1;
     --panel:#FFFFFF;
-    --c-kanban:#3FA66A; --c-app:#3E7FD0; --c-daily:#D6568A;
+    --c-kanban:#3FA66A; --c-app:#3E7FD0; --c-daily:#D6568A; --c-mix:#8B5CF6;
     --tab-h:46px;
     --sh-1:0 1px 2px rgba(70,45,25,.04), 0 2px 6px rgba(70,45,25,.05);
     --sh-2:0 2px 4px rgba(70,45,25,.05), 0 8px 24px rgba(70,45,25,.08);
@@ -156,7 +156,7 @@
   .nav-item.hl{background:#F6EEE5;transform:translateX(2px)}
   .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;box-shadow:0 0 0 3px rgba(0,0,0,.02)}
   .dot.kanban{background:var(--c-kanban)} .dot.app{background:var(--c-app)}
-  .dot.daily{background:var(--c-daily)} .dot.all{background:#B7A99C}
+  .dot.daily{background:var(--c-daily)} .dot.mix{background:var(--c-mix)} .dot.all{background:#B7A99C}
   .nav-tabs{display:flex;gap:4px;background:rgba(120,110,100,.08);border-radius:20px;padding:3px;margin:4px 4px 12px}
   .nav-tab{flex:1;height:30px;border:none;background:transparent;color:var(--sub);font-size:12.5px;font-weight:700;
     border-radius:16px;cursor:pointer;transition:background .2s var(--ease),color .2s,box-shadow .2s}
@@ -289,7 +289,7 @@
   .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent,#ccc)}
   .card:hover{transform:translateY(-5px);box-shadow:var(--sh-3);border-color:var(--brand-line)}
   .card .tag{position:absolute;top:14px;left:17px;font-size:11px;padding:4px 11px;border-radius:20px;color:#fff;display:inline-block;font-weight:600;letter-spacing:.5px;box-shadow:0 2px 5px rgba(0,0,0,.08);z-index:2}
-  .tag.kanban{background:var(--c-kanban)} .tag.app{background:var(--c-app)} .tag.daily{background:var(--c-daily)}
+  .tag.kanban{background:var(--c-kanban)} .tag.app{background:var(--c-app)} .tag.daily{background:var(--c-daily)} .tag.mix{background:var(--c-mix)}
   .card .perm-tag{position:absolute;top:14px;right:17px;font-size:10.5px;padding:3px 9px;border-radius:20px;font-weight:700;letter-spacing:.3px;background:rgba(232,86,10,.1);color:var(--brand);border:1px solid var(--brand-line);white-space:nowrap;z-index:2}
   .card h3{font-size:16px;margin-bottom:8px;font-weight:700;letter-spacing:.3px}
   .card .owner{font-size:12.5px;color:var(--sub)}
@@ -352,7 +352,7 @@
   .mod-row{display:flex;align-items:center;gap:14px;padding:11px 14px;border:1px solid var(--line);border-radius:var(--r-md);background:#fff;transition:border-color .16s,box-shadow .16s}
   .mod-row:hover{border-color:var(--brand-line);box-shadow:var(--sh-1)}
   .mod-row .m-tag{font-size:11px;padding:3px 10px;border-radius:20px;color:#fff;font-weight:600;flex-shrink:0;min-width:56px;text-align:center;display:inline-flex;align-items:center;justify-content:center}
-  .m-tag.kanban{background:var(--c-kanban)} .m-tag.app{background:var(--c-app)} .m-tag.daily{background:var(--c-daily)}
+  .m-tag.kanban{background:var(--c-kanban)} .m-tag.app{background:var(--c-app)} .m-tag.daily{background:var(--c-daily)} .m-tag.mix{background:var(--c-mix)}
   .mod-row .m-main{flex:1;min-width:0}
   .mod-row .m-name{font-size:14px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .mod-row .m-meta{font-size:12px;color:var(--sub);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -514,6 +514,7 @@
       <div class="nav-item" data-cat="kanban"><span class="dot kanban"></span>看板类（数据）</div>
       <div class="nav-item" data-cat="app"><span class="dot app"></span>应用类（工具）</div>
       <div class="nav-item" data-cat="daily"><span class="dot daily"></span>日报类</div>
+      <div class="nav-item" data-cat="mix"><span class="dot mix"></span>综合类</div>
     </div>
     <div class="nav-pane" id="pane-owner" hidden>
       <div class="owner-search"><input id="owner-search" type="text" placeholder="搜索责任人" /></div>
@@ -580,6 +581,7 @@
             <option value="kanban">看板类（数据）</option>
             <option value="app">应用类（工具）</option>
             <option value="daily">日报类</option>
+            <option value="mix">综合类</option>
           </select>
         </div>
         <div class="form-row">
@@ -801,7 +803,8 @@ const IP_ICONS = { jian: IP+'ip_jian.png', mei: IP+'ip_mei.png', meng: IP+'ip_me
 const CATS = {
   kanban:{label:'看板类',cls:'kanban',icon:IP_ICONS.meng},
   app:{label:'应用类',cls:'app',icon:IP_ICONS.jian},
-  daily:{label:'日报类',cls:'daily',icon:IP_ICONS.mei}
+  daily:{label:'日报类',cls:'daily',icon:IP_ICONS.mei},
+  mix:{label:'综合类',cls:'mix',icon:IP_ICONS.meng}
 };
 const ROLE_LABEL = { super_admin:'超级管理员', admin:'管理员', employee:'员工' };
 // 后端地址：云服务器部署时同源（空前缀）；github 镜像页指向云服务器绝对地址
@@ -927,16 +930,18 @@ let tabSeq=0; const tabs=[];
 const STAT_ICONS={
   kanban:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="5" height="16" rx="1"/><rect x="10" y="4" width="5" height="11" rx="1"/><rect x="17" y="4" width="4" height="14" rx="1"/></svg>',
   app:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
-  daily:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 2v3M16 2v3M4 9h16"/></svg>'
+  daily:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 2v3M16 2v3M4 9h16"/></svg>',
+  mix:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>'
 };
 function updateStat(){
-  const counts={kanban:0,app:0,daily:0};
+  const counts={kanban:0,app:0,daily:0,mix:0};
   modules.forEach(a=>{ if(counts[a.cat]!==undefined) counts[a.cat]++; });
   document.getElementById('sec-n').textContent=`共 ${modules.length} 个应用`;
   statEl.innerHTML=
     `<div class="stat-card kanban" data-cat="kanban"><span class="stat-ic">${STAT_ICONS.kanban}</span><span class="stat-col"><span class="stat-num">${counts.kanban}</span><span class="stat-label">看板</span></span></div>`+
     `<div class="stat-card app" data-cat="app"><span class="stat-ic">${STAT_ICONS.app}</span><span class="stat-col"><span class="stat-num">${counts.app}</span><span class="stat-label">应用</span></span></div>`+
-    `<div class="stat-card daily" data-cat="daily"><span class="stat-ic">${STAT_ICONS.daily}</span><span class="stat-col"><span class="stat-num">${counts.daily}</span><span class="stat-label">日报</span></span></div>`;
+    `<div class="stat-card daily" data-cat="daily"><span class="stat-ic">${STAT_ICONS.daily}</span><span class="stat-col"><span class="stat-num">${counts.daily}</span><span class="stat-label">日报</span></span></div>`+
+    `<div class="stat-card mix" data-cat="mix"><span class="stat-ic">${STAT_ICONS.mix}</span><span class="stat-col"><span class="stat-num">${counts.mix}</span><span class="stat-label">综合</span></span></div>`;
   statEl.querySelectorAll('.stat-card').forEach(card=>{
     const cat=card.dataset.cat; const navItem=document.querySelector(`.nav-item[data-cat="${cat}"]`);
     card.onclick=()=>{ if(navItem&&!navItem.classList.contains('disabled')) navItem.click(); };
