@@ -742,10 +742,14 @@
               </div>
             </div>
           </div>
+          <div class="all-apps" id="all-apps">
+            <div class="section-title"><span class="bar"></span><span>全部应用</span><span class="n" id="all-cn"></span></div>
+            <div class="cat-pills" id="cat-pills"><span class="cat-ind" id="cat-ind"></span></div>
+            <div class="grid" id="all-grid"></div>
+          </div>
         </div>
         <div class="home-cluster" id="home-cluster" hidden>
           <div class="section-title" id="sec-cluster"><span class="bar"></span><span id="sec-cluster-name">应用集群</span><span class="n" id="sec-cn"></span></div>
-          <div class="cat-pills" id="cat-pills"><span class="cat-ind" id="cat-ind"></span></div>
           <div class="grid" id="grid"></div>
         </div>
         <div class="home-dash" id="home-dash" hidden>
@@ -1259,6 +1263,7 @@ function isVisible(m){
 //  工作台渲染
 // ============================================================
 const grid=document.getElementById('grid');
+const allGrid=document.getElementById('all-grid');
 const search=document.getElementById('search');
 const countEl=document.getElementById('count');
 const statEl=document.getElementById('stat');
@@ -1388,16 +1393,15 @@ function render(){
   ov.hidden=true; cl.hidden=true; dh.hidden=true; dg.hidden=true; dv.hidden=true;
   if(curNode==='home'){
     ov.hidden=false;
+    renderAllApps(q);
     const roleLabel=currentRole==='staff'?'（员工视图）':'（管理员视图）';
     countEl.textContent=`共 ${modules.length} 个应用 ${roleLabel}`;
     return;
   }
   if(curNode.startsWith('cluster:')){
     const key=curNode.split(':')[1];
-    syncCatPills();
     const base=modules.filter(a=>isVisible(a) && a.cluster===key);
     const list=base.filter(a=>{
-      if(curCat!=='all' && a.cat!==curCat) return false;
       if(q&&!(a.name.toLowerCase().includes(q)||a.owner.toLowerCase().includes(q))) return false;
       return true;
     });
@@ -1413,8 +1417,8 @@ function render(){
       },170);
     }else{
       grid.innerHTML=gridEmptyHTML(
-        q?'未找到匹配的应用':'该分类下暂无应用',
-        q?'试试调整搜索关键词，或切换上方分类胶囊。':'切换上方分类胶囊，查看其他应用。'
+        q?'未找到匹配的应用':'该集群下暂无应用',
+        q?'试试调整搜索关键词。':'该集群暂未配置应用，敬请期待。'
       );
     }
     const roleLabel=currentRole==='staff'?'（员工视图）':'（管理员视图）';
@@ -1425,6 +1429,27 @@ function render(){
     dh.hidden=false;
     renderDash(curNode.split(':')[1]);
   }
+}
+// 首页「全部应用」：按类型胶囊(curCat)+搜索全局筛选可见应用
+function renderAllApps(q){
+  if(!allGrid) return;
+  const list=modules.filter(a=>isVisible(a) && (curCat==='all'||a.cat===curCat)
+    && (!q||a.name.toLowerCase().includes(q)||a.owner.toLowerCase().includes(q)));
+  const cn=document.getElementById('all-cn'); if(cn) cn.textContent=`共 ${list.length} 个`;
+  if(list.length){
+    showGridSkeleton(allGrid, Math.min(list.length,8));
+    setTimeout(()=>{
+      if(curNode!=='home') return; // 切换后作废
+      allGrid.innerHTML='';
+      list.forEach(a=>allGrid.appendChild(buildCard(a)));
+    },170);
+  }else{
+    allGrid.innerHTML=gridEmptyHTML(
+      q?'未找到匹配的应用':'该分类下暂无应用',
+      q?'试试调整搜索关键词，或切换上方分类胶囊。':'切换上方分类胶囊，查看其他应用。'
+    );
+  }
+  moveCatInd();
 }
 // ===== 顶部分类胶囊（滑动高亮筛选） =====
 const CAT_FILTERS=[{k:'all',t:'全部'},{k:'kanban',t:'看板'},{k:'train',t:'培训'},{k:'qc',t:'质检'},{k:'tool',t:'工具'}];
