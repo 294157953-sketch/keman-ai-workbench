@@ -406,6 +406,9 @@
   .login-input:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
   .login-btn{width:100%;height:46px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--brand-2),var(--brand));color:#fff;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 12px rgba(232,86,10,.35);transition:transform .16s,filter .16s}
   .login-btn:hover{filter:brightness(1.05);transform:translateY(-1px)}
+  .login-pwd-box{margin-top:4px}
+  .login-pwd-item{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+  .login-pwd-item .login-pwd-label{font-size:12.5px;color:var(--nut);font-weight:600}
   .login-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;filter:none}
   .login-tip{font-size:12px;color:var(--sub);text-align:center;margin-top:16px;line-height:1.6}
   .login-err{font-size:12.5px;color:#C0392B;background:#FBEAE8;border:1px solid #F0D2CC;border-radius:8px;padding:8px 12px;margin-bottom:14px;display:none}
@@ -437,8 +440,11 @@
       <label for="login-name">姓名</label>
       <input class="login-input" id="login-name" placeholder="请输入你的姓名（如：鼠清商）" autocomplete="off" />
     </div>
+    <div class="login-field" id="login-pwd-box" hidden>
+      <div id="login-pwd-list"></div>
+    </div>
     <button class="login-btn" id="login-btn" type="submit">登录工作台</button>
-    <div class="login-tip">输入姓名即可登录，无需密码。<br/>如提示「姓名不存在」，请联系管理员在「人员配置」中添加你。</div>
+    <div class="login-tip">输入姓名即可登录。<br/>如提示「姓名不存在」，请联系管理员在「人员配置」中添加你。</div>
   </form>
 </div>
 
@@ -483,6 +489,8 @@
         <div class="hd-pop-actions">
           <button class="hd-pop-btn" id="pop-personnel" type="button">👥 人员配置</button>
           <button class="hd-pop-btn" id="pop-modules" type="button">⚙ 模块配置后台</button>
+          <button class="hd-pop-btn" id="pop-roles" type="button" hidden>🔑 角色配置</button>
+          <button class="hd-pop-btn" id="pop-perms" type="button" hidden>📑 权限配置</button>
           <button class="hd-pop-btn danger" id="pop-logout" type="button">退出登录</button>
         </div>
       </div>
@@ -649,8 +657,8 @@
       <div id="pf-table-wrap">
         <table class="pf-table">
           <thead><tr>
-            <th style="width:90px">姓名</th><th style="width:90px">角色</th>
-            <th>可见应用数</th><th style="width:160px">创建时间</th><th style="width:140px;text-align:right">操作</th>
+            <th style="width:90px">姓名</th><th style="width:160px">角色</th>
+            <th>角色数</th><th style="width:160px">创建时间</th><th style="width:140px;text-align:right">操作</th>
           </tr></thead>
           <tbody id="pf-tbody"></tbody>
         </table>
@@ -676,15 +684,12 @@
         <input id="pf-edit-name" placeholder="如：鼠小满" required />
       </div>
       <div class="form-row">
-        <label for="pf-edit-role">角色</label>
-        <select id="pf-edit-role">
-          <option value="admin">管理员</option>
-          <option value="employee">员工</option>
-        </select>
+        <label>角色（可多选）</label>
+        <div id="pf-edit-roles" style="flex:1;display:flex;flex-wrap:wrap;gap:8px;max-height:180px;overflow:auto;padding:6px;border:1px solid var(--line);border-radius:8px"></div>
       </div>
-      <div class="form-row" id="pf-edit-apps-row">
-        <label>可见应用</label>
-        <div id="pf-edit-apps" style="flex:1;display:flex;flex-wrap:wrap;gap:8px;max-height:180px;overflow:auto;padding:6px;border:1px solid var(--line);border-radius:8px"></div>
+      <div class="form-row" id="pf-edit-pwd-row" hidden>
+        <label>角色密码</label>
+        <div id="pf-edit-pwds" style="flex:1;display:flex;flex-direction:column;gap:10px"></div>
       </div>
       <div class="form-row">
         <label for="pf-edit-remark">备注</label>
@@ -715,6 +720,82 @@
   </div>
 </div>
 
+<!-- 权限配置后台 -->
+<div class="modal" id="perm-modal" hidden>
+  <div class="modal-mask" id="perm-mask"></div>
+  <div class="modal-panel" style="width:min(660px,100%)" role="dialog" aria-modal="true" aria-label="权限配置">
+    <div class="modal-head">
+      <img src="https://294157953-sketch.github.io/keman-ai-workbench/ip_jian.png" class="modal-logo" alt="" />
+      <div class="modal-title">权限配置（网页权限点）</div>
+      <button class="modal-close" id="perm-close" aria-label="关闭">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="pf-bar">
+        <div class="pf-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="perm-search" placeholder="搜索权限" /></div>
+        <button class="btn-primary" id="perm-add" type="button">+ 新增权限</button>
+      </div>
+      <div id="perm-table-wrap"><table class="pf-table">
+        <thead><tr><th>权限名称</th><th>网页路径</th><th>描述</th><th style="width:120px;text-align:right">操作</th></tr></thead>
+        <tbody id="perm-tbody"></tbody></table>
+        <div class="empty-tip" id="perm-empty" hidden>暂无权限，点击「新增权限」添加。</div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 权限编辑 -->
+<div class="modal" id="perm-edit-modal" hidden>
+  <div class="modal-mask" id="perm-edit-mask"></div>
+  <div class="modal-panel" style="width:min(520px,100%)">
+    <div class="modal-head"><div class="modal-title" id="perm-edit-title">新增权限</div><button class="modal-close" id="perm-edit-close" aria-label="关闭">×</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="perm-edit-id" />
+      <div class="form-row"><label>权限名称</label><input id="perm-edit-name" placeholder="如：客满经营总览" required /></div>
+      <div class="form-row"><label>网页路径</label><input id="perm-edit-page" placeholder="如：/pages/dash-l1 或 应用链接" /></div>
+      <div class="form-row"><label>描述</label><input id="perm-edit-desc" placeholder="选填" /></div>
+      <div class="login-err" id="perm-edit-err"></div>
+      <div class="form-actions"><span class="grow"></span><button class="btn-cancel" id="perm-edit-cancel" type="button">取消</button><button class="btn-primary" id="perm-edit-save" type="button">保存</button></div>
+    </div>
+  </div>
+</div>
+<!-- 角色配置后台 -->
+<div class="modal" id="role-modal" hidden>
+  <div class="modal-mask" id="role-mask"></div>
+  <div class="modal-panel" style="width:min(660px,100%)" role="dialog" aria-modal="true" aria-label="角色配置">
+    <div class="modal-head">
+      <img src="https://294157953-sketch.github.io/keman-ai-workbench/ip_jian.png" class="modal-logo" alt="" />
+      <div class="modal-title">角色配置</div>
+      <button class="modal-close" id="role-close" aria-label="关闭">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="pf-bar">
+        <div class="pf-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="role-search" placeholder="搜索角色" /></div>
+        <button class="btn-primary" id="role-add" type="button">+ 新增角色</button>
+      </div>
+      <div id="role-table-wrap"><table class="pf-table">
+        <thead><tr><th>角色名称</th><th>权限数</th><th>需密码</th><th>管理员</th><th style="width:120px;text-align:right">操作</th></tr></thead>
+        <tbody id="role-tbody"></tbody></table>
+        <div class="empty-tip" id="role-empty" hidden>暂无角色</div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 角色编辑 -->
+<div class="modal" id="role-edit-modal" hidden>
+  <div class="modal-mask" id="role-edit-mask"></div>
+  <div class="modal-panel" style="width:min(560px,100%)">
+    <div class="modal-head"><div class="modal-title" id="role-edit-title">新增角色</div><button class="modal-close" id="role-edit-close" aria-label="关闭">×</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="role-edit-id" />
+      <div class="form-row"><label>角色名称</label><input id="role-edit-name" placeholder="如：业务处主管" required /></div>
+      <div class="form-row"><label>权限（可多选）</label><div id="role-edit-perms" style="flex:1;display:flex;flex-wrap:wrap;gap:8px;max-height:200px;overflow:auto;padding:6px;border:1px solid var(--line);border-radius:8px"></div></div>
+      <div class="form-row" style="align-items:center"><label style="flex:0 0 90px">需要密码</label><input type="checkbox" id="role-edit-pwd" style="width:auto" /></div>
+      <div class="form-row" style="align-items:center"><label style="flex:0 0 90px">管理员角色</label><input type="checkbox" id="role-edit-admin" style="width:auto" /></div>
+      <div class="form-row"><label>备注</label><input id="role-edit-remark" placeholder="选填" /></div>
+      <div class="login-err" id="role-edit-err"></div>
+      <div class="form-actions"><span class="grow"></span><button class="btn-cancel" id="role-edit-cancel" type="button">取消</button><button class="btn-primary" id="role-edit-save" type="button">保存</button></div>
+    </div>
+  </div>
+</div>
 <!-- 使用指南 -->
 <div class="modal" id="guide-modal" hidden>
   <div class="modal-mask" id="guide-mask"></div>
@@ -767,6 +848,14 @@
           <button class="set-item" id="set-sync" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>从云端同步配置<span class="si-status" id="set-sync-status">已同步</span></button>
         </div>
       </div>
+      <!-- 权限管理（仅超级管理员可见） -->
+      <div class="set-group" id="set-admin-group-perm" hidden>
+        <div class="set-group-title">权限管理</div>
+        <div class="set-list">
+          <button class="set-item" id="set-roles" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>角色配置</button>
+          <button class="set-item" id="set-perms" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>权限配置</button>
+        </div>
+      </div>
       <!-- 账户 -->
       <div class="set-group">
         <div class="set-group-title">账户</div>
@@ -813,10 +902,18 @@ const API_BASE  = IS_MIRROR ? 'http://47.96.108.51:8080' : '';
 const SHARED_CONFIG_URL = API_BASE + '/modules';
 
 // ===== 全局状态 =====
-let currentUser = null;            // {id,name,role,visibleApps?}
-let currentRole = 'admin';         // 派生：admin/super_admin -> 'admin'；employee -> 'staff'
+let currentUser = null;            // {id,name,roleIds,permIds}
+let currentRole = 'admin';         // 派生：含管理员角色 -> 'admin'；否则 'staff'
 let modules = [];                  // 云端应用配置
 let loginTime = '';
+let ALL_ROLES = [];                // 全部角色（后端）
+let ALL_PERMS = [];                // 全部权限（后端）
+async function loadMeta(){
+  try{
+    const [r1,r2]=await Promise.all([apiReq('GET','/api/roles'),apiReq('GET','/api/permissions')]);
+    ALL_ROLES=r1.data||[]; ALL_PERMS=r2.data||[];
+  }catch(e){ ALL_ROLES=[]; ALL_PERMS=[]; }
+}
 
 function uid(){ return 'm'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
 function cloudBadge(state,text){
@@ -824,7 +921,10 @@ function cloudBadge(state,text){
   el.className='cloud-badge show '+(state||'');
   const t=el.querySelector('.cb-text'); if(t) t.textContent=text||'';
 }
-function isAdmin(){ return currentUser && (currentUser.role==='super_admin'||currentUser.role==='admin'); }
+function roleName(rid){ const r=ALL_ROLES.find(x=>x.id===rid); return r?r.name:rid; }
+function roleColor(rid){ const r=ALL_ROLES.find(x=>x.id===rid); if(!r) return 'employee'; if(r.isAdmin&&r.name==='超级管理员') return 'super_admin'; if(r.isAdmin) return 'admin'; return 'employee'; }
+function isAdmin(){ return !!(currentUser && currentUser.roleIds && currentUser.roleIds.some(rid=>{ const r=ALL_ROLES.find(x=>x.id===rid); return r&&r.isAdmin; })); }
+function isSuper(){ return !!(currentUser && currentUser.roleIds && currentUser.roleIds.some(rid=>{ const r=ALL_ROLES.find(x=>x.id===rid); return r&&r.isAdmin&&r.name==='超级管理员'; })); }
 
 // ============================================================
 //  API 请求封装（自动带 token，统一处理 code/401）
@@ -844,8 +944,8 @@ async function apiReq(method, path, body){
   else { try{ data=JSON.parse(await res.text()); }catch(e){} }
   if(res.status===401){ throw {_401:true, message:'登录已失效，请重新登录'}; }
   if(!res.ok){ throw new Error((data&&data.message)||('请求失败('+res.status+')')); }
-  // 业务码：{code:0,...} 或 数组/ {ok:true} 直接返回
-  if(data && typeof data==='object' && data.code!==undefined && data.code!==0){
+  // 业务码：{code:0,...} 或 数组/ {ok:true} 直接返回；code:2 表示"需要密码"，由调用方处理，不抛错
+  if(data && typeof data==='object' && data.code!==undefined && data.code!==0 && data.code!==2){
     throw new Error(data.message||'操作失败');
   }
   return data;
@@ -855,16 +955,18 @@ async function apiReq(method, path, body){
 //  Auth 登录认证 + 路由守卫
 // ============================================================
 const Auth = {
-  async login(name){
-    const d=await apiReq('POST','/api/auth/login',{name});
+  async login(name, pw){
+    const body={name}; if(pw) body.pw=pw;
+    const d=await apiReq('POST','/api/auth/login', body);
+    if(d.code===2) return d;                 // 需要密码，由登录页处理
     localStorage.setItem('auth-token', d.data.token);
-    const u={id:d.data.id,name:d.data.name,role:d.data.role,visibleApps:d.data.visibleApps||[]};
+    const u={id:d.data.id,name:d.data.name,roleIds:d.data.roleIds||[],permIds:d.data.permIds||[]};
     localStorage.setItem('auth-user', JSON.stringify(u));
-    currentUser=u; return u;
+    currentUser=u; return d;
   },
   async me(){
     const d=await apiReq('GET','/api/auth/me');
-    const u={id:d.data.id,name:d.data.name,role:d.data.role,visibleApps:d.data.visibleApps||[]};
+    const u={id:d.data.id,name:d.data.name,roleIds:d.data.roleIds||[],permIds:d.data.permIds||[]};
     localStorage.setItem('auth-user', JSON.stringify(u));
     currentUser=u; return u;
   },
@@ -907,12 +1009,11 @@ async function pushSharedConfig(){
   }catch(e){ cloudBadge('err','同步失败'); }
 }
 
-// 员工可见性：admin 看全部；employee 看 perm==='staff' 或本人 visibleApps 含该 id
+// 员工可见性：管理员看全部；员工仅看其权限并集(permIds)命中的模块
 function isVisible(m){
   if(currentRole==='admin') return true;
-  if(m.perm==='staff') return true;
-  const va=(currentUser&&currentUser.visibleApps)||[];
-  return va.includes(m.id);
+  const perms=(currentUser&&currentUser.permIds)||[];
+  return perms.includes(m.id);
 }
 
 // ============================================================
@@ -995,7 +1096,7 @@ function render(){
     card.className='card'; card.style.setProperty('--accent',`var(--c-${a.cat})`);
     const linkHtml=a.url?`<a class="open" href="${a.url}" target="_blank" onclick="event.stopPropagation()">打开↗</a>`:'';
     const ssoIcon=a.sso?`<span class="sso-ico" title="飞书 SSO · 仅新窗口打开"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>`:'';
-    const permTag=(currentRole==='admin'&&a.perm==='admin')?`<span class="perm-tag">管理专属</span>`:'';
+    const permTag=(isAdmin()&&a.perm==='admin')?`<span class="perm-tag">管理专属</span>`:'';
     const actions=(a.url)?`<div class="card-actions">${linkHtml}${ssoIcon}</div>`:'';
     card.innerHTML=`<span class="tag ${c.cls}">${c.label}</span>${permTag}<h3>${a.name}</h3><div class="owner">责任人：<b>${a.owner}</b></div>${actions}`;
     card.onclick=()=>openApp(a);
@@ -1169,11 +1270,11 @@ function renderPfRows(){
   document.getElementById('pf-empty').hidden=list.length>0;
   list.forEach(u=>{
     const tr=document.createElement('tr');
-    const isSuper=u.role==='super_admin';
-    const appsN=(u.visibleApps&&u.visibleApps.length)||0;
+    const isSuper=(u.roleIds||[]).some(rid=>{ const r=ALL_ROLES.find(x=>x.id===rid); return r&&r.isAdmin&&r.name==='超级管理员'; });
+    const roleNames=(u.roleIds||[]).map(rid=>roleName(rid)).join('、')||'—';
     tr.innerHTML=`<td><b>${u.name}</b></td>
-      <td><span class="pf-role ${u.role}">${ROLE_LABEL[u.role]||u.role}</span></td>
-      <td class="pf-apps">${u.role==='super_admin'||u.role==='admin'?'全部应用':(appsN+' 个')}</td>
+      <td><span class="pf-role">${roleNames}</span></td>
+      <td class="pf-apps">${(u.roleIds||[]).length} 个角色</td>
       <td>${u.createTime||'—'}</td>
       <td><div class="pf-ops">
         <button class="pf-edit" ${isSuper?'disabled':''}>编辑</button>
@@ -1196,40 +1297,59 @@ const pfEditModal=document.getElementById('pf-edit-modal');
 document.getElementById('pf-edit-close').onclick=()=>pfEditModal.hidden=true;
 document.getElementById('pf-edit-mask').onclick=()=>pfEditModal.hidden=true;
 document.getElementById('pf-edit-cancel').onclick=()=>pfEditModal.hidden=true;
-document.getElementById('pf-edit-role').onchange=(e)=>{ document.getElementById('pf-edit-apps-row').style.display=(e.target.value==='employee'?'flex':'none'); };
+// 角色多选在 openPfEdit 内渲染并绑定 onchange（动态显示密码框）
 
+function renderPfPwds(roleIds){
+  const box=document.getElementById('pf-edit-pwds'); box.innerHTML='';
+  const need=roleIds.filter(rid=>{ const r=ALL_ROLES.find(x=>x.id===rid); return r&&r.needPassword; });
+  const row=document.getElementById('pf-edit-pwd-row');
+  if(!need.length){ row.hidden=true; return; }
+  row.hidden=false;
+  const cur=window.__pfCurUser||null;
+  need.forEach(rid=>{
+    const r=ALL_ROLES.find(x=>x.id===rid);
+    const lab=document.createElement('label'); lab.style.cssText='display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--nut);font-weight:600';
+    const inp=document.createElement('input'); inp.type='password'; inp.className='login-input'; inp.dataset.rid=rid;
+    inp.placeholder=(cur&&(cur.roleIds||[]).includes(rid))?'留空则保持原密码':'必填';
+    lab.appendChild(document.createTextNode(r.name+' 登录密码'));
+    lab.appendChild(inp);
+    box.appendChild(lab);
+  });
+}
 function openPfEdit(user){
   const isEdit=!!user;
+  window.__pfCurUser=user||null;
   document.getElementById('pf-edit-title').textContent=isEdit?'编辑人员':'新增人员';
   document.getElementById('pf-edit-id').value=isEdit?user.id:'';
   document.getElementById('pf-edit-name').value=isEdit?user.name:'';
-  document.getElementById('pf-edit-role').value=isEdit?user.role:'employee';
   document.getElementById('pf-edit-remark').value=isEdit?(user.remark||''):'';
-  const appsBox=document.getElementById('pf-edit-apps');
-  const selApps=new Set(isEdit&&user.visibleApps?user.visibleApps:[]);
-  appsBox.innerHTML='';
-  modules.forEach(m=>{
+  const rolesBox=document.getElementById('pf-edit-roles'); rolesBox.innerHTML='';
+  const selRoles=new Set(isEdit&&user.roleIds?user.roleIds:[]);
+  ALL_ROLES.forEach(r=>{
     const lab=document.createElement('label'); lab.style.cssText='display:flex;align-items:center;gap:5px;font-size:12.5px;background:#F6EEE5;padding:4px 9px;border-radius:8px;cursor:pointer';
-    const cb=document.createElement('input'); cb.type='checkbox'; cb.value=m.id; if(selApps.has(m.id)) cb.checked=true;
-    lab.appendChild(cb); lab.appendChild(document.createTextNode(m.name));
-    appsBox.appendChild(lab);
+    const cb=document.createElement('input'); cb.type='checkbox'; cb.value=r.id; if(selRoles.has(r.id)) cb.checked=true;
+    lab.appendChild(cb); lab.appendChild(document.createTextNode(r.name+(r.isAdmin?'（管理员）':'')));
+    rolesBox.appendChild(lab);
   });
-  document.getElementById('pf-edit-apps-row').style.display=(isEdit&&user.role==='employee')?'flex':'none';
+  rolesBox.onchange=()=>{ renderPfPwds([...rolesBox.querySelectorAll('input:checked')].map(c=>c.value)); };
+  renderPfPwds([...rolesBox.querySelectorAll('input:checked')].map(c=>c.value));
   document.getElementById('pf-edit-err').classList.remove('show');
   pfEditModal.hidden=false;
 }
 document.getElementById('pf-edit-save').onclick=async()=>{
   const id=document.getElementById('pf-edit-id').value;
   const name=document.getElementById('pf-edit-name').value.trim();
-  const role=document.getElementById('pf-edit-role').value;
   const remark=document.getElementById('pf-edit-remark').value.trim();
+  const roleIds=[...document.querySelectorAll('#pf-edit-roles input:checked')].map(c=>c.value);
   const errEl=document.getElementById('pf-edit-err'); errEl.classList.remove('show');
   if(!name){ errEl.textContent='姓名必填'; errEl.classList.add('show'); return; }
-  const visibleApps=role==='admin'?[]:[...document.querySelectorAll('#pf-edit-apps input:checked')].map(c=>c.value);
+  if(!roleIds.length){ errEl.textContent='至少分配一个角色'; errEl.classList.add('show'); return; }
+  const pw={};
+  document.querySelectorAll('#pf-edit-pwds input').forEach(inp=>{ if(inp.value.trim()) pw[inp.dataset.rid]=inp.value.trim(); });
   const btn=document.getElementById('pf-edit-save'); btn.disabled=true;
   try{
-    if(id){ await apiReq('PUT','/api/users/'+id,{name,role,visibleApps,remark}); }
-    else { await apiReq('POST','/api/users',{name,role,visibleApps,remark}); }
+    if(id){ await apiReq('PUT','/api/users/'+id,{name,roleIds,pw,remark}); }
+    else { await apiReq('POST','/api/users',{name,roleIds,pw,remark}); }
     pfEditModal.hidden=true;
     await openPersonnel();
   }catch(e){ errEl.textContent=e.message||'保存失败'; errEl.classList.add('show'); }
@@ -1254,6 +1374,147 @@ const guideOpen=document.getElementById('hero-guide');
 if(guideOpen) guideOpen.onclick=()=>{ guideModal.hidden=false; };
 document.getElementById('guide-close').onclick=()=>guideModal.hidden=true;
 document.getElementById('guide-mask').onclick=()=>guideModal.hidden=true;
+
+// ============================================================
+//  权限配置后台（仅超级管理员）
+// ============================================================
+const permModal=document.getElementById('perm-modal');
+const permTbody=document.getElementById('perm-tbody');
+let permFilter='';
+document.getElementById('perm-close').onclick=()=>permModal.hidden=true;
+document.getElementById('perm-mask').onclick=()=>permModal.hidden=true;
+document.getElementById('perm-search').oninput=(e)=>{ permFilter=e.target.value; renderPermRows(); };
+document.getElementById('perm-add').onclick=()=>openPermEdit(null);
+async function openPermConfig(){
+  if(!isSuper()){ alert('仅超级管理员可配置权限'); return; }
+  permModal.hidden=false; permTbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:#9A8C80;padding:18px">加载中…</td></tr>';
+  try{ const d=await apiReq('GET','/api/permissions'); ALL_PERMS=d.data||[]; renderPermRows(); }
+  catch(e){ permTbody.innerHTML='<tr><td colspan="4" style="color:#C0392B">'+(e.message||'加载失败')+'</td></tr>'; }
+}
+function renderPermRows(){
+  const f=permFilter.trim().toLowerCase();
+  const list=ALL_PERMS.filter(p=>!f||p.name.toLowerCase().includes(f)||(p.page||'').toLowerCase().includes(f));
+  permTbody.innerHTML=''; document.getElementById('perm-empty').hidden=list.length>0;
+  list.forEach(p=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><b>${p.name}</b></td><td class="pf-apps">${p.page||'—'}</td><td>${p.desc||'—'}</td>
+      <td><div class="pf-ops"><button class="pf-edit">编辑</button><button class="pf-del">删除</button></div></td>`;
+    tr.querySelector('.pf-edit').onclick=()=>openPermEdit(p);
+    tr.querySelector('.pf-del').onclick=()=>confirmDelete('确认删除权限「'+p.name+'」？该权限将从所有角色中移除。',()=>delPerm(p.id));
+    permTbody.appendChild(tr);
+  });
+}
+async function delPerm(id){ try{ await apiReq('DELETE','/api/permissions/'+id); ALL_PERMS=ALL_PERMS.filter(x=>x.id!==id); renderPermRows(); }catch(e){ alert(e.message||'删除失败'); } }
+const permEditModal=document.getElementById('perm-edit-modal');
+document.getElementById('perm-edit-close').onclick=()=>permEditModal.hidden=true;
+document.getElementById('perm-edit-mask').onclick=()=>permEditModal.hidden=true;
+document.getElementById('perm-edit-cancel').onclick=()=>permEditModal.hidden=true;
+function openPermEdit(p){
+  const isEdit=!!p;
+  document.getElementById('perm-edit-title').textContent=isEdit?'编辑权限':'新增权限';
+  document.getElementById('perm-edit-id').value=isEdit?p.id:'';
+  document.getElementById('perm-edit-name').value=isEdit?p.name:'';
+  document.getElementById('perm-edit-page').value=isEdit?(p.page||''):'';
+  document.getElementById('perm-edit-desc').value=isEdit?(p.desc||''):'';
+  document.getElementById('perm-edit-err').classList.remove('show');
+  permEditModal.hidden=false;
+}
+document.getElementById('perm-edit-save').onclick=async()=>{
+  const id=document.getElementById('perm-edit-id').value;
+  const name=document.getElementById('perm-edit-name').value.trim();
+  const page=document.getElementById('perm-edit-page').value.trim();
+  const desc=document.getElementById('perm-edit-desc').value.trim();
+  const errEl=document.getElementById('perm-edit-err'); errEl.classList.remove('show');
+  if(!name){ errEl.textContent='权限名称必填'; errEl.classList.add('show'); return; }
+  const btn=document.getElementById('perm-edit-save'); btn.disabled=true;
+  try{
+    if(id){ await apiReq('PUT','/api/permissions/'+id,{name,page,desc}); }
+    else { await apiReq('POST','/api/permissions',{name,page,desc}); }
+    permEditModal.hidden=true; await openPermConfig();
+  }catch(e){ errEl.textContent=e.message||'保存失败'; errEl.classList.add('show'); }
+  finally{ btn.disabled=false; }
+};
+
+// ============================================================
+//  角色配置后台（仅超级管理员）
+// ============================================================
+const roleModal=document.getElementById('role-modal');
+const roleTbody=document.getElementById('role-tbody');
+let roleFilter='';
+document.getElementById('role-close').onclick=()=>roleModal.hidden=true;
+document.getElementById('role-mask').onclick=()=>roleModal.hidden=true;
+document.getElementById('role-search').oninput=(e)=>{ roleFilter=e.target.value; renderRoleRows(); };
+document.getElementById('role-add').onclick=()=>openRoleEdit(null);
+async function openRoleConfig(){
+  if(!isSuper()){ alert('仅超级管理员可配置角色'); return; }
+  roleModal.hidden=false; roleTbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:#9A8C80;padding:18px">加载中…</td></tr>';
+  try{
+    const [r1,r2]=await Promise.all([apiReq('GET','/api/roles'),apiReq('GET','/api/permissions')]);
+    ALL_ROLES=r1.data||[]; ALL_PERMS=r2.data||[]; renderRoleRows();
+  }catch(e){ roleTbody.innerHTML='<tr colspan="5" style="color:#C0392B">'+(e.message||'加载失败')+'</td></tr>'; }
+}
+function renderRoleRows(){
+  const f=roleFilter.trim().toLowerCase();
+  const list=ALL_ROLES.filter(r=>!f||r.name.toLowerCase().includes(f));
+  roleTbody.innerHTML=''; document.getElementById('role-empty').hidden=list.length>0;
+  list.forEach(r=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><b>${r.name}</b></td><td class="pf-apps">${(r.permIds||[]).length} 个</td>
+      <td>${r.needPassword?'<span class="pf-role" style="background:#E5392F">是</span>':'否'}</td>
+      <td>${r.isAdmin?'<span class="pf-role" style="background:var(--brand)">是</span>':'否'}</td>
+      <td><div class="pf-ops"><button class="pf-edit">编辑</button><button class="pf-del">删除</button></div></td>`;
+    tr.querySelector('.pf-edit').onclick=()=>openRoleEdit(r);
+    tr.querySelector('.pf-del').onclick=()=>confirmDelete('确认删除角色「'+r.name+'」？将从所有人员中移除该角色引用。',()=>delRole(r.id));
+    roleTbody.appendChild(tr);
+  });
+}
+async function delRole(id){ try{ await apiReq('DELETE','/api/roles/'+id); ALL_ROLES=ALL_ROLES.filter(x=>x.id!==id); renderRoleRows(); }catch(e){ alert(e.message||'删除失败'); } }
+const roleEditModal=document.getElementById('role-edit-modal');
+document.getElementById('role-edit-close').onclick=()=>roleEditModal.hidden=true;
+document.getElementById('role-edit-mask').onclick=()=>roleEditModal.hidden=true;
+document.getElementById('role-edit-cancel').onclick=()=>roleEditModal.hidden=true;
+function openRoleEdit(r){
+  const isEdit=!!r;
+  document.getElementById('role-edit-title').textContent=isEdit?'编辑角色':'新增角色';
+  document.getElementById('role-edit-id').value=isEdit?r.id:'';
+  document.getElementById('role-edit-name').value=isEdit?r.name:'';
+  document.getElementById('role-edit-pwd').checked=isEdit?!!r.needPassword:false;
+  document.getElementById('role-edit-admin').checked=isEdit?!!r.isAdmin:false;
+  document.getElementById('role-edit-remark').value=isEdit?(r.remark||''):'';
+  const box=document.getElementById('role-edit-perms'); box.innerHTML='';
+  const sel=new Set(isEdit&&r.permIds?r.permIds:[]);
+  ALL_PERMS.forEach(p=>{
+    const lab=document.createElement('label'); lab.style.cssText='display:flex;align-items:center;gap:5px;font-size:12.5px;background:#F6EEE5;padding:4px 9px;border-radius:8px;cursor:pointer';
+    const cb=document.createElement('input'); cb.type='checkbox'; cb.value=p.id; if(sel.has(p.id)) cb.checked=true;
+    lab.appendChild(cb); lab.appendChild(document.createTextNode(p.name));
+    box.appendChild(lab);
+  });
+  document.getElementById('role-edit-err').classList.remove('show');
+  roleEditModal.hidden=false;
+}
+document.getElementById('role-edit-save').onclick=async()=>{
+  const id=document.getElementById('role-edit-id').value;
+  const name=document.getElementById('role-edit-name').value.trim();
+  const permIds=[...document.querySelectorAll('#role-edit-perms input:checked')].map(c=>c.value);
+  const needPassword=document.getElementById('role-edit-pwd').checked;
+  const isAdminChk=document.getElementById('role-edit-admin').checked;
+  const remark=document.getElementById('role-edit-remark').value.trim();
+  const errEl=document.getElementById('role-edit-err'); errEl.classList.remove('show');
+  if(!name){ errEl.textContent='角色名称必填'; errEl.classList.add('show'); return; }
+  const btn=document.getElementById('role-edit-save'); btn.disabled=true;
+  try{
+    if(id){ await apiReq('PUT','/api/roles/'+id,{name,permIds,needPassword,isAdmin:isAdminChk,remark}); }
+    else { await apiReq('POST','/api/roles',{name,permIds,needPassword,isAdmin:isAdminChk,remark}); }
+    roleEditModal.hidden=true; await openRoleConfig();
+  }catch(e){ errEl.textContent=e.message||'保存失败'; errEl.classList.add('show'); }
+  finally{ btn.disabled=false; }
+};
+
+// 入口绑定（设置弹窗 + 用户菜单，均经 isSuper 守卫）
+document.getElementById('set-roles').onclick=()=>{ closeSetting(); openRoleConfig(); };
+document.getElementById('set-perms').onclick=()=>{ closeSetting(); openPermConfig(); };
+document.getElementById('pop-roles').onclick=()=>{ hdUser.classList.remove('open'); openRoleConfig(); };
+document.getElementById('pop-perms').onclick=()=>{ hdUser.classList.remove('open'); openPermConfig(); };
 const hdUser=document.getElementById('hd-user');
 document.getElementById('hd-user-trigger').onclick=(e)=>{ e.stopPropagation(); hdUser.classList.toggle('open'); };
 document.addEventListener('click',e=>{ if(!hdUser.contains(e.target)) hdUser.classList.remove('open'); });
@@ -1267,12 +1528,14 @@ function openSetting(){
   if(currentUser){
     document.getElementById('set-avatar').textContent=currentUser.name?currentUser.name.charAt(0):'客';
     document.getElementById('set-name-text').textContent=currentUser.name||'--';
+    const mainRole=(currentUser.roleIds&&currentUser.roleIds[0])||'';
     const rp=document.getElementById('set-role');
-    rp.className='role-pill '+(currentUser.role||'');
-    rp.textContent=ROLE_LABEL[currentUser.role]||currentUser.role;
+    rp.className='role-pill '+roleColor(mainRole);
+    rp.textContent=roleName(mainRole);
     document.getElementById('set-sub').textContent='登录时间：'+(loginTime||'--');
   }
   document.getElementById('set-admin-group').hidden=!isAdmin();
+  const sg=document.getElementById('set-admin-group-perm'); if(sg) sg.hidden=!isSuper();
   settingModal.hidden=false;
 }
 function closeSetting(){ settingModal.hidden=true; }
@@ -1323,28 +1586,32 @@ document.addEventListener('click',e=>{ if(!hdMore.contains(e.target)) document.g
 //  登录 / 进入应用
 // ============================================================
 function applyUserInfo(){
-  currentRole = (currentUser && currentUser.role!=='employee') ? 'admin' : 'staff';
+  const ad=isAdmin();
+  currentRole = ad ? 'admin' : 'staff';
   loginTime = new Date().toLocaleString('zh-CN',{hour12:false});
   const initial=currentUser.name?currentUser.name.charAt(0):'客';
   document.getElementById('hd-avatar').textContent=initial;
   document.getElementById('hd-avatar-lg').textContent=initial;
   document.getElementById('hd-username').textContent=currentUser.name;
-  // 角色标签（带颜色）
+  // 角色标签（取主角色）
+  const mainRole=(currentUser.roleIds&&currentUser.roleIds[0])||'';
   const roleWrap=document.getElementById('hd-userrole');
   roleWrap.innerHTML='';
   const p=document.createElement('span');
-  p.className='role-pill '+currentUser.role;
-  p.textContent=ROLE_LABEL[currentUser.role]||currentUser.role;
+  p.className='role-pill '+roleColor(mainRole);
+  p.textContent=roleName(mainRole);
   roleWrap.appendChild(p);
   document.getElementById('pop-name').textContent=currentUser.name;
   document.getElementById('pop-name2').textContent=currentUser.name;
-  document.getElementById('pop-role').textContent=ROLE_LABEL[currentUser.role]||currentUser.role;
-  document.getElementById('pop-role2').textContent=ROLE_LABEL[currentUser.role]||currentUser.role;
+  document.getElementById('pop-role').textContent=roleName(mainRole);
+  document.getElementById('pop-role2').textContent=roleName(mainRole);
   document.getElementById('pop-time').textContent=loginTime;
-  // 模块配置入口按权限显隐
-  document.getElementById('btn-admin').hidden=!isAdmin();
-  document.getElementById('pop-modules').hidden=!isAdmin();
-  document.getElementById('pop-personnel').hidden=!isAdmin();
+  // 配置入口按权限显隐
+  document.getElementById('btn-admin').hidden=!ad;
+  document.getElementById('pop-modules').hidden=!ad;
+  document.getElementById('pop-personnel').hidden=!ad;
+  const pe=document.getElementById('pop-roles'); if(pe) pe.hidden=!isSuper();
+  const pm=document.getElementById('pop-perms'); if(pm) pm.hidden=!isSuper();
 }
 function showLogin(){
   document.getElementById('app-root').hidden=true;
@@ -1359,7 +1626,7 @@ function showLogin(){
 function showApp(){
   document.getElementById('login-view').hidden=true;
   document.getElementById('app-root').hidden=false;
-  applyUserInfo();
+  loadMeta().then(applyUserInfo);   // 拉取角色/权限后渲染标签与入口
   syncSharedConfig();
 }
 
@@ -1371,10 +1638,18 @@ loginForm.addEventListener('submit',async(e)=>{
   e.preventDefault();
   const name=document.getElementById('login-name').value.trim();
   if(!name){ loginErr.textContent='请输入姓名'; loginErr.classList.add('show'); return; }
+  const pwdBox=document.getElementById('login-pwd-box');
+  let pwMap=null;
+  if(!pwdBox.hidden){
+    pwMap={};
+    document.querySelectorAll('#login-pwd-list input').forEach(inp=>{ pwMap[inp.dataset.rid]=inp.value; });
+    if(Object.values(pwMap).some(v=>!v)){ loginErr.textContent='请填写所有角色密码'; loginErr.classList.add('show'); return; }
+  }
   loginErr.classList.remove('show');
-  loginBtn.disabled=true; loginBtn.innerHTML='<span class="login-loading"></span>登录中…';
+  loginBtn.disabled=true; loginBtn.textContent='登录中…';
   try{
-    await Auth.login(name);
+    const d=await Auth.login(name, pwMap);
+    if(d && d.code===2){ renderLoginPwd(d.needPwd); return; }   // 需要密码，动态展示密码输入
     showApp();
   }catch(err){
     loginBtn.disabled=false; loginBtn.textContent='登录工作台';
@@ -1382,6 +1657,17 @@ loginForm.addEventListener('submit',async(e)=>{
     loginErr.classList.add('show');
   }
 });
+function renderLoginPwd(needPwd){
+  const box=document.getElementById('login-pwd-list'); box.innerHTML='';
+  needPwd.forEach(r=>{
+    const lab=document.createElement('label'); lab.className='login-pwd-item';
+    lab.innerHTML=`<span class="login-pwd-label">${r.name}密码</span><input class="login-input" type="password" data-rid="${r.id}" placeholder="请输入${r.name}登录密码" autocomplete="off" />`;
+    box.appendChild(lab);
+  });
+  document.getElementById('login-pwd-box').hidden=false;
+  loginBtn.disabled=false; loginBtn.textContent='登录工作台';
+  loginErr.textContent='该账号需要密码验证，请输入对应角色密码'; loginErr.classList.add('show');
+}
 
 // 启动：检查 token -> 验证 -> 进入 / 否则登录
 async function boot(){
