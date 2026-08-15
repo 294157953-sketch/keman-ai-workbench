@@ -202,6 +202,7 @@
   .fw-card .fw-go{margin-top:8px;font-size:12px;color:var(--brand);font-weight:700}
   /* 看板占位 */
   .home-dash{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg)}
+  .home-dash[hidden],.dash-view[hidden],.dash-grid[hidden]{display:none!important}
   .dash-grid{width:100%;max-width:1120px;margin:22px auto;flex:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;padding:0 16px 20px;align-content:start;overflow-y:auto}
   .dash-grid .dash-ph{grid-column:1/-1;justify-self:center;align-self:center;text-align:center;max-width:560px}
   .dash-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px;cursor:pointer;transition:transform .18s var(--ease),box-shadow .18s,border-color .18s;box-shadow:var(--sh-1)}
@@ -1181,29 +1182,30 @@ function showDashView(app, backNode){
 function renderDash(lvl){
   const info=DASH_LEVELS[lvl];
   const apps=modules.filter(a=>String(a.dashLevel)===lvl && isVisible(a) && a.url);
-  const grid=document.getElementById('dash-grid');
-  const view=document.getElementById('dash-view');
-  grid.hidden=true; view.hidden=true;
+  const dg=document.getElementById('dash-grid');
+  const dv=document.getElementById('dash-view');
+  dg.hidden=true; dv.hidden=true;
+  dg.innerHTML=''; // 清理旧卡片
   countEl.textContent='数据看板层 · '+info.title;
   if(lvl==='1'){
     // 一级：仅配置一个网页，直接打开，无中间页
     if(apps.length){ showDashView(apps[0],'home'); return; }
-    grid.hidden=false;
-    grid.innerHTML=`<div class="dash-ph"><div class="dp-ic">📊</div><div class="dp-title">${info.title}</div><div class="dp-note">当前该层级暂无已接入的看板。</div></div>`;
+    dg.hidden=false;
+    dg.innerHTML=`<div class="dash-ph"><div class="dp-ic">📊</div><div class="dp-title">${info.title}</div><div class="dp-note">当前该层级暂无已接入的看板。</div></div>`;
     return;
   }
   // 二级 / 三级：卡片网格，点击卡片站内加载对应看板
   if(apps.length){
-    grid.hidden=false;
+    dg.hidden=false;
     apps.forEach(a=>{
       const c=document.createElement('div'); c.className='dash-card';
       c.innerHTML=`<h3>${a.name}</h3><div class="dc-owner">责任人：${a.owner}</div>`;
       c.onclick=()=>showDashView(a,'dash:'+lvl);
-      grid.appendChild(c);
+      dg.appendChild(c);
     });
   } else {
-    grid.hidden=false;
-    grid.innerHTML=`<div class="dash-ph"><div class="dp-ic">📊</div><div class="dp-title">${info.title}</div><div class="dp-note">当前该层级暂无已接入的看板类应用。</div></div>`;
+    dg.hidden=false;
+    dg.innerHTML=`<div class="dash-ph"><div class="dp-ic">📊</div><div class="dp-title">${info.title}</div><div class="dp-note">当前该层级暂无已接入的看板类应用。</div></div>`;
   }
 }
 document.getElementById('dv-back').onclick=()=>{ const b=document.getElementById('dash-view').dataset.back||'home'; navigate(b); };
@@ -1213,7 +1215,9 @@ function render(){
   const ov=document.getElementById('home-overview');
   const cl=document.getElementById('home-cluster');
   const dh=document.getElementById('home-dash');
-  ov.hidden=true; cl.hidden=true; dh.hidden=true;
+  const dg=document.getElementById('dash-grid');
+  const dv=document.getElementById('dash-view');
+  ov.hidden=true; cl.hidden=true; dh.hidden=true; dg.hidden=true; dv.hidden=true;
   if(curNode==='home'){
     ov.hidden=false;
     const roleLabel=currentRole==='staff'?'（员工视图）':'（管理员视图）';
