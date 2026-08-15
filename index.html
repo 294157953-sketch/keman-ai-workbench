@@ -1374,9 +1374,10 @@ document.getElementById('mod-form').onsubmit=(e)=>{
     perm:document.getElementById('f-perm').value, sso:false,
     cluster: isDash ? '' : cluster, dashLevel: isDash ? dash : '' };
   // 经营总览（dashLevel=1）：仅允许配置“一个且必须存在”的跳转链接；支持直接修改该链接，禁止新增或重复配置多个
+  // 仅统计已配置链接（含 url）的看板，避免空 url 的残留条目误伤正常编辑
   if(isDash && dash==='1'){
     if(!rec.url){ alert('经营总览必须配置一个跳转链接，链接不能为空。'); return; }
-    const dup=modules.find(m=>String(m.dashLevel)==='1' && m.id!==id);
+    const dup=modules.find(m=>String(m.dashLevel)==='1' && m.url && m.id!==id);
     if(dup){ alert('经营总览仅允许配置一个跳转链接，请直接编辑已有的经营总览看板，不可新增或重复配置。'); return; }
   }
   if(!rec.name||!rec.owner){ alert('名称和责任人必填'); return; }
