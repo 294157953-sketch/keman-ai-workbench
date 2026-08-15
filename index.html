@@ -559,9 +559,9 @@
     <div class="nav-brand"><img src="https://294157953-sketch.github.io/keman-ai-workbench/ip_jian.png" alt="" /><span>工作台导航</span></div>
     <nav class="nav-group" aria-label="数据看板层">
       <div class="group-title">数据看板层</div>
-      <div class="nav-item active" data-node="dash:1"><span class="n-ico dash">数</span>一级 · 经营总览</div>
-      <div class="nav-item" data-node="dash:2"><span class="n-ico dash">数</span>二级 · 业务处</div>
-      <div class="nav-item" data-node="dash:3"><span class="n-ico dash">数</span>三级 · 经营体</div>
+      <div class="nav-item" data-node="dash:1"><span class="n-ico dash">数</span>经营总览</div>
+      <div class="nav-item" data-node="dash:2"><span class="n-ico dash">数</span>业务处</div>
+      <div class="nav-item" data-node="dash:3"><span class="n-ico dash">数</span>经营体</div>
     </nav>
     <nav class="nav-group" aria-label="应用系统层">
       <div class="group-title">应用系统层</div>
@@ -594,17 +594,17 @@
             </div>
             <div class="hero-text">
               <h1>欢迎来到 <em>三只松鼠</em> 客满中心 AI 应用统一工作台</h1>
-              <p>平台按「数据看板层 + 应用系统层」两级架构组织：看板层构建三级看板体系（经营总览 → 业务处 → 经营体），实现宏观到微观的数据穿透；应用层整合培训、质检、日常作业三大集群。点击下方任意入口进入。</p>
-              <div class="tags"><span>两级架构</span><span>三级看板</span><span>三大集群</span><span>多标签协同</span><span>权限分级</span></div>
+              <p>平台按「数据看板层 + 应用系统层」两级架构组织：看板层构建分层看板体系（经营总览 → 业务处 → 经营体），实现宏观到微观的数据穿透；应用层整合培训、质检、日常作业三大集群。点击下方任意入口进入。</p>
+              <div class="tags"><span>两级架构</span><span>分层看板</span><span>三大集群</span><span>多标签协同</span><span>权限分级</span></div>
             </div>
           </div>
           <div class="fw-layers">
             <div class="fw-layer">
-              <div class="fw-layer-head"><span class="fw-layer-tag dash">数据看板层</span><span class="fw-layer-desc">三级看板体系 · 宏观到微观数据穿透</span></div>
+              <div class="fw-layer-head"><span class="fw-layer-tag dash">数据看板层</span><span class="fw-layer-desc">分层看板体系 · 宏观到微观数据穿透</span></div>
               <div class="fw-cards">
-                <div class="fw-card dash" data-node="dash:1"><div class="fw-card-ic">①</div><div><div class="fw-card-t">一级 · 客满中心经营总览</div><div class="fw-card-s">面向中心层，呈现整体经营核心指标</div><div class="fw-go">进入 ›</div></div></div>
-                <div class="fw-card dash" data-node="dash:2"><div class="fw-card-ic">②</div><div><div class="fw-card-t">二级 · 业务处视角</div><div class="fw-card-s">面向业务处，聚焦各业务处运营明细</div><div class="fw-go">进入 ›</div></div></div>
-                <div class="fw-card dash" data-node="dash:3"><div class="fw-card-ic">③</div><div><div class="fw-card-t">三级 · 渠道 / 经营体视角</div><div class="fw-card-s">面向 mini CEO，支撑一线经营体自主管理</div><div class="fw-go">进入 ›</div></div></div>
+                <div class="fw-card dash" data-node="dash:1"><div class="fw-card-ic">数</div><div><div class="fw-card-t">客满中心经营总览</div><div class="fw-card-s">面向中心层，呈现整体经营核心指标</div><div class="fw-go">进入 ›</div></div></div>
+                <div class="fw-card dash" data-node="dash:2"><div class="fw-card-ic">数</div><div><div class="fw-card-t">业务处视角</div><div class="fw-card-s">面向业务处，聚焦各业务处运营明细</div><div class="fw-go">进入 ›</div></div></div>
+                <div class="fw-card dash" data-node="dash:3"><div class="fw-card-ic">数</div><div><div class="fw-card-t">渠道 / 经营体视角</div><div class="fw-card-s">面向 mini CEO，支撑一线经营体自主管理</div><div class="fw-go">进入 ›</div></div></div>
               </div>
             </div>
             <div class="fw-layer">
@@ -700,9 +700,9 @@
           <label for="f-dash">看板层级</label>
           <select id="f-dash">
             <option value="">— 非看板类 —</option>
-            <option value="1">一级 · 经营总览</option>
-            <option value="2">二级 · 业务处</option>
-            <option value="3">三级 · 经营体</option>
+            <option value="1">经营总览</option>
+            <option value="2">业务处</option>
+            <option value="3">经营体</option>
           </select>
         </div>
         <div class="form-actions">
@@ -1127,9 +1127,9 @@ const CLUSTERS={
   tool:{label:'常用工具',node:'cluster:tool'}
 };
 const DASH_LEVELS={
-  '1':{title:'一级 · 客满中心经营总览',desc:'面向中心层，呈现整体经营核心指标。三级看板体系内容后续统一接入，当前可访问已配置的看板类应用。'},
-  '2':{title:'二级 · 业务处视角',desc:'面向业务处，聚焦各业务处运营明细。三级看板体系内容后续统一接入，当前可访问已配置的看板类应用。'},
-  '3':{title:'三级 · 渠道 / 经营体视角',desc:'面向 mini CEO，支撑一线经营体自主管理。三级看板体系内容后续统一接入，当前可访问已配置的看板类应用。'}
+  '1':{title:'客满中心经营总览',desc:'面向中心层，呈现整体经营核心指标。分层看板体系内容后续统一接入，当前可访问已配置的看板类应用。'},
+  '2':{title:'业务处视角',desc:'面向业务处，聚焦各业务处运营明细。分层看板体系内容后续统一接入，当前可访问已配置的看板类应用。'},
+  '3':{title:'渠道 / 经营体视角',desc:'面向 mini CEO，支撑一线经营体自主管理。分层看板体系内容后续统一接入，当前可访问已配置的看板类应用。'}
 };
 
 const STAT_ICONS={
@@ -1164,6 +1164,15 @@ function buildCard(a){
   card.onclick=()=>openApp(a);
   return card;
 }
+// 看板卡片：沿用首页应用卡片(.card)样式，但点击为站内 iframe 加载（不新开窗口/标签）
+function buildDashCard(a, backNode){
+  const c=CATS[a.cat];
+  const card=document.createElement('div');
+  card.className='card'; card.style.setProperty('--accent',`var(--c-${a.cat})`);
+  card.innerHTML=`<span class="tag ${c.cls}">${c.label}</span><h3>${a.name}</h3><div class="owner">责任人：<b>${a.owner}</b></div><div class="card-actions"><span class="open" style="cursor:pointer">查看 ›</span></div>`;
+  card.onclick=()=>showDashView(a, backNode);
+  return card;
+}
 function showDashView(app, backNode){
   const view=document.getElementById('dash-view');
   const grid=document.getElementById('dash-grid');
@@ -1186,23 +1195,18 @@ function renderDash(lvl){
   const dv=document.getElementById('dash-view');
   dg.hidden=true; dv.hidden=true;
   dg.innerHTML=''; // 清理旧卡片
-  countEl.textContent='数据看板层 · '+info.title;
+  countEl.textContent='数据看板 · '+info.title;
   if(lvl==='1'){
-    // 一级：仅配置一个网页，直接打开，无中间页
+    // 经营总览：仅配置一个网页，点击直接站内打开，无中间页
     if(apps.length){ showDashView(apps[0],'home'); return; }
     dg.hidden=false;
     dg.innerHTML=`<div class="dash-ph"><div class="dp-ic">📊</div><div class="dp-title">${info.title}</div><div class="dp-note">当前该层级暂无已接入的看板。</div></div>`;
     return;
   }
-  // 二级 / 三级：卡片网格，点击卡片站内加载对应看板
+  // 业务处 / 经营体：以首页应用卡片样式展示看板卡片，点击站内加载对应看板
   if(apps.length){
     dg.hidden=false;
-    apps.forEach(a=>{
-      const c=document.createElement('div'); c.className='dash-card';
-      c.innerHTML=`<h3>${a.name}</h3><div class="dc-owner">责任人：${a.owner}</div>`;
-      c.onclick=()=>showDashView(a,'dash:'+lvl);
-      dg.appendChild(c);
-    });
+    apps.forEach(a=> dg.appendChild(buildDashCard(a,'dash:'+lvl)) );
   } else {
     dg.hidden=false;
     dg.innerHTML=`<div class="dash-ph"><div class="dp-ic">📊</div><div class="dp-title">${info.title}</div><div class="dp-note">当前该层级暂无已接入的看板类应用。</div></div>`;
