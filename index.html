@@ -1394,9 +1394,11 @@ document.getElementById('mod-form').onsubmit=(e)=>{
   else modules.push(rec);
   pushSharedConfig(); renderAdminRows(); refreshAll(); document.getElementById('mod-form').reset(); document.getElementById('f-id').value='';
 };
-// 表单联动：选择看板层级 → 自动将“类型”切为看板类并清空应用集群；清空层级 → 恢复可选类型
+// 表单联动：选择看板层级 → 自动将“类型”切为看板类并清空应用集群；清空层级 → 撤销自动设置的看板类，避免产生“无层级又无集群”的不可见孤儿模块
 document.getElementById('f-dash').addEventListener('change',e=>{
-  if(e.target.value){ document.getElementById('f-cat').value='kanban'; document.getElementById('f-cluster').value=''; }
+  const catEl=document.getElementById('f-cat'), clEl=document.getElementById('f-cluster');
+  if(e.target.value){ catEl.value='kanban'; clEl.value=''; }
+  else if(catEl.value==='kanban'){ catEl.value='app'; }
 });
 let modFilter='';
 function renderAdminRows(){
