@@ -35,31 +35,29 @@
       radial-gradient(900px 500px at 8% -5%,rgba(255,150,60,.07),transparent 60%),
       radial-gradient(800px 600px at 100% 110%,rgba(62,127,208,.05),transparent 55%);
   }
-  /* ===== Header ===== */
-  header{position:relative;z-index:6;flex-shrink:0;height:68px;padding:0 22px;
+  /* ===== Header（浅色现代企业后台风格，弱化深色木纹） ===== */
+  header{position:relative;z-index:6;flex-shrink:0;height:60px;padding:0 22px;
     display:flex;align-items:center;gap:0;
-    background:
-      linear-gradient(180deg, rgba(36,19,8,.62), rgba(36,19,8,.50)),
-      repeating-linear-gradient(90deg, #7a3f1a 0 18px, #653214 18px 36px);
-    box-shadow:0 2px 0 rgba(0,0,0,.06), 0 10px 30px rgba(70,30,10,.22);
+    background:linear-gradient(180deg,#FFFFFF 0%,#FBF5EE 100%);
+    border-bottom:1px solid var(--line);
+    box-shadow:0 1px 3px rgba(70,45,25,.05);
   }
-  header::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;
-    background:linear-gradient(90deg,transparent,rgba(255,224,184,.7),transparent)}
-  header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
-    background:linear-gradient(90deg,transparent,rgba(255,210,150,.9) 30%,var(--brand) 50%,rgba(255,210,150,.9) 70%,transparent)}
+  header::before{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
+    background:linear-gradient(90deg,transparent,var(--brand) 50%,transparent);opacity:.55}
+  header::after{display:none}
   .logo-badge{width:50px;height:50px;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative}
   .logo-badge img{height:48px;width:48px;object-fit:contain;border-radius:12px;padding:3px;
     background:rgba(255,255,255,.12);filter:drop-shadow(0 3px 6px rgba(40,18,6,.4));transition:transform .3s var(--ease)}
   .logo-badge:hover img{transform:scale(1.06) rotate(-3deg)}
   .hd-left{display:flex;align-items:center;gap:14px;flex-shrink:0}
   .brand-txt{display:flex;flex-direction:column;justify-content:center;line-height:1.18;gap:1px}
-  .brand-txt .cn{font-size:19px;font-weight:800;letter-spacing:2px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.35)}
-  .brand-txt .en{font-size:9px;letter-spacing:2px;opacity:.66;font-weight:600;text-transform:uppercase;margin-top:1px}
-  .brand-txt .company{font-size:11px;font-weight:600;letter-spacing:1px;color:rgba(255,255,255,.82);margin-top:1px}
-  .hd-divider{width:1px;height:34px;background:rgba(255,255,255,.22);flex-shrink:0}
-  .hd-title{font-size:16px;font-weight:700;letter-spacing:1px;color:#fff;
-    text-shadow:0 1px 3px rgba(0,0,0,.3);white-space:nowrap}
-  .hd-title .tdot{color:var(--brand-2);margin:0 3px;font-weight:800}
+  .brand-txt .cn{font-size:19px;font-weight:800;letter-spacing:2px;color:var(--ink);text-shadow:none}
+  .brand-txt .en{font-size:9px;letter-spacing:2px;opacity:1;color:var(--sub);font-weight:600;text-transform:uppercase;margin-top:1px}
+  .brand-txt .company{font-size:11px;font-weight:600;letter-spacing:1px;color:var(--sub);margin-top:1px}
+  .hd-divider{width:1px;height:34px;background:var(--line);flex-shrink:0}
+  .hd-title{font-size:16px;font-weight:700;letter-spacing:1px;color:var(--ink);
+    text-shadow:none;white-space:nowrap}
+  .hd-title .tdot{color:var(--brand);margin:0 3px;font-weight:800}
   .stat{display:flex;gap:8px;align-items:center}
   .cloud-badge{display:none;align-items:center;gap:5px;font-size:12px;color:var(--sub);font-weight:600;white-space:nowrap}
   .cloud-badge.show{display:inline-flex}
@@ -69,29 +67,29 @@
   .cloud-badge.err .dot{background:#c0392b}
   @keyframes pulse{0%{opacity:.35}50%{opacity:1}100%{opacity:.35}}
   .stat-card{display:flex;align-items:center;gap:6px;height:34px;min-width:54px;padding:0 12px;border-radius:18px;
-    cursor:pointer;color:#fff;transition:filter .16s var(--ease),transform .16s var(--ease);
-    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16)}
-  .stat-card:hover{filter:brightness(1.15);transform:translateY(-1px);background:rgba(255,255,255,.2)}
+    cursor:pointer;color:var(--ink);transition:filter .16s var(--ease),transform .16s var(--ease),background .16s,border-color .16s;
+    background:#fff;border:1px solid var(--line);box-shadow:var(--sh-1)}
+  .stat-card:hover{transform:translateY(-1px);background:var(--brand-soft);border-color:var(--brand-line)}
   .stat-card .stat-ic{width:15px;height:15px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
   .stat-card .stat-ic svg{width:15px;height:15px;display:block}
   .stat-card .stat-col{display:flex;flex-direction:column;line-height:1.02}
   .stat-card .stat-num{font-size:16px;font-weight:700;line-height:1}
-  .stat-card .stat-label{font-size:11px;font-weight:400;opacity:.9}
-  .stat-card.kanban{background:rgba(63,166,106,.34);border-color:rgba(63,166,106,.55)}
-  .stat-card.app{background:rgba(62,127,208,.34);border-color:rgba(62,127,208,.55)}
-  .stat-card.daily{background:rgba(232,86,10,.38);border-color:rgba(232,86,10,.6)}
+  .stat-card .stat-label{font-size:11px;font-weight:400;color:var(--sub)}
+  .stat-card.kanban{background:rgba(63,166,106,.12);border-color:rgba(63,166,106,.32);color:#2E7D4F}
+  .stat-card.app{background:rgba(62,127,208,.12);border-color:rgba(62,127,208,.32);color:#2E6BC4}
+  .stat-card.daily{background:rgba(232,86,10,.12);border-color:rgba(232,86,10,.32);color:var(--brand)}
   .hd-spacer{flex:1 1 auto}
   .hd-right{display:flex;align-items:center;gap:12px;flex-shrink:0}
   .hd-user{position:relative}
   .hd-user-trigger{display:flex;align-items:center;gap:8px;height:40px;padding:0 12px;border-radius:20px;
-    background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#fff;cursor:pointer;
-    transition:background .16s,transform .16s}
-  .hd-user-trigger:hover{background:rgba(255,255,255,.2)}
+    background:#fff;border:1px solid var(--line);color:var(--ink);cursor:pointer;
+    box-shadow:var(--sh-1);transition:background .16s,transform .16s,border-color .16s}
+  .hd-user-trigger:hover{background:var(--brand-soft);border-color:var(--brand-line)}
   .hd-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--brand-2),var(--brand));
     color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
   .hd-user-meta{display:flex;flex-direction:column;line-height:1.1;text-align:left}
   .hd-user-name{font-size:13px;font-weight:700}
-  .hd-user-role{font-size:10px;opacity:.78;font-weight:500}
+  .hd-user-role{font-size:10px;color:var(--sub);font-weight:500}
   .role-pill{font-size:10px;font-weight:700;padding:1px 8px;border-radius:10px;color:#fff;margin-top:2px;width:fit-content}
   .role-pill.super_admin{background:#E5392F}
   .role-pill.admin{background:var(--brand)}
@@ -119,10 +117,10 @@
   .hd-pop-btn[hidden]{display:none}
   .hd-actions{display:flex;align-items:center;gap:8px;position:relative}
   .hd-btn{position:relative;width:38px;height:38px;border-radius:50%;
-    background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#fff;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;transition:background .16s,transform .16s,border-color .16s}
+    background:#fff;border:1px solid var(--line);color:var(--ink);cursor:pointer;
+    display:flex;align-items:center;justify-content:center;box-shadow:var(--sh-1);transition:background .16s,transform .16s,border-color .16s,color .16s}
   .hd-btn svg{width:18px;height:18px;display:block}
-  .hd-btn:hover{background:var(--brand);border-color:var(--brand);transform:translateY(-1px);box-shadow:0 4px 12px rgba(232,86,10,.35)}
+  .hd-btn:hover{background:var(--brand-soft);border-color:var(--brand-line);color:var(--brand);transform:translateY(-1px)}
   .hd-btn:active{transform:translateY(0) scale(.93)}
   .hd-more{display:none;position:relative}
   .hd-more-btn{font-size:20px;line-height:1;font-weight:700}
@@ -184,6 +182,11 @@
   /* 首页框架视图 */
   .home-overview .section-title{margin:22px 4px 14px}
   .fw-layers{display:flex;flex-direction:column;gap:10px}
+  .legend{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:11px 16px;margin-bottom:6px;
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--r-md);box-shadow:var(--sh-1)}
+  .legend .lg-tip{font-size:12px;color:var(--sub);font-weight:600}
+  .legend .lg-item{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink);font-weight:600}
+  .legend .lg-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;box-shadow:0 1px 2px rgba(0,0,0,.08)}
   .fw-layer-head{display:flex;align-items:center;gap:12px;margin:18px 4px 12px}
   .fw-layer-tag{font-size:13px;font-weight:800;color:#fff;padding:4px 13px;border-radius:20px}
   .fw-layer-tag.dash{background:linear-gradient(135deg,#FF8C42,#FF6A00)}
@@ -201,7 +204,7 @@
   .fw-card-s{font-size:12px;color:var(--sub);margin-top:4px;line-height:1.55}
   .fw-card .fw-go{margin-top:8px;font-size:12px;color:var(--brand);font-weight:700}
   /* 看板占位 */
-  .home-dash{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg)}
+  .home-dash{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
   .home-dash[hidden],.dash-view[hidden],.dash-grid[hidden]{display:none!important}
   .dash-head{flex-shrink:0}
   .dash-grid{width:100%;flex:1;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px;padding:0 0 20px;align-content:start;overflow-y:auto} /* 业务处/经营体：与应用层 .grid 同列数/同间距/满宽，视觉一致（不改动应用层） */
@@ -210,7 +213,7 @@
   .dash-card:hover{border-color:var(--brand);box-shadow:0 8px 20px rgba(255,106,0,.14);transform:translateY(-2px)}
   .dash-card h3{margin:0 0 6px;font-size:15px;color:var(--nut)}
   .dash-card .dc-owner{font-size:12px;color:var(--sub)}
-  .dash-view{position:absolute;inset:0;display:flex;flex-direction:column;background:#fff}
+  .dash-view{position:absolute;inset:0;display:flex;flex-direction:column;background:#fff;overflow:hidden}
   .dash-view .frame-wrap{background:#fff}
   .dash-view-bar{display:flex;align-items:center;gap:10px;height:44px;padding:0 14px;border-bottom:1px solid var(--line);background:#fff}
   .dash-view-bar .dv-name{font-weight:700;color:var(--nut);font-size:14px}
@@ -270,7 +273,7 @@
   .pb-refresh:hover{border-color:var(--brand);color:var(--brand)}
   .pb-open{background:linear-gradient(135deg,var(--brand-2),var(--brand));color:#fff;padding:6px 14px;border:1px solid transparent;box-shadow:0 2px 6px rgba(232,86,10,.25)}
   .pb-open:hover{filter:brightness(1.06)}
-  .frame-wrap{position:absolute;inset:44px 0 0 0;background:#fff;min-height:0}
+  .frame-wrap{position:absolute;inset:44px 0 0 0;background:#fff;min-height:0;overflow:hidden}
   .frame-wrap iframe{width:100%;height:100%;border:none;display:block}
   .frame-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#FFFDFB,#F7EFE6);z-index:3}
   .frame-fallback[hidden]{display:none}
@@ -300,6 +303,15 @@
   .hero-text .tags span{font-size:12px;background:var(--brand-soft);color:var(--brand);padding:5px 12px;border-radius:20px;font-weight:600;border:1px solid var(--brand-line)}
   .hero-guide{display:inline-flex;align-items:center;gap:6px;margin-top:18px;font-size:13px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--brand-2),var(--brand));padding:9px 18px;border-radius:10px;text-decoration:none;box-shadow:0 4px 12px rgba(232,86,10,.3);cursor:pointer;transition:transform .16s,filter .16s}
   .hero-guide:hover{transform:translateY(-1px);filter:brightness(1.05)}
+  .hero-collapse{position:absolute;top:14px;right:18px;z-index:4;font-size:12px;font-weight:600;color:var(--sub);
+    background:#fff;border:1px solid var(--line);border-radius:20px;padding:5px 13px;cursor:pointer;transition:.15s;box-shadow:var(--sh-1)}
+  .hero-collapse:hover{border-color:var(--brand);color:var(--brand)}
+  .hero.collapsed{display:none}
+  .hero-reveal{display:flex;align-items:center;gap:9px;padding:11px 18px;margin-bottom:18px;
+    background:var(--panel);border:1px dashed var(--brand-line);border-radius:var(--r-md);
+    font-size:13px;color:var(--sub);cursor:pointer;box-shadow:var(--sh-1);transition:.15s}
+  .hero-reveal:hover{background:var(--brand-soft);color:var(--brand)}
+  .hero-reveal b{color:var(--brand);font-weight:700}
   .guide-list{display:flex;flex-direction:column;gap:14px}
   .guide-item{display:flex;gap:12px;align-items:flex-start}
   .gi-num{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--brand);color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center}
@@ -335,6 +347,7 @@
   .card .perm-tag{position:absolute;top:14px;right:17px;font-size:10.5px;padding:3px 9px;border-radius:20px;font-weight:700;letter-spacing:.3px;background:rgba(232,86,10,.1);color:var(--brand);border:1px solid var(--brand-line);white-space:nowrap;z-index:2}
   .card h3{font-size:16px;margin-bottom:8px;font-weight:700;letter-spacing:.3px}
   .card .owner{font-size:12.5px;color:var(--sub)}
+  .card .desc{font-size:12px;color:var(--sub);line-height:1.55;margin:2px 0 8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .card .owner b{color:var(--nut);font-weight:600}
   .card .card-actions{position:absolute;bottom:14px;right:17px;display:flex;align-items:center;gap:8px;z-index:3}
   .card .open{font-size:12px;color:var(--brand);text-decoration:none;font-weight:700;background:var(--brand-soft);padding:4px 10px;border-radius:9px;border:1px solid var(--brand-line);transition:.15s;white-space:nowrap}
@@ -589,7 +602,8 @@
     <div class="pages" id="pages">
       <div class="page home active" id="page-home">
         <div class="home-overview" id="home-overview">
-          <div class="hero">
+          <div class="hero" id="hero">
+            <button class="hero-collapse" id="hero-collapse" type="button">收起 ›</button>
             <div class="hero-illo">
               <img src="https://294157953-sketch.github.io/keman-ai-workbench/ip_trio.png" class="hero-trio-img" alt="三只松鼠官方IP" />
               <div class="plaque">三只松鼠</div>
@@ -599,6 +613,14 @@
               <p>平台按「数据看板层 + 应用系统层」两级架构组织：看板层构建分层看板体系（经营总览 → 业务处 → 经营体），实现宏观到微观的数据穿透；应用层整合培训、质检、日常作业三大集群。点击下方任意入口进入。</p>
               <div class="tags"><span>两级架构</span><span>分层看板</span><span>三大集群</span><span>多标签协同</span><span>权限分级</span></div>
             </div>
+          </div>
+          <div class="hero-reveal" id="hero-reveal" hidden>› 展开欢迎横幅</div>
+          <div class="legend">
+            <span class="lg-tip">业务类型图例</span>
+            <span class="lg-item"><span class="lg-dot" style="background:linear-gradient(135deg,#FF8C42,#FF6A00)"></span>数据看板</span>
+            <span class="lg-item"><span class="lg-dot" style="background:#6C8EF5"></span>培训</span>
+            <span class="lg-item"><span class="lg-dot" style="background:#E2553B"></span>质检</span>
+            <span class="lg-item"><span class="lg-dot" style="background:#3FB984"></span>工具</span>
           </div>
           <div class="fw-layers">
             <div class="fw-layer">
@@ -1166,7 +1188,7 @@ function buildCard(a){
   const ssoIcon=a.sso?`<span class="sso-ico" title="飞书 SSO · 仅新窗口打开"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>`:'';
   const permTag=(isAdmin()&&a.perm==='admin')?`<span class="perm-tag">管理专属</span>`:'';
   const actions=(a.url)?`<div class="card-actions">${linkHtml}${ssoIcon}</div>`:'';
-  card.innerHTML=`<span class="tag ${c.cls}">${c.label}</span>${permTag}<h3>${a.name}</h3><div class="owner">责任人：<b>${a.owner}</b></div>${actions}`;
+  card.innerHTML=`<span class="tag ${c.cls}">${c.label}</span>${permTag}<h3>${a.name}</h3>${a.desc?`<div class="desc">${a.desc}</div>`:''}<div class="owner">责任人：<b>${a.owner}</b></div>${actions}`;
   card.onclick=()=>openApp(a);
   return card;
 }
@@ -1177,7 +1199,7 @@ function buildDashCard(a, backNode){
   card.className='card'; card.style.setProperty('--accent',`var(--c-${a.cat})`);
   const hasUrl=!!a.url;
   const actions=hasUrl?`<div class="card-actions"><span class="open" style="cursor:pointer">查看 ›</span></div>`:'<div class="card-actions"><span style="color:var(--sub);font-size:12px">暂未配置链接</span></div>';
-  card.innerHTML=`<span class="tag ${c.cls}">${c.label}</span><h3>${a.name}</h3><div class="owner">责任人：<b>${a.owner}</b></div>${actions}`;
+  card.innerHTML=`<span class="tag ${c.cls}">${c.label}</span><h3>${a.name}</h3>${a.desc?`<div class="desc">${a.desc}</div>`:''}<div class="owner">责任人：<b>${a.owner}</b></div>${actions}`;
   if(hasUrl) card.onclick=()=>showDashView(a, backNode);
   else card.style.opacity='0.7';
   return card;
@@ -1554,6 +1576,17 @@ const guideOpen=document.getElementById('hero-guide');
 if(guideOpen) guideOpen.onclick=()=>{ guideModal.hidden=false; };
 document.getElementById('guide-close').onclick=()=>guideModal.hidden=true;
 document.getElementById('guide-mask').onclick=()=>guideModal.hidden=true;
+// 首页欢迎横幅可收起（记忆到 localStorage）
+const heroEl=document.getElementById('hero');
+const heroRevealEl=document.getElementById('hero-reveal');
+function applyHeroState(){
+  const collapsed=localStorage.getItem('heroCollapsed')==='1';
+  heroEl.classList.toggle('collapsed',collapsed);
+  heroRevealEl.hidden=!collapsed;
+}
+applyHeroState();
+document.getElementById('hero-collapse').onclick=()=>{ localStorage.setItem('heroCollapsed','1'); applyHeroState(); };
+heroRevealEl.onclick=()=>{ localStorage.setItem('heroCollapsed','0'); applyHeroState(); };
 
 // ============================================================
 //  权限配置后台（仅超级管理员）
