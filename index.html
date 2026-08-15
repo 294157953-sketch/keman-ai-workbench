@@ -203,7 +203,8 @@
   /* 看板占位 */
   .home-dash{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg)}
   .home-dash[hidden],.dash-view[hidden],.dash-grid[hidden]{display:none!important}
-  .dash-grid{width:100%;max-width:1120px;margin:22px 16px;flex:1;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;padding:0 0 20px;align-content:start;overflow-y:auto} /* 业务处/经营体：固定每行5个，与 .grid 同步一致 */
+  .dash-head{flex-shrink:0}
+  .dash-grid{width:100%;flex:1;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px;padding:0 0 20px;align-content:start;overflow-y:auto} /* 业务处/经营体：与应用层 .grid 同列数/同间距/满宽，视觉一致（不改动应用层） */
   .dash-grid .dash-ph{grid-column:1/-1;justify-self:center;align-self:center;text-align:center;max-width:560px}
   .dash-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px;cursor:pointer;transition:transform .18s var(--ease),box-shadow .18s,border-color .18s;box-shadow:var(--sh-1)}
   .dash-card:hover{border-color:var(--brand);box-shadow:0 8px 20px rgba(255,106,0,.14);transform:translateY(-2px)}
@@ -623,6 +624,9 @@
           <div class="grid" id="grid"></div>
         </div>
         <div class="home-dash" id="home-dash" hidden>
+          <div class="dash-head" id="dash-head" hidden>
+            <div class="section-title"><span class="bar"></span><span id="dash-title">业务处</span><span class="n" id="dash-cn"></span></div>
+          </div>
           <div class="dash-grid" id="dash-grid" hidden></div>
           <div class="dash-view" id="dash-view" hidden>
             <div class="dash-view-bar">
@@ -1198,7 +1202,8 @@ function renderDash(lvl){
   const apps=modules.filter(a=>String(a.dashLevel)===lvl && isVisible(a));
   const dg=document.getElementById('dash-grid');
   const dv=document.getElementById('dash-view');
-  dg.hidden=true; dv.hidden=true;
+  const dh=document.getElementById('dash-head');
+  dg.hidden=true; dv.hidden=true; dh.hidden=true;
   dg.innerHTML=''; // 清理旧卡片
   countEl.textContent='数据看板 · '+info.title;
   if(lvl==='1'){
@@ -1209,6 +1214,10 @@ function renderDash(lvl){
     return;
   }
   // 业务处 / 经营体：以首页应用卡片样式展示看板卡片，点击站内加载对应看板
+  // 顶部标题栏与应用层集群视图(section-title+grid)保持一致，强化视觉结构统一
+  dh.hidden=false;
+  document.getElementById('dash-title').textContent=info.title;
+  document.getElementById('dash-cn').textContent='共 '+apps.length+' 个看板';
   if(apps.length){
     dg.hidden=false;
     apps.forEach(a=> dg.appendChild(buildDashCard(a,'dash:'+lvl)) );
