@@ -203,7 +203,7 @@
   /* 看板占位 */
   .home-dash{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg)}
   .home-dash[hidden],.dash-view[hidden],.dash-grid[hidden]{display:none!important}
-  .dash-grid{width:100%;max-width:1120px;margin:22px 16px;flex:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;padding:0 0 20px;align-content:start;overflow-y:auto}
+  .dash-grid{width:100%;max-width:1120px;margin:22px 16px;flex:1;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;padding:0 0 20px;align-content:start;overflow-y:auto} /* 业务处/经营体：固定每行5个，与 .grid 同步一致 */
   .dash-grid .dash-ph{grid-column:1/-1;justify-self:center;align-self:center;text-align:center;max-width:560px}
   .dash-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px;cursor:pointer;transition:transform .18s var(--ease),box-shadow .18s,border-color .18s;box-shadow:var(--sh-1)}
   .dash-card:hover{border-color:var(--brand);box-shadow:0 8px 20px rgba(255,106,0,.14);transform:translateY(-2px)}
@@ -325,7 +325,7 @@
   .section-title{display:flex;align-items:center;gap:9px;margin:32px 2px 16px;font-size:15px;font-weight:800;color:var(--ink);letter-spacing:.5px}
   .section-title .bar{width:4px;height:16px;border-radius:2px;background:linear-gradient(180deg,var(--brand),var(--brand-2))}
   .section-title .n{margin-left:auto;font-size:12px;color:var(--sub);font-weight:600}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(252px,1fr));gap:18px;align-content:start}
+  .grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px;align-content:start} /* 应用层：固定每行5个，与 .dash-grid 同步一致 */
   .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-lg);padding:48px 17px 46px;cursor:pointer;transition:transform .2s var(--ease),box-shadow .2s,border-color .2s;box-shadow:var(--sh-1);position:relative;overflow:hidden}
   .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent,#ccc)}
   .card:hover{transform:translateY(-5px);box-shadow:var(--sh-3);border-color:var(--brand-line)}
@@ -705,7 +705,7 @@
             <option value="2">业务处</option>
             <option value="3">经营体</option>
           </select>
-          <div class="form-hint">选择层级后，该应用自动归入“看板类”，并在对应导航（经营总览/业务处/经营体）中以卡片展示，无需改动“类型”。</div>
+          <div class="form-hint">选择层级后，该应用自动归入“看板类”，并在对应导航（经营总览/业务处/经营体）中以卡片展示，无需改动“类型”。其中「经营总览」仅允许配置一个跳转链接（必填），如需修改请直接编辑已有看板，不可新增或配置多个。</div>
         </div>
         <div class="form-actions">
           <span class="grow"></span>
@@ -1373,6 +1373,12 @@ document.getElementById('mod-form').onsubmit=(e)=>{
     owner:document.getElementById('f-owner').value.trim(), url:document.getElementById('f-url').value.trim(),
     perm:document.getElementById('f-perm').value, sso:false,
     cluster: isDash ? '' : cluster, dashLevel: isDash ? dash : '' };
+  // 经营总览（dashLevel=1）：仅允许配置“一个且必须存在”的跳转链接；支持直接修改该链接，禁止新增或重复配置多个
+  if(isDash && dash==='1'){
+    if(!rec.url){ alert('经营总览必须配置一个跳转链接，链接不能为空。'); return; }
+    const dup=modules.find(m=>String(m.dashLevel)==='1' && m.id!==id);
+    if(dup){ alert('经营总览仅允许配置一个跳转链接，请直接编辑已有的经营总览看板，不可新增或重复配置。'); return; }
+  }
   if(!rec.name||!rec.owner){ alert('名称和责任人必填'); return; }
   if(id){ const i=modules.findIndex(m=>m.id===id); if(i>=0) modules[i]=rec; }
   else modules.push(rec);
