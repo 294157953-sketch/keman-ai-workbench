@@ -16,8 +16,18 @@ MODULES_FILE = os.path.join(ROOT, "modules.json")
 USERS_FILE   = os.path.join(ROOT, "users.json")
 ROLES_FILE   = os.path.join(ROOT, "roles.json")
 PERMS_FILE   = os.path.join(ROOT, "permissions.json")
+NAV_FILE     = os.path.join(ROOT, "nav.json")
 # 以下文件禁止通过 HTTP 直接访问（含业务数据/日志）
-BLOCK_FILES = {"modules.json", "users.json", "roles.json", "permissions.json", "server.log", "config_server.py"}
+BLOCK_FILES = {"modules.json", "users.json", "roles.json", "permissions.json",
+               "nav.json", "server.log", "config_server.py"}
+
+# 固定的 4 个一级目录（不可删除，可改名/图标/排序）
+DEFAULT_NAV = [
+    {"id": "d_overview", "name": "数据总览", "icon": "kanban", "order": 1, "fixed": True},
+    {"id": "d_train",    "name": "培训平台", "icon": "train",  "order": 2, "fixed": True},
+    {"id": "d_qc",       "name": "质检平台", "icon": "qc",     "order": 3, "fixed": True},
+    {"id": "d_tool",     "name": "日常工具", "icon": "tool",   "order": 4, "fixed": True},
+]
 
 CORS = {"Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
@@ -54,6 +64,26 @@ def verify_pw(pw, stored):
 def load_users():  return load_json(USERS_FILE, None)
 def load_roles():  return load_json(ROLES_FILE, [])
 def load_perms():  return load_json(PERMS_FILE, [])
+def load_nav():
+    nav = load_json(NAV_FILE, None)
+    if nav is None:
+        return DEFAULT_NAV
+    by_id = {d["id"]: d for d in nav if isinstance(d, dict)}
+    merged = []
+    for d in DEFAULT_NAV:
+        if d["id"] in by_id:
+            cur = by_id[d["id"]]
+            merged.append({"id": d["id"], "name": cur.get("name", d["name"]),
+                           "icon": cur.get("icon", d["icon"]),
+                           "order": cur.get("order", d["order"]), "fixed": True})
+        else:
+            merged.append(dict(d))
+    for d in nav:
+        if isinstance(d, dict) and d.get("id") not in {x["id"] for x in DEFAULT_NAV}:
+            merged.append(d)
+    return merged
+def save_perms(a): save_json(PERMS_FILE, a)
+def save_nav(a): save_json(NAV_FILE, a)
 def save_users(a): save_json(USERS_FILE, a)
 def save_roles(a): save_json(ROLES_FILE, a)
 def save_perms(a): save_json(PERMS_FILE, a)
@@ -486,6 +516,8 @@ class Handler(BaseHTTPRequestHandler):
             return
         if path == "/modules":
             self._json(200, load_json(MODULES_FILE, [])); return
+        if path == "/nav":
+            self._json(200, load_nav()); return
         if path == "/api/auth/me":
             code, obj = self.api_auth_me(); self._json(code, obj); return
         if path == "/api/users":
@@ -514,6 +546,16 @@ class Handler(BaseHTTPRequestHandler):
             if not isinstance(arr, list):
                 self._json(400, {"ok": False, "error": "modules 必须是数组"}); return
             save_json(MODULES_FILE, arr)
+            self._json(200, {"ok": True, "count": len(arr)}); return
+        if path == "/nav":
+            u = self._user()
+            if not (u is not None and is_admin(u)):
+                self._json(403, {"ok": False, "error": "无权限"}); return
+            data = self._body_json()
+            arr = data.get("nav") if isinstance(data, dict) else (data if isinstance(data, list) else None)
+            if not isinstance(arr, list):
+                self._json(400, {"ok": False, "error": "nav 必须是数组"}); return
+            save_nav(arr)
             self._json(200, {"ok": True, "count": len(arr)}); return
         if path == "/api/auth/login":
             code, obj = self.api_auth_login(self._body_json()); self._json(code, obj); return

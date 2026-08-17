@@ -226,6 +226,52 @@
   .nav-item .n-ico{width:22px;height:22px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;letter-spacing:-.5px}
   .n-ico.dash{background:linear-gradient(135deg,var(--brand-2),var(--brand))}
   .n-ico.train{background:var(--c-app)} .n-ico.qc{background:var(--c-daily)} .n-ico.tool{background:#3FAE8E}
+  /* ===== 子母目录树 ===== */
+  .nav-search{display:flex;align-items:center;gap:8px;margin:6px 10px 8px;padding:7px 10px;border-radius:10px;background:var(--hover);border:1px solid var(--line)}
+  .nav-search svg{width:15px;height:15px;color:var(--sub);flex-shrink:0}
+  .nav-search input{flex:1;border:none;background:transparent;outline:none;font-size:13px;color:var(--ink)}
+  .nav-tree{flex:1;overflow-y:auto;overflow-x:hidden;padding:2px 8px 8px;scrollbar-width:thin}
+  .nav-tree::-webkit-scrollbar{width:5px}
+  .nav-tree::-webkit-scrollbar-thumb{background:rgba(150,130,110,.3);border-radius:3px}
+  .nav-dir{margin-bottom:2px}
+  .nav-dir-head{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:9px;cursor:pointer;color:var(--ink);font-size:13.5px;font-weight:700;user-select:none;transition:background .15s}
+  .nav-dir-head:hover{background:var(--hover)}
+  .nav-arrow{width:14px;font-size:11px;color:var(--sub);transition:transform .2s var(--ease);text-align:center}
+  .nav-dir.open>.nav-dir-head .nav-arrow{transform:rotate(0)}
+  .nav-dir-ico{width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--brand);flex-shrink:0}
+  .nav-dir-ico svg{width:18px;height:18px}
+  .nav-dir-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .nav-dir-count{font-size:11px;color:var(--sub);background:rgba(120,110,100,.12);border-radius:10px;padding:1px 7px;font-weight:700}
+  .nav-dir-list{display:grid;grid-template-rows:0fr;transition:grid-template-rows .2s var(--ease);overflow:hidden}
+  .nav-dir.open>.nav-dir-list{grid-template-rows:1fr}
+  .nav-dir-list>div{min-height:0}
+  .nav-subitem{display:flex;align-items:center;gap:8px;padding:8px 10px;margin:2px 0;border-radius:8px;cursor:pointer;font-size:13px;color:var(--ink-2,var(--ink));border-left:3px solid transparent;transition:background .15s,color .15s,border-color .15s}
+  .nav-subitem:hover{background:var(--hover)}
+  .nav-sub-ico{width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:var(--sub);flex-shrink:0}
+  .nav-sub-ico svg{width:15px;height:15px}
+  .nav-sub-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .nav-sub-new{font-size:11px;color:var(--sub);opacity:.7}
+  .nav-sub-edit{font-size:12px;color:var(--brand);opacity:0;transition:opacity .15s}
+  .nav-subitem:hover .nav-sub-edit{opacity:.9}
+  .nav-subitem.sel{background:var(--brand-soft);color:var(--brand);font-weight:700;border-left-color:var(--brand)}
+  .nav-subitem.dragging{opacity:.4}
+  .nav-subitem.drag-over{border-top:2px solid var(--brand)}
+  .nav-foot{display:flex;align-items:center;gap:6px;padding:8px 10px;border-top:1px solid var(--line)}
+  .nav-about{flex:1;border:none;background:transparent;color:var(--sub);font-size:12.5px;cursor:pointer;padding:6px 8px;border-radius:8px;text-align:left;transition:background .15s,color .15s}
+  .nav-about:hover{background:var(--hover);color:var(--ink)}
+  .nav-collapse{width:26px;height:26px;border:none;background:var(--hover);color:var(--sub);border-radius:7px;cursor:pointer;font-size:14px;flex-shrink:0}
+  .nav-collapse:hover{background:var(--brand-soft);color:var(--brand)}
+  .nav-add{width:24px;height:24px;border:none;border-radius:50%;background:var(--brand);color:#fff;font-size:15px;line-height:1;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+  .nav-add:hover{filter:brightness(1.06)}
+  /* 折叠图标栏 */
+  body.nav-collapsed nav{width:64px}
+  body.nav-collapsed .nav-brand-txt,body.nav-collapsed .nav-search,body.nav-collapsed .nav-dir-name,body.nav-collapsed .nav-dir-count,body.nav-collapsed .nav-sub-name,body.nav-collapsed .nav-sub-new,body.nav-collapsed .nav-sub-edit,body.nav-collapsed .nav-about{display:none}
+  body.nav-collapsed .nav-dir-list{display:none}
+  body.nav-collapsed .nav-dir-head{justify-content:center;padding-left:0;padding-right:0}
+  body.nav-collapsed .nav-foot{justify-content:center}
+  /* 首页分组 */
+  .home-group{width:100%;max-width:1400px;margin-bottom:22px}
+  .home-group .grid{margin-top:2px}
   /* 首页框架视图 */
   .home-overview .section-title{margin:22px 4px 14px}
   .fw-layers{display:flex;flex-direction:column;gap:10px}
@@ -501,6 +547,46 @@
   .modal-close{width:30px;height:30px;border-radius:9px;border:none;background:rgba(255,255,255,.15);color:#fff;font-size:19px;cursor:pointer;line-height:1;transition:.15s}
   .modal-close:hover{background:rgba(255,255,255,.3)}
   .modal-body{overflow-y:auto;padding:18px 20px 22px;display:flex;flex-direction:column;gap:16px}
+  /* ===== 后台 Tab ===== */
+  .adm-tabs{display:flex;gap:6px;background:rgba(120,110,100,.08);border-radius:10px;padding:4px}
+  .adm-tab{flex:1;height:34px;border:none;background:transparent;color:var(--sub);font-size:13px;font-weight:700;border-radius:8px;cursor:pointer;transition:background .2s,color .2s}
+  .adm-tab:hover{color:var(--nut)}
+  .adm-tab.active{background:var(--brand);color:#fff}
+  .adm-pane{animation:navFade .2s var(--ease)}
+  .adm-section{display:flex;flex-direction:column;gap:10px}
+  .adm-sec-title{font-size:13px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:6px}
+  .adm-sec-title::before{content:"";width:3px;height:14px;border-radius:2px;background:var(--brand)}
+  .adm-divider{height:1px;background:var(--line);margin:2px 0}
+  .adm-note{font-size:12.5px;color:var(--sub);line-height:1.6;margin:0}
+  .adm-migrate-result{font-size:12.5px;color:var(--brand);font-weight:700;align-self:flex-start}
+  .btn-secondary{height:36px;padding:0 16px;border-radius:9px;border:1px solid var(--brand-line);background:var(--brand-soft);color:var(--brand);font-weight:700;cursor:pointer;font-size:13px;align-self:flex-start;transition:.15s}
+  .btn-secondary:hover{background:var(--brand);color:#fff}
+  /* 一级目录卡片 */
+  .dir-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .dir-card{display:flex;gap:10px;align-items:center;padding:11px;border:1px solid var(--line);border-radius:11px;background:var(--panel)}
+  .dir-card-ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:var(--brand-soft);color:var(--brand);flex-shrink:0}
+  .dir-card-ico svg{width:20px;height:20px}
+  .dir-card-body{flex:1;min-width:0}
+  .dir-card-title{font-size:10.5px;color:var(--sub);font-weight:700;letter-spacing:.5px;margin-bottom:3px}
+  .dir-name{width:100%;border:1px solid var(--line);border-radius:7px;padding:6px 8px;font-size:13px;color:var(--ink);background:var(--panel);outline:none}
+  .dir-name:focus{border-color:var(--brand-line);background:var(--brand-soft)}
+  .dir-card-meta{font-size:11px;color:var(--sub);margin-top:3px}
+  /* 子目录管理 */
+  .sub-groups{display:flex;flex-direction:column;gap:14px}
+  .sub-group-title{font-size:12.5px;font-weight:800;color:var(--ink);margin-bottom:6px;padding-left:2px}
+  .sub-list{display:flex;flex-direction:column;gap:6px}
+  .sub-row{display:flex;align-items:center;gap:9px;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--panel);font-size:13px}
+  .sub-ico{width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--sub);flex-shrink:0}
+  .sub-ico svg{width:16px;height:16px}
+  .sub-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;color:var(--ink)}
+  .sub-perm{font-size:11px;color:var(--sub);background:rgba(120,110,100,.12);border-radius:8px;padding:1px 7px;font-weight:700}
+  .sub-tag{font-size:11px;color:#fff;background:#3FAE8E;border-radius:8px;padding:1px 7px;font-weight:700}
+  .sub-row button{border:none;background:var(--hover);color:var(--ink-2,var(--ink));border-radius:7px;padding:4px 9px;font-size:12px;cursor:pointer;transition:.15s;flex-shrink:0}
+  .sub-row .sub-edit{background:var(--brand-soft);color:var(--brand);font-weight:700}
+  .sub-row .sub-del{background:rgba(229,57,47,.1);color:#C0392B}
+  .sub-row button:hover{filter:brightness(.96)}
+  /* 后台 Tab 响应式 */
+  @media (max-width:560px){ .dir-cards{grid-template-columns:1fr} }
   .mod-form{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-md);padding:13px 16px;display:flex;flex-direction:column;gap:9px}
   .form-row{display:flex;align-items:center;gap:12px}
   .form-row label{width:58px;flex-shrink:0;font-size:13px;font-weight:700;color:var(--nut);text-align:right}
@@ -703,22 +789,20 @@
 
 <div class="main">
   <nav id="nav">
-    <div class="nav-brand"><img src="https://294157953-sketch.github.io/keman-ai-workbench/ip_jian.png" alt="" /><span>工作台导航</span></div>
-    <nav class="nav-group" aria-label="数据看板层">
-      <div class="group-title clickable" data-node="dash:home" role="button" tabindex="0" title="查看数据看板层总览">数据看板层</div>
-      <div class="nav-item" data-node="dash:1"><span class="n-ico dash">数</span>经营总览</div>
-      <div class="nav-item" data-node="dash:2"><span class="n-ico dash">数</span>业务处</div>
-      <div class="nav-item" data-node="dash:3"><span class="n-ico dash">数</span>经营体</div>
-    </nav>
-    <nav class="nav-group" aria-label="应用系统层">
-      <div class="group-title">应用系统层</div>
-      <div class="nav-item" data-node="cluster:train"><span class="n-ico train">培</span>培训平台</div>
-      <div class="nav-item" data-node="cluster:qc"><span class="n-ico qc">质</span>质检平台</div>
-      <div class="nav-item" data-node="cluster:tool"><span class="n-ico tool">具</span>常用工具</div>
-    </nav>
-    <nav class="nav-group" aria-label="帮助">
-      <div class="nav-item" data-node="about"><span class="n-ico" style="background:linear-gradient(135deg,#7C7FD6,#5B8BD0)">i</span>关于平台</div>
-    </nav>
+    <div class="nav-brand">
+      <img src="https://294157953-sketch.github.io/keman-ai-workbench/ip_jian.png" alt="" />
+      <span class="nav-brand-txt">工作台导航</span>
+      <button class="nav-add" id="nav-add" type="button" hidden title="新增子目录">＋</button>
+    </div>
+    <div class="nav-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+      <input id="nav-search" type="search" placeholder="搜索子目录…" autocomplete="off" />
+    </div>
+    <div class="nav-tree" id="nav-tree"></div>
+    <div class="nav-foot">
+      <button class="nav-about" id="nav-about" type="button">关于平台</button>
+      <button class="nav-collapse" id="nav-collapse" type="button" title="折叠 / 展开侧栏">‹</button>
+    </div>
   </nav>
 
   <div class="content">
@@ -749,7 +833,6 @@
           </div>
           <div class="all-apps" id="all-apps">
             <div class="section-title"><span class="bar"></span><span>全部应用</span><span class="n" id="all-cn"></span></div>
-            <div class="cat-pills" id="cat-pills"><span class="cat-ind" id="cat-ind"></span></div>
             <div class="grid" id="all-grid"></div>
           </div>
         </div>
@@ -797,6 +880,11 @@
       <button class="modal-close" id="admin-close" aria-label="关闭">×</button>
     </div>
     <div class="modal-body">
+      <div class="adm-tabs">
+        <button class="adm-tab active" data-tab="mod" type="button">模块管理</button>
+        <button class="adm-tab" data-tab="dir" type="button">目录管理</button>
+      </div>
+      <div class="adm-pane" data-pane="mod">
       <form class="mod-form" id="mod-form" autocomplete="off">
         <input type="hidden" id="f-id" />
         <div class="form-row">
@@ -846,12 +934,53 @@
           </select>
           <div class="form-hint">选择层级后，该应用自动归入“看板类”，并在对应导航（经营总览/业务处/经营体）中以卡片展示，无需改动“类型”。其中「经营总览」仅允许配置一个跳转链接（必填），如需修改请直接编辑已有看板，不可新增或配置多个。</div>
         </div>
+        <div class="form-row">
+          <label for="f-parent">所属目录</label>
+          <select id="f-parent">
+            <option value="d_overview">数据总览</option>
+            <option value="d_train">培训平台</option>
+            <option value="d_qc">质检平台</option>
+            <option value="d_tool">日常工具</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="f-open">打开方式</label>
+          <select id="f-open">
+            <option value="iframe">内部打开（右侧内容区 iframe）</option>
+            <option value="newtab">新窗口打开</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="f-sort">排序</label>
+          <input id="f-sort" type="number" min="0" step="1" placeholder="0（越小越靠前）" />
+        </div>
         <div class="form-actions">
           <span class="grow"></span>
           <button type="button" class="btn-cancel" id="f-cancel">取消</button>
           <button type="submit" class="btn-primary" id="f-save">保存模块</button>
         </div>
       </form>
+      </div><!-- /adm-pane mod -->
+      <div class="adm-pane" data-pane="dir" hidden>
+        <div class="adm-section">
+          <div class="adm-sec-title">一级目录（固定 4 个，不可删除，可改名 / 图标 / 排序）</div>
+          <div class="dir-cards" id="dir-cards"></div>
+          <button class="btn-primary" id="dir-save" type="button">保存目录配置</button>
+        </div>
+        <div class="adm-divider"></div>
+        <div class="adm-section">
+          <div class="adm-sec-title">子目录管理（即应用入口，可增删改 / 排序）</div>
+          <button class="btn-primary" id="sub-add" type="button">＋ 新增子目录</button>
+          <div class="sub-groups" id="sub-groups"></div>
+        </div>
+        <div class="adm-divider"></div>
+        <div class="adm-section">
+          <div class="adm-sec-title">数据迁移工具</div>
+          <p class="adm-note">将原有应用卡片按类型 / 集群自动归属到对应一级目录（写入 parentId / level / sort），不删除任何旧数据，迁移前可回滚。</p>
+          <button class="btn-secondary" id="migrate-btn" type="button">一键迁移</button>
+          <span class="adm-migrate-result" id="migrate-result"></span>
+        </div>
+      </div><!-- /adm-pane dir -->
       <div class="mod-divider"></div>
       <div class="mod-list">
         <div class="mod-list-bar">
@@ -1153,6 +1282,29 @@
 // ===== 资源 & 常量 =====
 const IP = 'https://294157953-sketch.github.io/keman-ai-workbench/';
 const IP_ICONS = { jian: IP+'ip_jian.png', mei: IP+'ip_mei.png', meng: IP+'ip_meng.png' };
+// 一级目录默认配置（与后端 DEFAULT_NAV 一致；云端 /nav 优先）
+const DEFAULT_NAV = [
+  {id:'d_overview', name:'数据总览', icon:'kanban', order:1, fixed:true},
+  {id:'d_train',    name:'培训平台', icon:'train',  order:2, fixed:true},
+  {id:'d_qc',       name:'质检平台', icon:'qc',     order:3, fixed:true},
+  {id:'d_tool',     name:'日常工具', icon:'tool',   order:4, fixed:true}
+];
+// 子目录归属：按 cat / cluster 自动判定一级目录（兼容无 parentId 的旧数据）
+function parentOf(m){
+  if(m.parentId) return m.parentId;
+  const c=m.cluster;
+  if(m.cat==='kanban') return 'd_overview';
+  if(c==='train') return 'd_train';
+  if(c==='qc') return 'd_qc';
+  if(c==='tool'||m.cat==='daily') return 'd_tool';
+  return 'd_tool';
+}
+function subIconOf(m){
+  if(m.icon && CARD_ICONS[m.icon]) return CARD_ICONS[m.icon];
+  const c=m.cluster;
+  if(c==='train'||c==='qc'||c==='tool') return CARD_ICONS[c];
+  return CARD_ICONS[m.cat]||CARD_ICONS.app;
+}
 const CATS = {
   kanban:{label:'看板类',cls:'kanban',icon:IP_ICONS.meng},
   app:{label:'应用类',cls:'app',icon:IP_ICONS.jian},
@@ -1183,6 +1335,8 @@ const SHARED_CONFIG_URL = API_BASE + '/modules';
 let currentUser = null;            // {id,name,roleIds,permIds}
 let currentRole = 'admin';         // 派生：含管理员角色 -> 'admin'；否则 'staff'
 let modules = [];                  // 云端应用配置
+let navDirs = [];                  // 一级目录配置（来自 /nav，4 个固定目录）
+let selectedAppId = null;          // 当前选中的子目录（用于高亮）
 let loginTime = '';
 let ALL_ROLES = [];                // 全部角色（后端）
 let ALL_PERMS = [];                // 全部权限（后端）
@@ -1474,26 +1628,34 @@ function render(){
     renderDash(lvl);
   }
 }
-// 首页「全部应用」：按类型胶囊(curCat)+搜索全局筛选可见应用
+// 首页「全部应用」：按一级目录分组展示（spec：点击首页卡片=点击左侧对应子目录）
 function renderAllApps(q){
   if(!allGrid) return;
-  const list=modules.filter(a=>isVisible(a) && (curCat==='all'||a.cat===curCat)
+  const dirs=(navDirs.length?navDirs:DEFAULT_NAV).slice().sort((a,b)=>a.order-b.order);
+  const all=modules.filter(a=>isVisible(a)
     && (!q||a.name.toLowerCase().includes(q)||a.owner.toLowerCase().includes(q)));
-  const cn=document.getElementById('all-cn'); if(cn) cn.textContent=`共 ${list.length} 个`;
-  if(list.length){
-    showGridSkeleton(allGrid, Math.min(list.length,8));
-    setTimeout(()=>{
-      if(curNode!=='home') return; // 切换后作废
-      allGrid.innerHTML='';
-      list.forEach(a=>allGrid.appendChild(buildCard(a)));
-    },170);
-  }else{
+  const cn=document.getElementById('all-cn'); if(cn) cn.textContent=`共 ${all.length} 个`;
+  if(!all.length){
     allGrid.innerHTML=gridEmptyHTML(
       q?'未找到匹配的应用':'该分类下暂无应用',
-      q?'试试调整搜索关键词，或切换上方分类胶囊。':'切换上方分类胶囊，查看其他应用。'
+      q?'试试调整搜索关键词。':'切换上方分类胶囊，查看其他应用。'
     );
+    return;
   }
-  moveCatInd();
+  showGridSkeleton(allGrid, Math.min(all.length,8));
+  setTimeout(()=>{
+    if(curNode!=='home') return; // 切换后作废
+    allGrid.innerHTML='';
+    dirs.forEach(dir=>{
+      const subs=all.filter(a=>parentOf(a)===dir.id).sort((a,b)=>(a.sort||0)-(b.sort||0));
+      if(!subs.length) return;
+      const sec=document.createElement('div'); sec.className='home-group';
+      sec.innerHTML=`<div class="section-title"><span class="bar"></span><span>${dir.name}</span><span class="n">${subs.length} 个</span></div>`;
+      const g=document.createElement('div'); g.className='grid';
+      subs.forEach(a=>g.appendChild(buildCard(a)));
+      sec.appendChild(g); allGrid.appendChild(sec);
+    });
+  },170);
 }
 // ===== 类型子视图胶囊（按 a.cat 筛选，与左侧一级分类不重复） =====
 const CAT_LABEL={kanban:'看板',app:'应用',daily:'日报'};
@@ -1622,7 +1784,8 @@ function openApp(app){
   if(!app.url){ alert(app.name+' 暂未配置链接，无法打开。'); return; }
   const BLOCKED=['feishuapp.com','feishu.cn','aiforce.cloud','dingtalk.com','work.weixin.qq.com'];
   const tryHost=new URL(app.url,location.origin).hostname;
-  if(BLOCKED.some(h=>tryHost.includes(h))){ window.open(app.url,'_blank','noopener'); return; }
+  if(app.open==='newtab' || BLOCKED.some(h=>tryHost.includes(h))){ window.open(app.url,'_blank','noopener'); return; }
+  selectedAppId=app.id; markNavSelected(app.id);
   const exist=tabs.find(t=>t.app===app); if(exist){activateTab(exist.id);return;}
   const id='tab-'+(++tabSeq); tabs.push({id,app});
   const tb=document.createElement('div'); tb.className='tab'; tb.dataset.id=id;
@@ -1712,6 +1875,110 @@ document.addEventListener('keydown',e=>{
 function refreshAll(){ updateStat(); render(); }
 
 // ============================================================
+//  左侧导航树（子母目录结构）
+// ============================================================
+const navTree   = document.getElementById('nav-tree');
+const navSearch = document.getElementById('nav-search');
+const navAddBtn = document.getElementById('nav-add');
+const navAboutBtn = document.getElementById('nav-about');
+const navCollapseBtn = document.getElementById('nav-collapse');
+function escapeHtml(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+let navExpanded = (()=>{ try{ return JSON.parse(localStorage.getItem('navExpanded')||'["d_overview"]'); }catch(e){ return ['d_overview']; } })();
+
+function subsOf(dirId){
+  return modules.filter(m=>isVisible(m) && parentOf(m)===dirId).sort((a,b)=>(a.sort||0)-(b.sort||0));
+}
+function markNavSelected(appId){
+  selectedAppId=appId;
+  document.querySelectorAll('#nav-tree .nav-subitem').forEach(s=>s.classList.toggle('sel', s.dataset.app===appId));
+}
+function renderNavTree(){
+  if(!navTree) return;
+  if(navAddBtn) navAddBtn.hidden=!isAdmin();
+  const q=(navSearch.value||'').trim().toLowerCase();
+  const dirs=(navDirs.length?navDirs:DEFAULT_NAV).slice().sort((a,b)=>a.order-b.order);
+  navTree.innerHTML='';
+  dirs.forEach(dir=>{
+    const allSubs=subsOf(dir.id);
+    const subs=allSubs.filter(m=> !q || m.name.toLowerCase().includes(q) || m.owner.toLowerCase().includes(q));
+    if(q && subs.length===0) return;                 // 搜索态：无匹配目录隐藏
+    const expanded = q ? true : (navExpanded.indexOf(dir.id)>=0);
+    const dirEl=document.createElement('div');
+    dirEl.className='nav-dir'+(expanded?' open':'');
+    dirEl.innerHTML=`
+      <div class="nav-dir-head" data-dir="${dir.id}">
+        <span class="nav-arrow">${expanded?'▾':'▸'}</span>
+        <span class="nav-dir-ico">${CARD_ICONS[dir.icon]||CARD_ICONS.app}</span>
+        <span class="nav-dir-name">${escapeHtml(dir.name)}</span>
+        <span class="nav-dir-count">${allSubs.length}</span>
+      </div>
+      <div class="nav-dir-list">${subs.map(m=>`
+        <div class="nav-subitem${selectedAppId===m.id?' sel':''}" data-app="${m.id}" data-node="app:${m.id}" draggable="${isAdmin()?1:0}">
+          <span class="nav-sub-ico">${subIconOf(m)}</span>
+          <span class="nav-sub-name">${escapeHtml(m.name)}</span>
+          ${m.open==='newtab'?'<span class="nav-sub-new" title="新窗口打开">↗</span>':''}
+          ${isAdmin()?'<span class="nav-sub-edit" title="编辑">✎</span>':''}
+        </div>`).join('')}</div>`;
+    navTree.appendChild(dirEl);
+    dirEl.querySelector('.nav-dir-head').onclick=()=>{
+      if(q) return;                                    // 搜索态下不折叠
+      const i=navExpanded.indexOf(dir.id);
+      if(i>=0) navExpanded.splice(i,1); else navExpanded.push(dir.id);
+      localStorage.setItem('navExpanded', JSON.stringify(navExpanded));
+      renderNavTree();
+    };
+    dirEl.querySelectorAll('.nav-subitem').forEach(si=>{
+      si.onclick=(e)=>{
+        if(e.target.classList.contains('nav-sub-edit')){ if(guardAdmin()) openAdmin('dir', si.dataset.app); return; }
+        const m=modules.find(x=>x.id===si.dataset.app); if(m) openApp(m);
+      };
+      // 管理员拖拽排序
+      si.ondragstart=(e)=>{ if(!isAdmin())return; e.dataTransfer.setData('text/plain', si.dataset.app); si.classList.add('dragging'); };
+      si.ondragend=()=>si.classList.remove('dragging');
+      si.ondragover=(e)=>{ if(!isAdmin())return; e.preventDefault(); si.classList.add('drag-over'); };
+      si.ondragleave=()=>si.classList.remove('drag-over');
+      si.ondrop=(e)=>{
+        if(!isAdmin())return; e.preventDefault(); si.classList.remove('drag-over');
+        reorderSub(dir.id, e.dataTransfer.getData('text/plain'), si.dataset.app);
+      };
+    });
+  });
+  // 折叠图标栏：隐藏文字
+  if(document.body.classList.contains('nav-collapsed')){
+    navTree.classList.add('collapsed');
+  } else navTree.classList.remove('collapsed');
+}
+function reorderSub(dirId, fromId, toId){
+  const list=modules.filter(m=>parentOf(m)===dirId).sort((a,b)=>(a.sort||0)-(b.sort||0));
+  const fi=list.findIndex(m=>m.id===fromId), ti=list.findIndex(m=>m.id===toId);
+  if(fi<0||ti<0||fi===ti) return;
+  const [m]=list.splice(fi,1); list.splice(ti,0,m);
+  list.forEach((m,i)=>{ const rec=modules.find(x=>x.id===m.id); if(rec) rec.sort=i; });
+  pushSharedConfig(); renderNavTree();
+}
+async function loadNav(){
+  try{
+    const d=await apiReq('GET','/nav');
+    const arr=(d&&d.nav)||d;
+    if(Array.isArray(arr)&&arr.length) navDirs=arr;
+  }catch(e){ navDirs=[]; }   // 失败回退 DEFAULT_NAV
+}
+function toggleNavCollapse(){
+  const c=document.body.classList.toggle('nav-collapsed');
+  if(navCollapseBtn) navCollapseBtn.textContent=c?'›':'‹';
+  localStorage.setItem('navCollapsedUI', c?'1':'0');
+}
+function initNav(){
+  if(navSearch) navSearch.oninput=renderNavTree;
+  if(navAboutBtn) navAboutBtn.onclick=()=>navigate('about');
+  if(navCollapseBtn) navCollapseBtn.onclick=toggleNavCollapse;
+  if(navAddBtn && isAdmin()) navAddBtn.onclick=()=>{ if(!guardAdmin()) return; openAdmin('dir'); };
+  if(localStorage.getItem('navCollapsedUI')==='1'){ document.body.classList.add('nav-collapsed'); if(navCollapseBtn) navCollapseBtn.textContent='›'; }
+  renderNavTree();                          // 先用默认目录渲染
+  loadNav().then(()=>{ renderNavTree(); }); // 拉取云端目录后刷新
+}
+
+// ============================================================
 //  模块配置后台（管理员）
 // ============================================================
 const adminModal=document.getElementById('admin-modal');
@@ -1728,10 +1995,14 @@ document.getElementById('mod-form').onsubmit=(e)=>{
   // 看板层级非空 → 必为看板类（自动归入数据看板层），与“类型”字段无关，避免层级被静默丢弃
   const isDash=!!dash;
   const effCat=isDash?'kanban':cat;
-  const rec={ id:id||uid(), cat:effCat, name:document.getElementById('f-name').value.trim(),
+  const rec={ id:id||uid(), cat:effCat, name:true&&document.getElementById('f-name').value.trim(),
     owner:document.getElementById('f-owner').value.trim(), url:document.getElementById('f-url').value.trim(),
     perm:document.getElementById('f-perm').value, sso:false,
-    cluster: isDash ? '' : cluster, dashLevel: isDash ? dash : '' };
+    cluster: isDash ? '' : cluster, dashLevel: isDash ? dash : '',
+    parentId:document.getElementById('f-parent').value||parentOf({cluster:isDash?'':cluster,cat:effCat}),
+    open:document.getElementById('f-open').value||'iframe',
+    sort:parseInt(document.getElementById('f-sort').value||'0',10)||0,
+    icon:(modules.find(x=>x.id===id)||{}).icon || (CARD_ICONS[cluster]?cluster:effCat), level:2 };
   // 经营总览（dashLevel=1）：仅允许配置“一个且必须存在”的跳转链接；支持直接修改该链接，禁止新增或重复配置多个
   // 仅统计已配置链接（含 url）的看板，避免空 url 的残留条目误伤正常编辑
   if(isDash && dash==='1'){
@@ -1765,12 +2036,145 @@ function renderAdminRows(){
       <div class="m-main"><div class="m-name">${m.name}</div>
       <div class="m-meta">责任人：${m.owner} ｜ 权限：${m.perm==='admin'?'管理专属':'员工可见'} ｜ ${m.url?('链接：'+m.url):'<span class="no-url">暂未配置链接</span>'}</div></div>
       <div class="m-ops"><button class="m-edit">编辑</button><button class="m-del">删除</button></div>`;
-    d.querySelector('.m-edit').onclick=()=>{ document.getElementById('f-id').value=m.id; document.getElementById('f-cat').value=m.cat; document.getElementById('f-name').value=m.name; document.getElementById('f-owner').value=m.owner; document.getElementById('f-url').value=m.url||''; document.getElementById('f-perm').value=m.perm; document.getElementById('f-cluster').value=m.cluster||''; document.getElementById('f-dash').value=m.dashLevel||''; };
+    d.querySelector('.m-edit').onclick=()=>{ document.getElementById('f-id').value=m.id; document.getElementById('f-cat').value=m.cat; document.getElementById('f-name').value=m.name; document.getElementById('f-owner').value=m.owner; document.getElementById('f-url').value=m.url||''; document.getElementById('f-perm').value=m.perm; document.getElementById('f-cluster').value=m.cluster||''; document.getElementById('f-dash').value=m.dashLevel||''; document.getElementById('f-parent').value=parentOf(m); document.getElementById('f-open').value=m.open||'iframe'; document.getElementById('f-sort').value=m.sort||0; };
     d.querySelector('.m-del').onclick=()=>confirmDelete('确认删除模块「'+m.name+'」？',()=>{ modules=modules.filter(x=>x.id!==m.id); pushSharedConfig(); renderAdminRows(); refreshAll(); });
     rows.appendChild(d);
   });
 }
-function openAdmin(){ renderAdminRows(); adminModal.hidden=false; }
+function openAdmin(tab, appId){
+  renderAdminRows();
+  adminModal.hidden=false;
+  switchAdmTab(tab||'mod');
+  if(tab==='dir') renderDirPane();
+  if(appId){ // 从导航“编辑”直接定位到该子目录的编辑表单
+    const m=modules.find(x=>x.id===appId); if(m){ openSubEdit(appId); }
+  }
+}
+// ===== 后台 Tab 切换 =====
+function switchAdmTab(tab){
+  document.querySelectorAll('#admin-modal .adm-tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
+  document.querySelectorAll('#admin-modal .adm-pane').forEach(p=>p.hidden=(p.dataset.pane!==tab));
+  if(tab==='dir') renderDirPane();
+}
+document.querySelectorAll('#admin-modal .adm-tab').forEach(t=>{
+  t.onclick=()=>switchAdmTab(t.dataset.tab);
+});
+// ===== 目录管理面板 =====
+function renderDirPane(){
+  const dirs=(navDirs.length?navDirs:DEFAULT_NAV).slice().sort((a,b)=>a.order-b.order);
+  const cards=document.getElementById('dir-cards'); cards.innerHTML='';
+  dirs.forEach(d=>{
+    const el=document.createElement('div'); el.className='dir-card';
+    el.dataset.id=d.id;
+    el.innerHTML=`
+      <div class="dir-card-ico">${CARD_ICONS[d.icon]||CARD_ICONS.app}</div>
+      <div class="dir-card-body">
+        <div class="dir-card-title">一级目录</div>
+        <input class="dir-name" value="${escapeHtml(d.name)}" data-id="${d.id}" />
+        <div class="dir-card-meta">不可删除 ｜ 当前 ${subsOf(d.id).length} 个子目录</div>
+      </div>`;
+    cards.appendChild(el);
+  });
+  renderSubGroups();
+}
+document.getElementById('dir-save').onclick=async()=>{
+  const dirs=(navDirs.length?navDirs:DEFAULT_NAV).slice();
+  document.querySelectorAll('#dir-cards .dir-name').forEach(inp=>{
+    const d=dirs.find(x=>x.id===inp.dataset.id); if(d) d.name=inp.value.trim()||d.name;
+  });
+  navDirs=dirs;
+  try{ await apiReq('POST','/nav',{nav:dirs}); }catch(e){ /* 离线/镜像页可能无 /nav，仅前端生效 */ }
+  renderNavTree();
+  alert('一级目录配置已保存。');
+};
+function renderSubGroups(){
+  const groups=document.getElementById('sub-groups'); groups.innerHTML='';
+  const dirs=(navDirs.length?navDirs:DEFAULT_NAV).slice().sort((a,b)=>a.order-b.order);
+  dirs.forEach(d=>{
+    const subs=subsOf(d.id);
+    const g=document.createElement('div'); g.className='sub-group';
+    g.innerHTML=`<div class="sub-group-title">${escapeHtml(d.name)}（${subs.length}）</div>`;
+    const list=document.createElement('div'); list.className='sub-list';
+    if(!subs.length){ list.innerHTML='<div class="empty-tip">暂无子目录</div>'; }
+    subs.forEach((m,i)=>{
+      const row=document.createElement('div'); row.className='sub-row';
+      row.innerHTML=`
+        <span class="sub-ico">${subIconOf(m)}</span>
+        <span class="sub-name">${escapeHtml(m.name)}</span>
+        <span class="sub-perm">${m.perm==='admin'?'管理':'员工'}</span>
+        ${m.open==='newtab'?'<span class="sub-tag">新窗口</span>':''}
+        <span class="grow"></span>
+        <button class="sub-up" title="上移">↑</button>
+        <button class="sub-down" title="下移">↓</button>
+        <button class="sub-edit" title="编辑">编辑</button>
+        <button class="sub-del" title="删除">删除</button>`;
+      row.querySelector('.sub-up').onclick=()=>moveSub(m.id, -1);
+      row.querySelector('.sub-down').onclick=()=>moveSub(m.id, 1);
+      row.querySelector('.sub-edit').onclick=()=>openSubEdit(m.id);
+      row.querySelector('.sub-del').onclick=()=>confirmDelete('确认删除子目录「'+m.name+'」？',()=>{ modules=modules.filter(x=>x.id!==m.id); pushSharedConfig(); refreshAll(); renderDirPane(); });
+      list.appendChild(row);
+    });
+    g.appendChild(list); groups.appendChild(g);
+  });
+}
+function moveSub(id, dir){
+  const m=modules.find(x=>x.id===id); if(!m) return;
+  const p=parentOf(m);
+  const list=modules.filter(x=>parentOf(x)===p).sort((a,b)=>(a.sort||0)-(b.sort||0));
+  const i=list.findIndex(x=>x.id===id); const j=i+dir;
+  if(j<0||j>=list.length) return;
+  const [mm]=list.splice(i,1); list.splice(j,0,mm);
+  list.forEach((x,idx)=>{ const r=modules.find(y=>y.id===x.id); if(r) r.sort=idx; });
+  pushSharedConfig(); refreshAll(); renderDirPane();
+}
+function openSubEdit(id){
+  const m=modules.find(x=>x.id===id); if(!m) return;
+  switchAdmTab('mod');
+  document.getElementById('f-id').value=m.id;
+  document.getElementById('f-cat').value=m.cat===undefined?'app':(m.cat||'app');
+  document.getElementById('f-name').value=m.name;
+  document.getElementById('f-owner').value=m.owner||'';
+  document.getElementById('f-url').value=m.url||'';
+  document.getElementById('f-perm').value=m.perm||'staff';
+  document.getElementById('f-cluster').value=m.cluster||'';
+  document.getElementById('f-dash').value=m.dashLevel||'';
+  document.getElementById('f-parent').value=parentOf(m);
+  document.getElementById('f-open').value=m.open||'iframe';
+  document.getElementById('f-sort').value=m.sort||0;
+  document.getElementById('f-name').focus();
+}
+document.getElementById('sub-add').onclick=()=>{
+  switchAdmTab('mod');
+  document.getElementById('mod-form').reset();
+  document.getElementById('f-id').value='';
+  document.getElementById('f-perm').value='staff';
+  document.getElementById('f-open').value='iframe';
+  document.getElementById('f-parent').value='d_tool';
+  document.getElementById('f-sort').value='0';
+  document.getElementById('f-name').focus();
+};
+// ===== 一键迁移：按类型/集群自动归属一级目录 =====
+document.getElementById('migrate-btn').onclick=async()=>{
+  if(!confirm('确认执行一键迁移？\n将按每个应用卡片的类型 / 集群，自动写入 parentId / level / sort，原有名称和链接等字段全部保留。')) return;
+  const before=modules.map(m=>({id:m.id, parentId:m.parentId, sort:m.sort}));
+  const counts={d_overview:0,d_train:0,d_qc:0,d_tool:0};
+  const byDir={d_overview:[],d_train:[],d_qc:[],d_tool:[]};
+  modules.forEach(m=>{
+    const pid=parentOf(m);
+    m.parentId=pid; m.level=2;
+    if(m.icon===undefined||!m.icon) m.icon=(CARD_ICONS[m.cluster]?m.cluster:m.cat)||'app';
+    if(m.open===undefined) m.open='iframe';
+    if(m.sort===undefined||m.sort===null) m.sort=0;
+    byDir[pid].push(m.id); counts[pid]++;
+  });
+  Object.keys(byDir).forEach(pid=>byDir[pid].forEach((id,idx)=>{ const r=modules.find(x=>x.id===id); if(r) r.sort=idx; }));
+  try{
+    await pushSharedConfig();
+    const res=document.getElementById('migrate-result');
+    res.textContent=`迁移完成：数据总览 ${counts.d_overview} ｜ 培训 ${counts.d_train} ｜ 质检 ${counts.d_qc} ｜ 工具 ${counts.d_tool}`;
+    refreshAll(); renderDirPane();
+  }catch(e){ alert('迁移失败：'+(e.message||e)); }
+};
 document.getElementById('mod-search-input').oninput=(e)=>{ modFilter=e.target.value; renderAdminRows(); };
 
 // ============================================================
@@ -2182,11 +2586,10 @@ function showLogin(){
 function showApp(){
   document.getElementById('login-view').hidden=true;
   document.getElementById('app-root').hidden=false;
-  // 主题 / 分类胶囊初始化
+  // 主题 / 左侧导航树初始化
   const bt=document.getElementById('btn-theme'); if(bt) bt.onclick=toggleTheme;
   updateThemeIcon(document.documentElement.dataset.theme==='dark'?'dark':'light');
-  initCatPills();
-  window.addEventListener('resize', moveCatInd);
+  initNav();
   loadMeta().then(applyUserInfo);   // 拉取角色/权限后渲染标签与入口
   syncSharedConfig();
 }

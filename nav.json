@@ -1,0 +1,30 @@
+[
+  {
+    "id": "d_overview",
+    "name": "数据总览",
+    "icon": "kanban",
+    "order": 1,
+    "fixed": true
+  },
+  {
+    "id": "d_train",
+    "name": "培训平台",
+    "icon": "train",
+    "order": 2,
+    "fixed": true
+  },
+  {
+    "id": "d_qc",
+    "name": "质检平台",
+    "icon": "qc",
+    "order": 3,
+    "fixed": true
+  },
+  {
+    "id": "d_tool",
+    "name": "日常工具",
+    "icon": "tool",
+    "order": 4,
+    "fixed": true
+  }
+]
