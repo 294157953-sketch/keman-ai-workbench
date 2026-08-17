@@ -43,6 +43,22 @@
     --c-kanban:#E2924A; --c-app:#6E9BDB; --c-daily:#E27573; --c-mix:#9A9CE0;
     --sh-1:0 1px 3px rgba(0,0,0,.4); --sh-2:0 4px 14px rgba(0,0,0,.45); --sh-3:0 12px 28px rgba(0,0,0,.55);
   }
+  /* 深色模式降亮：顶栏胶囊选中态与滑动标签底色避免过艳 */
+  html[data-theme="dark"] .cat-pill.active{color:#E8915A}
+  html[data-theme="dark"] .cat-ind{background:#27313f;border-color:#3a4658}
+  html[data-theme="dark"] .hero-reveal{background:transparent;border-color:transparent;color:var(--sub)}
+  html[data-theme="dark"] .hero-reveal:hover{background:var(--hover);color:var(--brand)}
+  html[data-theme="dark"] .af-card,.html[data-theme="dark"] .about-legend{background:#222c3a}
+  /* 深色模式降亮：标签底色与顶栏胶囊选中态降低亮度，避免过艳 */
+  html[data-theme="dark"] .c-cat,
+  html[data-theme="dark"] .pb-cat,
+  html[data-theme="dark"] .m-tag,
+  html[data-theme="dark"] .fw-layer-tag,
+  html[data-theme="dark"] .role-pill,
+  html[data-theme="dark"] .feat-ico,
+  html[data-theme="dark"] .n-ico{filter:saturate(.6) brightness(.82)}
+  html[data-theme="dark"] .stat-card{filter:saturate(.66) brightness(.9)}
+  html[data-theme="dark"] .stat-card.active{background:var(--brand-soft);border-color:var(--brand-line);color:var(--brand);filter:none}
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
   body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",Inter,system-ui,sans-serif;
@@ -52,7 +68,7 @@
     transition:background .25s var(--ease),color .25s var(--ease);}
   /* ===== Header（纯白现代企业后台风格） ===== */
   header{position:relative;z-index:6;flex-shrink:0;height:60px;padding:0 20px;
-    display:flex;align-items:center;gap:16px;
+    display:flex;align-items:center;gap:16px;overflow:hidden;
     background:var(--panel);
     border-bottom:1px solid var(--line);
     box-shadow:0 1px 2px rgba(16,24,40,.04), 0 1px 0 rgba(16,24,40,.02);
@@ -70,13 +86,13 @@
     cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .16s,color .16s,border-color .16s}
   .hd-theme:hover{background:var(--hover);color:var(--ink);border-color:var(--brand-line)}
   .hd-theme svg{width:18px;height:18px;display:block}
-  .logo-badge{width:42px;height:42px;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative}
-  .logo-badge img{height:38px;width:38px;object-fit:contain;border-radius:10px;padding:2px;
+  .logo-badge{width:38px;height:38px;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative}
+  .logo-badge img{height:34px;width:34px;object-fit:contain;border-radius:10px;padding:2px;
     background:transparent;filter:drop-shadow(0 2px 4px rgba(0,0,0,.12));transition:transform .3s var(--ease)}
   .logo-badge:hover img{transform:scale(1.06)}
   .hd-left{display:flex;align-items:center;gap:14px;flex-shrink:0}
   .brand-txt{display:flex;flex-direction:column;justify-content:center;line-height:1.18;gap:1px}
-  .brand-txt .cn{font-size:19px;font-weight:800;letter-spacing:2px;color:var(--ink);text-shadow:none}
+  .brand-txt .cn{font-size:17px;font-weight:800;letter-spacing:1px;color:var(--ink);text-shadow:none}
   .brand-txt .en{font-size:9px;letter-spacing:2px;opacity:1;color:var(--sub);font-weight:600;text-transform:uppercase;margin-top:1px}
   .brand-txt .company{font-size:11px;font-weight:600;letter-spacing:1px;color:var(--sub);margin-top:1px}
   .hd-divider{width:1px;height:34px;background:var(--line);flex-shrink:0}
@@ -166,13 +182,18 @@
   /* ===== Layout ===== */
   #app-root{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden}
   .main{display:flex;flex:1;min-height:0}
-  nav{width:220px;background:var(--panel);border-right:1px solid var(--line);
+  nav{width:196px;background:var(--panel);border-right:1px solid var(--line);
     padding:20px 12px;overflow-y:auto;flex-shrink:0;transition:background .25s var(--ease),border-color .25s var(--ease)}
   .nav-brand{display:flex;align-items:center;gap:9px;padding:0 9px 15px;margin-bottom:8px;border-bottom:1px solid var(--line)}
   .nav-brand img{width:28px;height:28px;flex-shrink:0;border-radius:9px;object-fit:cover;
     box-shadow:var(--sh-1);background:var(--panel);border:1px solid var(--line)}
   .nav-brand span{font-size:13px;font-weight:700;color:var(--ink);letter-spacing:.5px}
   .group-title{font-size:10.5px;color:var(--sub);margin:16px 9px 9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+  .group-title.clickable{cursor:pointer;display:flex;align-items:center;gap:6px;transition:color .15s}
+  .group-title.clickable::after{content:"›";font-size:14px;font-weight:800;opacity:.45;transition:transform .15s var(--ease)}
+  .group-title.clickable:hover{color:var(--brand)}
+  .group-title.clickable:hover::after{transform:translateX(3px);opacity:.9}
+  .group-title.active{color:var(--brand)}
   .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r-sm);border-left:3px solid transparent;
     cursor:pointer;font-size:13.5px;color:var(--ink);margin-bottom:3px;transition:background .16s,transform .16s,color .16s,border-color .16s}
   .nav-item:hover{background:var(--hover)}
@@ -255,7 +276,7 @@
   .dash-ph .dp-title{font-size:19px;font-weight:800;color:var(--nut);margin:12px 0 6px}
   .dash-ph .dp-note{font-size:13px;line-height:1.8}
   .dash-ph .dp-apps{margin-top:20px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
-  .content{flex:1;display:flex;flex-direction:column;min-width:0}
+  .content{flex:1;display:flex;flex-direction:column;min-width:0;overflow-x:hidden}
   .toolbar{padding:13px 22px;background:var(--panel);backdrop-filter:blur(8px);
     border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;flex-shrink:0}
   .search-wrap{position:relative;flex:0 0 300px}
@@ -317,9 +338,9 @@
   .ff-card .ff-title{font-size:15.5px;font-weight:800;color:var(--ink);margin-bottom:9px}
   .ff-card .ff-sub{font-size:12.5px;color:var(--sub);line-height:1.75;margin-bottom:18px}
   .ff-card .pb-open{display:inline-block}
-  .home{position:absolute;inset:0;overflow-y:auto;padding:34px 40px 48px;display:flex;flex-direction:column;align-items:center;
+  .home{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:34px 40px 48px;display:flex;flex-direction:column;align-items:center;
     background:radial-gradient(700px 380px at 10% 0%,rgba(255,150,60,.06),transparent 60%),radial-gradient(600px 480px at 96% 100%,rgba(62,127,208,.04),transparent 55%),var(--cream)}
-  .home-overview,.home-cluster{width:100%;max-width:1400px}
+  .home-overview,.home-cluster{width:100%;max-width:1400px;overflow-x:hidden}
   /* 首页欢迎横幅（浅色渐变 SaaS 风格） */
   .hero{position:relative;border:1px solid var(--line);border-radius:var(--r-lg);padding:28px 34px;box-shadow:var(--sh-2);overflow:hidden;
     background:linear-gradient(120deg,var(--panel) 0%,var(--panel) 58%,var(--brand-soft) 145%)}
@@ -355,6 +376,18 @@
   .feat-ico svg{width:20px;height:20px;display:block}
   .feat-ico.feat-kanban{background:var(--c-kanban)} .feat-ico.feat-app{background:var(--c-app)}
   .feat-ico.feat-tool{background:var(--c-tool)} .feat-ico.feat-daily{background:var(--c-daily)} .feat-ico.feat-mix{background:var(--c-mix)}
+  /* 关于平台弹窗 */
+  .about-body{padding:18px 20px 22px}
+  .about-intro{font-size:13.5px;line-height:1.75;color:var(--sub);margin-bottom:16px}
+  .about-intro strong{color:var(--ink);font-weight:700}
+  .about-h{font-size:13px;font-weight:800;color:var(--ink);margin:6px 0 11px;letter-spacing:.5px}
+  .about-feat{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin-bottom:18px}
+  .af-card{display:flex;align-items:center;gap:12px;padding:13px 15px;background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r-md)}
+  .af-t{font-size:13.5px;font-weight:800;color:var(--ink)}
+  .af-s{font-size:11.5px;color:var(--sub);margin-top:2px;line-height:1.5}
+  .about-legend{display:flex;flex-wrap:wrap;gap:10px 22px;padding:13px 16px;background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r-md)}
+  .al-item{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:var(--ink)}
+  .al-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;box-shadow:0 1px 2px rgba(0,0,0,.08)}
   .feat-t{grid-column:2;grid-row:1;font-size:14px;font-weight:700;color:var(--ink);line-height:1.3;min-width:0}
   .feat-s{grid-column:2;grid-row:2;font-size:12px;color:var(--sub);margin-top:2px;line-height:1.5;min-width:0}
   .guide-list{display:flex;flex-direction:column;gap:14px}
@@ -419,6 +452,8 @@
   footer b{color:var(--nut);font-weight:700}
   .admin-btn{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--brand-2),var(--brand));border:none;padding:9px 16px;border-radius:var(--r-sm);cursor:pointer;flex-shrink:0;box-shadow:0 2px 6px rgba(232,86,10,.3);transition:transform .16s,box-shadow .16s,filter .16s}
   .admin-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(232,86,10,.4);filter:brightness(1.05)}
+  .ghost-btn{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;color:var(--sub);background:var(--panel-2);border:1px solid var(--line);padding:7px 13px;border-radius:var(--r-sm);cursor:pointer;flex-shrink:0;transition:background .15s,color .15s,border-color .15s}
+  .ghost-btn:hover{background:var(--brand-soft);color:var(--brand);border-color:var(--brand-line)}
   .admin-btn[hidden]{display:none}
   .admin-btn:active{transform:translateY(0)}
   /* ===== 顶部分类胶囊（滑动高亮） ===== */
@@ -604,11 +639,9 @@
     <div class="logo-badge"><img src="https://294157953-sketch.github.io/keman-ai-workbench/ip_trio_clean.png" alt="三只松鼠官方IP" /></div>
     <div class="brand-txt">
       <span class="cn">三只松鼠</span>
-      <span class="en">Three Squirrels</span>
-      <span class="company">股份有限公司</span>
     </div>
     <span class="hd-divider"></span>
-    <span class="hd-title">客满中心<span class="tdot">·</span>AI 统一工作台</span>
+    <span class="hd-title">客满中心 · AI 工作台</span>
   </div>
   <div class="hd-search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
@@ -672,7 +705,7 @@
   <nav id="nav">
     <div class="nav-brand"><img src="https://294157953-sketch.github.io/keman-ai-workbench/ip_jian.png" alt="" /><span>工作台导航</span></div>
     <nav class="nav-group" aria-label="数据看板层">
-      <div class="group-title">数据看板层</div>
+      <div class="group-title clickable" data-node="dash:home" role="button" tabindex="0" title="查看数据看板层总览">数据看板层</div>
       <div class="nav-item" data-node="dash:1"><span class="n-ico dash">数</span>经营总览</div>
       <div class="nav-item" data-node="dash:2"><span class="n-ico dash">数</span>业务处</div>
       <div class="nav-item" data-node="dash:3"><span class="n-ico dash">数</span>经营体</div>
@@ -683,11 +716,15 @@
       <div class="nav-item" data-node="cluster:qc"><span class="n-ico qc">质</span>质检平台</div>
       <div class="nav-item" data-node="cluster:tool"><span class="n-ico tool">具</span>常用工具</div>
     </nav>
+    <nav class="nav-group" aria-label="帮助">
+      <div class="nav-item" data-node="about"><span class="n-ico" style="background:linear-gradient(135deg,#7C7FD6,#5B8BD0)">i</span>关于平台</div>
+    </nav>
   </nav>
 
   <div class="content">
     <div class="toolbar">
       <span class="cloud-badge" id="cloud-badge" title="云端同步状态"><span class="dot"></span><span class="cb-text">同步中…</span></span>
+      <button class="ghost-btn" id="btn-hero" type="button" hidden>› 欢迎横幅</button>
       <button class="admin-btn" id="btn-admin">⚙ 模块配置后台</button>
       <div class="count" id="count"></div>
     </div>
@@ -710,38 +747,6 @@
               </div>
             </div>
           </div>
-          <div class="feat-row" id="feat-row">
-            <div class="feat-card"><span class="feat-ico feat-kanban"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="20" x2="6" y2="14"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="18" y1="20" x2="18" y2="10"/></svg></span><div class="feat-t">两级架构</div><div class="feat-s">看板层 + 应用层，结构清晰</div></div>
-            <div class="feat-card"><span class="feat-ico feat-app"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span><div class="feat-t">分层看板</div><div class="feat-s">经营总览 → 业务处 → 经营体</div></div>
-            <div class="feat-card"><span class="feat-ico feat-tool"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><div class="feat-t">智能配置</div><div class="feat-s">模块 / 权限 / 人员统一管理</div></div>
-            <div class="feat-card"><span class="feat-ico feat-daily"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span><div class="feat-t">统一入口</div><div class="feat-s">多标签协同，一处直达</div></div>
-          </div>
-          <div class="hero-reveal" id="hero-reveal" hidden>› 展开欢迎横幅</div>
-          <div class="legend">
-            <span class="lg-tip">业务类型图例</span>
-            <span class="lg-item"><span class="lg-dot" style="background:linear-gradient(135deg,#FF8C42,#FF6A00)"></span>数据看板</span>
-            <span class="lg-item"><span class="lg-dot" style="background:#6C8EF5"></span>培训</span>
-            <span class="lg-item"><span class="lg-dot" style="background:#E2553B"></span>质检</span>
-            <span class="lg-item"><span class="lg-dot" style="background:#3FB984"></span>工具</span>
-          </div>
-          <div class="fw-layers">
-            <div class="fw-layer">
-              <div class="fw-layer-head"><span class="fw-layer-tag dash">数据看板层</span><span class="fw-layer-desc">分层看板体系 · 宏观到微观数据穿透</span></div>
-              <div class="fw-cards">
-                <div class="fw-card dash" data-node="dash:1"><div class="fw-card-ic">数</div><div><div class="fw-card-t">客满中心经营总览</div><div class="fw-card-s">面向中心层，呈现整体经营核心指标</div><div class="fw-go">进入 ›</div></div></div>
-                <div class="fw-card dash" data-node="dash:2"><div class="fw-card-ic">数</div><div><div class="fw-card-t">业务处视角</div><div class="fw-card-s">面向业务处，聚焦各业务处运营明细</div><div class="fw-go">进入 ›</div></div></div>
-                <div class="fw-card dash" data-node="dash:3"><div class="fw-card-ic">数</div><div><div class="fw-card-t">渠道 / 经营体视角</div><div class="fw-card-s">面向 mini CEO，支撑一线经营体自主管理</div><div class="fw-go">进入 ›</div></div></div>
-              </div>
-            </div>
-            <div class="fw-layer">
-              <div class="fw-layer-head"><span class="fw-layer-tag app">应用系统层</span><span class="fw-layer-desc">三大应用集群 · 培训 / 质检 / 日常作业</span></div>
-              <div class="fw-cards">
-                <div class="fw-card train" data-node="cluster:train"><div class="fw-card-ic">培</div><div><div class="fw-card-t">培训平台</div><div class="fw-card-s">新人培训 / 进阶考试 / 模拟接待 / 实操 / 打字，负责人才能力培养</div><div class="fw-go">进入 ›</div></div></div>
-                <div class="fw-card qc" data-node="cluster:qc"><div class="fw-card-ic">质</div><div><div class="fw-card-t">质检平台</div><div class="fw-card-s">文本 AI 质检 / 语音 AI 质检 / 质检申诉，保障合规与质量</div><div class="fw-go">进入 ›</div></div></div>
-                <div class="fw-card tool" data-node="cluster:tool"><div class="fw-card-ic">具</div><div><div class="fw-card-t">常用工具</div><div class="fw-card-s">库存 / 工单 / 知识库（RAG）/ 积分激励，提升作业效率</div><div class="fw-go">进入 ›</div></div></div>
-              </div>
-            </div>
-          </div>
           <div class="all-apps" id="all-apps">
             <div class="section-title"><span class="bar"></span><span>全部应用</span><span class="n" id="all-cn"></span></div>
             <div class="cat-pills" id="cat-pills"><span class="cat-ind" id="cat-ind"></span></div>
@@ -750,6 +755,7 @@
         </div>
         <div class="home-cluster" id="home-cluster" hidden>
           <div class="section-title" id="sec-cluster"><span class="bar"></span><span id="sec-cluster-name">应用集群</span><span class="n" id="sec-cn"></span></div>
+          <div class="cat-pills" id="cluster-pills"><span class="cat-ind" id="cluster-ind"></span></div>
           <div class="grid" id="grid"></div>
         </div>
         <div class="home-dash" id="home-dash" hidden>
@@ -1045,6 +1051,35 @@
   </div>
 </div>
 
+<!-- 关于平台 -->
+<div class="modal" id="about-modal" hidden>
+  <div class="modal-mask" id="about-mask"></div>
+  <div class="modal-panel" style="width:min(720px,100%)" role="dialog" aria-modal="true" aria-label="关于平台">
+    <div class="modal-head">
+      <img src="https://294157953-sketch.github.io/keman-ai-workbench/ip_jian.png" class="modal-logo" alt="" />
+      <div class="modal-title">关于平台</div>
+      <button class="modal-close" id="about-close" aria-label="关闭">×</button>
+    </div>
+    <div class="modal-body about-body">
+      <p class="about-intro">客满中心 AI 应用统一工作台，整合<strong>数据看板</strong>与<strong>智能应用</strong>，为客满运营提供统一入口与多标签协同能力，让运营更高效、更协同。</p>
+      <h4 class="about-h">产品特性</h4>
+      <div class="about-feat">
+        <div class="af-card"><span class="feat-ico feat-kanban"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="20" x2="6" y2="14"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="18" y1="20" x2="18" y2="10"/></svg></span><div class="af-t">两级架构</div><div class="af-s">看板层 + 应用层，结构清晰</div></div>
+        <div class="af-card"><span class="feat-ico feat-app"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span><div class="af-t">分层看板</div><div class="af-s">经营总览 → 业务处 → 经营体</div></div>
+        <div class="af-card"><span class="feat-ico feat-tool"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><div class="af-t">智能配置</div><div class="af-s">模块 / 权限 / 人员统一管理</div></div>
+        <div class="af-card"><span class="feat-ico feat-daily"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span><div class="af-t">统一入口</div><div class="af-s">多标签协同，一处直达</div></div>
+      </div>
+      <h4 class="about-h">业务类型图例</h4>
+      <div class="about-legend">
+        <span class="al-item"><span class="al-dot" style="background:linear-gradient(135deg,#FF8C42,#FF6A00)"></span>数据看板</span>
+        <span class="al-item"><span class="al-dot" style="background:#6C8EF5"></span>培训</span>
+        <span class="al-item"><span class="al-dot" style="background:#E2553B"></span>质检</span>
+        <span class="al-item"><span class="al-dot" style="background:#3FB984"></span>工具</span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- 设置 -->
 <div class="modal" id="setting-modal" hidden>
   <div class="modal-mask" id="setting-mask"></div>
@@ -1296,7 +1331,7 @@ function updateStat(){
   });
   document.getElementById('sec-cn').textContent='';
   statEl.innerHTML=
-    `<div class="stat-card kanban" data-node="dash:1"><span class="stat-ic">${STAT_ICONS.kanban}</span><span class="stat-col"><span class="stat-num">${c.kanban}</span><span class="stat-label">看板</span></span></div>`+
+    `<div class="stat-card kanban" data-node="dash:home"><span class="stat-ic">${STAT_ICONS.kanban}</span><span class="stat-col"><span class="stat-num">${c.kanban}</span><span class="stat-label">看板</span></span></div>`+
     `<div class="stat-card app" data-node="cluster:train"><span class="stat-ic">${STAT_ICONS.app}</span><span class="stat-col"><span class="stat-num">${c.train}</span><span class="stat-label">培训</span></span></div>`+
     `<div class="stat-card daily" data-node="cluster:qc"><span class="stat-ic">${STAT_ICONS.daily}</span><span class="stat-col"><span class="stat-num">${c.qc}</span><span class="stat-label">质检</span></span></div>`+
     `<div class="stat-card mix" data-node="cluster:tool"><span class="stat-ic">${STAT_ICONS.mix}</span><span class="stat-col"><span class="stat-num">${c.tool}</span><span class="stat-label">常用工具</span></span></div>`;
@@ -1337,6 +1372,28 @@ function buildDashCard(a, backNode){
   else card.style.opacity='0.7';
   return card;
 }
+// 数据看板层聚合页（hub）：经营总览 / 业务处 / 经营体 三个子视图入口，统一看板导航逻辑
+function renderDashHub(){
+  const dg=document.getElementById('dash-grid');
+  const dv=document.getElementById('dash-view');
+  const dh=document.getElementById('dash-head');
+  dg.hidden=true; dv.hidden=true; dh.hidden=false;
+  document.getElementById('dash-title').textContent='数据看板层';
+  document.getElementById('dash-cn').textContent='经营总览 · 业务处 · 经营体';
+  dg.innerHTML='';
+  ['1','2','3'].forEach(l=>{
+    const info=DASH_LEVELS[l];
+    const apps=modules.filter(a=>String(a.dashLevel)===l && isVisible(a));
+    const card=document.createElement('div'); card.className='card';
+    card.innerHTML=
+      `<div class="c-head"><span class="c-ico kanban">${CARD_ICONS.kanban}</span><span class="c-cat kanban">${l} 级</span></div>`+
+      `<div class="c-body"><div class="c-title">${info.title}</div><div class="c-desc">${info.desc}</div></div>`+
+      `<div class="c-foot"><span class="c-owner"><span class="c-avatar">${l}</span><span class="c-owner-name"><b>共 ${apps.length} 个看板</b></span></span><span class="c-act">进入 ›</span></div>`;
+    card.onclick=()=>navigate('dash:'+l);
+    dg.appendChild(card);
+  });
+  dg.hidden=false;
+}
 function showDashView(app, backNode){
   const view=document.getElementById('dash-view');
   const grid=document.getElementById('dash-grid');
@@ -1363,7 +1420,7 @@ function renderDash(lvl){
   countEl.textContent='数据看板 · '+info.title;
   if(lvl==='1'){
     // 经营总览：仅配置一个网页，点击直接站内打开，无中间页
-    if(apps.length){ showDashView(apps[0],'home'); return; }
+    if(apps.length){ showDashView(apps[0],'dash:home'); return; }
     dg.hidden=false;
     dg.innerHTML=`<div class="dash-ph"><div class="dp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div><div class="dp-title">${info.title}</div><div class="dp-note">当前该层级暂无已接入的看板。</div></div>`;
     return;
@@ -1375,7 +1432,7 @@ function renderDash(lvl){
   document.getElementById('dash-cn').textContent='共 '+apps.length+' 个看板';
   if(apps.length){
     dg.hidden=false;
-    apps.forEach(a=> dg.appendChild(buildDashCard(a,'dash:'+lvl)) );
+    apps.forEach(a=> dg.appendChild(buildDashCard(a,'dash:home')) );
   } else {
     dg.hidden=false;
     dg.innerHTML=`<div class="dash-ph"><div class="dp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div><div class="dp-title">${info.title}</div><div class="dp-note">当前该层级暂无已接入的看板类应用。</div></div>`;
@@ -1398,36 +1455,23 @@ function render(){
     countEl.textContent=`共 ${modules.length} 个应用 ${roleLabel}`;
     return;
   }
+  if(curNode==='about'){           // 关于平台：以弹窗呈现，首页保留为背景
+    ov.hidden=false;
+    renderAllApps(q);
+    openAbout();
+    return;
+  }
   if(curNode.startsWith('cluster:')){
     const key=curNode.split(':')[1];
-    const base=modules.filter(a=>isVisible(a) && a.cluster===key);
-    const list=base.filter(a=>{
-      if(q&&!(a.name.toLowerCase().includes(q)||a.owner.toLowerCase().includes(q))) return false;
-      return true;
-    });
-    cl.hidden=false;
-    document.getElementById('sec-cluster-name').textContent=CLUSTERS[key].label;
-    document.getElementById('sec-cn').textContent=`共 ${list.length} 个应用`;
-    if(list.length){
-      showGridSkeleton(grid, Math.min(list.length,8));
-      setTimeout(()=>{
-        if(curNode!=='cluster:'+key) return; // 切换后作废
-        grid.innerHTML='';
-        list.forEach(a=>grid.appendChild(buildCard(a)));
-      },170);
-    }else{
-      grid.innerHTML=gridEmptyHTML(
-        q?'未找到匹配的应用':'该集群下暂无应用',
-        q?'试试调整搜索关键词。':'该集群暂未配置应用，敬请期待。'
-      );
-    }
-    const roleLabel=currentRole==='staff'?'（员工视图）':'（管理员视图）';
-    countEl.textContent=`显示 ${list.length} / ${modules.length} 个 ${roleLabel}`;
+    curClusterCat='all';              // 进入新集群重置类型子筛选
+    renderCluster(key);
     return;
   }
   if(curNode.startsWith('dash:')){
     dh.hidden=false;
-    renderDash(curNode.split(':')[1]);
+    const lvl=curNode.split(':')[1];
+    if(lvl==='home'){ renderDashHub(); return; }
+    renderDash(lvl);
   }
 }
 // 首页「全部应用」：按类型胶囊(curCat)+搜索全局筛选可见应用
@@ -1451,8 +1495,10 @@ function renderAllApps(q){
   }
   moveCatInd();
 }
-// ===== 顶部分类胶囊（滑动高亮筛选） =====
-const CAT_FILTERS=[{k:'all',t:'全部'},{k:'kanban',t:'看板'},{k:'train',t:'培训'},{k:'qc',t:'质检'},{k:'tool',t:'工具'}];
+// ===== 类型子视图胶囊（按 a.cat 筛选，与左侧一级分类不重复） =====
+const CAT_LABEL={kanban:'看板',app:'应用',daily:'日报'};
+const CAT_FILTERS=[{k:'all',t:'全部'},{k:'kanban',t:'看板'},{k:'app',t:'应用'},{k:'daily',t:'日报'}];
+// 首页「全部应用」类型子筛选
 let curCat='all';
 function initCatPills(){
   const box=document.getElementById('cat-pills'); if(!box) return;
@@ -1470,13 +1516,70 @@ function syncCatPills(){
   box.querySelectorAll('.cat-pill').forEach(x=>x.classList.toggle('active',x.dataset.cat===curCat));
   moveCatInd();
 }
-function moveCatInd(){
-  const box=document.getElementById('cat-pills'); if(!box) return;
-  const ind=document.getElementById('cat-ind'); if(!ind) return;
+// 集群视图内的类型子筛选（要求1：胶囊改为对应分类内的子视图）
+let curClusterCat='all';
+function renderCluster(key){
+  const cl=document.getElementById('home-cluster');
+  const grid=document.getElementById('grid');
+  const q=search.value.trim().toLowerCase();
+  const base=modules.filter(a=>isVisible(a) && a.cluster===key);
+  const list=base.filter(a=>{
+    if(curClusterCat!=='all' && a.cat!==curClusterCat) return false;
+    if(q&&!(a.name.toLowerCase().includes(q)||a.owner.toLowerCase().includes(q))) return false;
+    return true;
+  });
+  cl.hidden=false;
+  document.getElementById('sec-cluster-name').textContent=CLUSTERS[key].label;
+  document.getElementById('sec-cn').textContent=`共 ${list.length} 个应用`;
+  renderClusterPills(key);
+  if(list.length){
+    showGridSkeleton(grid, Math.min(list.length,8));
+    setTimeout(()=>{
+      if(curNode!=='cluster:'+key) return;
+      grid.innerHTML='';
+      list.forEach(a=>grid.appendChild(buildCard(a)));
+    },170);
+  }else{
+    grid.innerHTML=gridEmptyHTML(
+      q?'未找到匹配的应用':'该集群下暂无应用',
+      q?'试试调整搜索关键词。':'该集群暂未配置应用，敬请期待。'
+    );
+  }
+  const roleLabel=currentRole==='staff'?'（员工视图）':'（管理员视图）';
+  countEl.textContent=`显示 ${list.length} / ${modules.length} 个 ${roleLabel}`;
+}
+function renderClusterPills(key){
+  const box=document.getElementById('cluster-pills'); if(!box) return;
+  const base=modules.filter(a=>isVisible(a)&&a.cluster===key);
+  const types=[{k:'all',t:'全部'}];
+  ['kanban','app','daily'].forEach(t=>{ if(base.some(a=>a.cat===t)) types.push({k:t,t:CAT_LABEL[t]}); });
+  box.innerHTML='';
+  const ind=document.createElement('span'); ind.className='cat-ind'; ind.id='cluster-ind';
+  types.forEach(c=>{
+    const b=document.createElement('button');
+    b.className='cat-pill'+(c.k===curClusterCat?' active':'');
+    b.textContent=c.t; b.dataset.cat=c.k; b.type='button';
+    b.onclick=()=>{ if(curClusterCat===c.k) return; curClusterCat=c.k; syncClusterPills(); renderCluster(key); };
+    box.appendChild(b);
+  });
+  box.appendChild(ind);
+  requestAnimationFrame(moveClusterInd); setTimeout(moveClusterInd,60);
+}
+function syncClusterPills(){
+  const box=document.getElementById('cluster-pills'); if(!box) return;
+  box.querySelectorAll('.cat-pill').forEach(x=>x.classList.toggle('active',x.dataset.cat===curClusterCat));
+  moveClusterInd();
+}
+// 滑动高亮指示器（首页 / 集群共用）
+function moveInd(boxId,indId){
+  const box=document.getElementById(boxId); if(!box) return;
+  const ind=document.getElementById(indId); if(!ind) return;
   const act=box.querySelector('.cat-pill.active'); if(!act) return;
   ind.style.width=act.offsetWidth+'px';
   ind.style.transform='translateX('+(act.offsetLeft-4)+'px)';
 }
+function moveCatInd(){ moveInd('cat-pills','cat-ind'); }
+function moveClusterInd(){ moveInd('cluster-pills','cluster-ind'); }
 // ===== 骨架屏 / 空状态 =====
 function showGridSkeleton(g,n){
   g.innerHTML='';
@@ -1509,7 +1612,7 @@ function updateThemeIcon(t){
 }
 function navigate(node){
   curNode=node;
-  document.querySelectorAll('#nav .nav-item').forEach(n=>n.classList.toggle('active',n.dataset.node===node));
+  document.querySelectorAll('#nav [data-node]').forEach(n=>n.classList.toggle('active',n.dataset.node===node));
   activateTab('home');
   render();
 }
@@ -1588,6 +1691,10 @@ document.getElementById('tab-home').addEventListener('contextmenu',e=>{e.prevent
 // ============================================================
 document.querySelectorAll('#nav .nav-item[data-node]').forEach(n=>{
   n.onclick=()=>navigate(n.dataset.node);
+});
+document.querySelectorAll('#nav .group-title[data-node]').forEach(g=>{
+  g.onclick=()=>navigate(g.dataset.node);
+  g.onkeydown=(e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); navigate(g.dataset.node); } };
 });
 document.querySelectorAll('.fw-card[data-node]').forEach(c=>{
   c.onclick=()=>navigate(c.dataset.node);
@@ -1800,14 +1907,29 @@ document.getElementById('guide-mask').onclick=()=>guideModal.hidden=true;
 // 首页欢迎横幅可收起（记忆到 localStorage）
 const heroEl=document.getElementById('hero');
 const heroRevealEl=document.getElementById('hero-reveal');
+const btnHeroEl=document.getElementById('btn-hero');
 function applyHeroState(){
-  const collapsed=localStorage.getItem('heroCollapsed')==='1';
+  const seen=localStorage.getItem('heroSeen')==='1';
+  const manual=localStorage.getItem('heroCollapsed');   // '0'(展开) | '1'(收起) | null(未手动)
+  let collapsed;
+  if(manual!==null) collapsed=(manual==='1');            // 手动优先：展开/收起持久化
+  else if(seen) collapsed=true;                          // 非首次登录：默认收起，释放首屏
+  else collapsed=false;                                  // 仅首次登录展示
   heroEl.classList.toggle('collapsed',collapsed);
-  heroRevealEl.hidden=!collapsed;
+  if(heroRevealEl) heroRevealEl.hidden=true;            // 收起后彻底隐藏，移除空虚线占位框
+  if(btnHeroEl) btnHeroEl.hidden=!collapsed;            // 工具栏轻量"展开"入口
+  if(!seen){ try{ localStorage.setItem('heroSeen','1'); }catch(e){} }
 }
 applyHeroState();
 document.getElementById('hero-collapse').onclick=()=>{ localStorage.setItem('heroCollapsed','1'); applyHeroState(); };
-heroRevealEl.onclick=()=>{ localStorage.setItem('heroCollapsed','0'); applyHeroState(); };
+if(btnHeroEl) btnHeroEl.onclick=()=>{ localStorage.setItem('heroCollapsed','0'); applyHeroState(); };
+
+// ===== 关于平台弹窗 =====
+const aboutModal=document.getElementById('about-modal');
+function openAbout(){ if(aboutModal) aboutModal.hidden=false; }
+function closeAbout(){ if(aboutModal) aboutModal.hidden=true; }
+document.getElementById('about-close').onclick=closeAbout;
+document.getElementById('about-mask').onclick=closeAbout;
 
 // ============================================================
 //  权限配置后台（仅超级管理员）
